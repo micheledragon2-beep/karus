@@ -1,3 +1,4 @@
+cat > /home/claude/karus_part1.html << 'ENDOFPART1'
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -5,28 +6,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Karus 2026</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap');
 :root {
-  --font-body:'DM Sans',-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;
+  --font-body:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
   --font-mono:'JetBrains Mono','SF Mono','Courier New',monospace;
-  --font-serif:'Playfair Display',Georgia,'Times New Roman',serif;
+  --font-serif:'Playfair Display',Georgia,serif;
   --gold:#c9a84c;--gold2:#e8c56a;--gold3:rgba(201,168,76,0.08);
   --green:#22c55e;--red:#ef4444;--amber:#f59e0b;
   --teal:#14b8a6;--purple:#a78bfa;--blue:#60a5fa;--grey:#64748b;
   --r:10px;--rl:14px;--nav-h:56px;--bot-h:60px;
   --safe-b:env(safe-area-inset-bottom,0px);
 }
-[data-theme="dark"] {
-  --bg:#0a0f1e;--s1:#0f1729;--s2:#141e32;--s3:#1a2540;
-  --border:rgba(201,168,76,0.12);--border2:rgba(201,168,76,0.22);
-  --slate:#6b7fa0;--slate2:#8a9ab8;--text:#d8dfe8;--white:#f0f3f8;
-}
-[data-theme="light"] {
-  --bg:#f0f4ff;--s1:#ffffff;--s2:#f5f7fc;--s3:#e8ecf8;
-  --border:rgba(100,116,180,0.15);--border2:rgba(100,116,180,0.3);
-  --slate:#64748b;--slate2:#475569;--text:#1e293b;--white:#0f172a;
-}
+[data-theme="dark"]{--bg:#0a0f1e;--s1:#0f1729;--s2:#141e32;--s3:#1a2540;--border:rgba(201,168,76,0.12);--border2:rgba(201,168,76,0.22);--slate:#6b7fa0;--slate2:#8a9ab8;--text:#d8dfe8;--white:#f0f3f8;}
+[data-theme="light"]{--bg:#f0f4ff;--s1:#ffffff;--s2:#f5f7fc;--s3:#e8ecf8;--border:rgba(100,116,180,0.15);--border2:rgba(100,116,180,0.3);--slate:#64748b;--slate2:#475569;--text:#1e293b;--white:#0f172a;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{-webkit-text-size-adjust:100%;}
 body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;font-size:14px;line-height:1.5;transition:background .3s,color .3s;}
@@ -34,7 +28,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 ::-webkit-scrollbar-track{background:var(--s1);}
 ::-webkit-scrollbar-thumb{background:var(--s3);border-radius:2px;}
 
-/* AUTH */
+/* ═══ AUTH ═══ */
 .auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;padding:1.5rem;}
 .auth-box{background:var(--s1);border:1px solid var(--border2);border-radius:20px;padding:2.5rem 2rem;width:100%;max-width:420px;box-shadow:0 24px 64px rgba(0,0,0,0.4);}
 .auth-logo{text-align:center;margin-bottom:2rem;}
@@ -52,7 +46,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 .auth-error{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:var(--red);border-radius:var(--r);padding:.65rem .85rem;font-size:.8rem;margin-bottom:.9rem;display:none;}
 .auth-error.show{display:block;}
 
-/* HEADER */
+/* ═══ HEADER ═══ */
 .app-header{background:var(--s1);border-bottom:1px solid var(--border2);padding:0 1.5rem;display:flex;align-items:stretch;position:sticky;top:0;z-index:200;height:var(--nav-h);}
 .logo{display:flex;align-items:center;gap:10px;padding-right:1.5rem;border-right:1px solid var(--border);flex-shrink:0;}
 .logo-name{font-family:var(--font-serif);font-size:.95rem;font-weight:600;color:var(--white);line-height:1.1;}
@@ -64,13 +58,13 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 .tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);}
 .header-right{display:flex;align-items:center;gap:.6rem;padding-left:1rem;border-left:1px solid var(--border);flex-shrink:0;}
 .header-email{font-size:.7rem;color:var(--slate);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.theme-btn{background:var(--s2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:.3rem .6rem;font-size:.75rem;cursor:pointer;transition:all .2s;}
-.theme-btn:hover{border-color:var(--border2);}
+.icon-btn{background:var(--s2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:.3rem .6rem;font-size:.75rem;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:var(--font-body);}
+.icon-btn:hover{border-color:var(--border2);}
 .outlook-btn{background:rgba(0,120,212,.15);border:1px solid rgba(0,120,212,.3);color:#4da3e8;border-radius:6px;padding:.3rem .65rem;font-size:.68rem;font-weight:600;cursor:pointer;font-family:var(--font-body);white-space:nowrap;}
 .outlook-btn.connected{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.3);color:var(--green);}
 .signout-btn{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--red);border-radius:6px;padding:.3rem .65rem;font-size:.68rem;font-weight:600;cursor:pointer;font-family:var(--font-body);}
 
-/* GLOBAL SEARCH */
+/* ═══ GLOBAL SEARCH ═══ */
 .global-search-wrap{position:relative;flex-shrink:0;}
 .global-search{background:var(--s2);border:1px solid var(--border);color:var(--white);border-radius:20px;padding:.35rem .85rem .35rem 2rem;font-family:var(--font-body);font-size:.78rem;outline:none;width:180px;transition:all .2s;}
 .global-search:focus{border-color:var(--gold);width:240px;}
@@ -84,60 +78,71 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 .search-result-name{font-size:.82rem;color:var(--white);font-weight:600;}
 .search-result-sub{font-size:.7rem;color:var(--slate);margin-top:.1rem;}
 
-/* SAVE INDICATOR */
+/* ═══ SAVE INDICATOR ═══ */
 .save-indicator{position:fixed;bottom:calc(var(--bot-h) + var(--safe-b) + .75rem);right:1rem;background:var(--s1);border:1px solid var(--border2);border-radius:8px;padding:.4rem .85rem;font-size:.72rem;color:var(--slate);z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;font-family:var(--font-mono);}
 .save-indicator.show{opacity:1;}
 .save-indicator.saving{color:var(--amber);}
 .save-indicator.saved{color:var(--green);}
 
-/* REMINDER BANNER */
+/* ═══ REMINDER BANNER ═══ */
 .reminder-banner{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:var(--r);padding:.75rem 1rem;margin-bottom:1rem;display:none;}
 .reminder-banner.show{display:block;}
 .reminder-banner-title{font-size:.72rem;font-weight:700;color:var(--amber);margin-bottom:.4rem;}
-.reminder-item{font-size:.78rem;color:var(--text);display:flex;align-items:center;gap:.5rem;padding:.2rem 0;}
+.reminder-item{font-size:.78rem;color:var(--text);display:flex;align-items:center;gap:.5rem;padding:.2rem 0;cursor:pointer;}
+.reminder-item:hover .reminder-name{color:var(--gold);}
 .reminder-dot{width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;}
 
-/* BOTTOM NAV */
+/* ═══ PACING WIDGET ═══ */
+.pacing-bar{background:var(--s1);border:1px solid var(--border2);border-radius:var(--rl);padding:1rem 1.25rem;margin-bottom:1rem;}
+.pacing-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;}
+.pacing-title{font-family:var(--font-serif);font-size:.85rem;color:var(--gold);font-weight:600;}
+.pacing-status{font-size:.72rem;font-weight:700;padding:.2rem .6rem;border-radius:20px;}
+.pacing-status.ahead{background:rgba(34,197,94,.15);color:var(--green);}
+.pacing-status.behind{background:rgba(239,68,68,.15);color:var(--red);}
+.pacing-status.on-track{background:rgba(245,158,11,.15);color:var(--amber);}
+.pacing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem;margin-bottom:.75rem;}
+.pacing-item{background:var(--s2);border-radius:var(--r);padding:.65rem .85rem;}
+.pacing-item-label{font-size:.6rem;color:var(--slate);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem;}
+.pacing-item-val{font-family:var(--font-mono);font-size:.95rem;font-weight:600;color:var(--white);}
+.pacing-item-sub{font-size:.65rem;color:var(--slate);margin-top:.1rem;}
+.pacing-track{height:8px;background:var(--s2);border-radius:4px;overflow:visible;position:relative;margin-top:.5rem;}
+.pacing-fill{height:100%;border-radius:4px;transition:width .7s cubic-bezier(.4,0,.2,1);}
+.pacing-marker{position:absolute;top:-4px;width:2px;height:16px;background:var(--slate2);border-radius:1px;}
+.pacing-marker-label{position:absolute;top:18px;font-size:.58rem;color:var(--slate);transform:translateX(-50%);white-space:nowrap;}
+
+/* ═══ BOTTOM NAV ═══ */
 .bot-nav{display:none;}
 
-/* PAGES */
+/* ═══ PAGES ═══ */
 .page{display:none;padding:1.25rem 1.5rem 2rem;animation:fadeUp .22s ease;}
 .page.active{display:block;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 
-/* KPI */
+/* ═══ KPI ═══ */
 .kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:.75rem;margin-bottom:1.1rem;}
 .kpi{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.1rem;position:relative;overflow:hidden;transition:border-color .2s,transform .15s;}
 .kpi:hover{border-color:var(--border2);transform:translateY(-1px);}
 .kpi-accent{position:absolute;top:0;left:0;right:0;height:2px;}
-.kpi.gold .kpi-accent{background:var(--gold);}
-.kpi.green .kpi-accent{background:var(--green);}
-.kpi.red .kpi-accent{background:var(--red);}
-.kpi.teal .kpi-accent{background:var(--teal);}
-.kpi.purple .kpi-accent{background:var(--purple);}
-.kpi.amber .kpi-accent{background:var(--amber);}
-.kpi.blue .kpi-accent{background:var(--blue);}
-.kpi.grey .kpi-accent{background:var(--grey);}
+.kpi.gold .kpi-accent{background:var(--gold);}.kpi.green .kpi-accent{background:var(--green);}.kpi.red .kpi-accent{background:var(--red);}.kpi.teal .kpi-accent{background:var(--teal);}.kpi.purple .kpi-accent{background:var(--purple);}.kpi.amber .kpi-accent{background:var(--amber);}.kpi.blue .kpi-accent{background:var(--blue);}.kpi.grey .kpi-accent{background:var(--grey);}
 .kpi-label{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin-bottom:.45rem;}
 .kpi-value{font-family:var(--font-mono);font-size:1.45rem;font-weight:600;color:var(--white);letter-spacing:-.02em;line-height:1;}
 .kpi-sub{font-size:.68rem;color:var(--slate);margin-top:.35rem;}
 
-/* CARDS */
+/* ═══ CARDS ═══ */
 .card{background:var(--s1);border:1px solid var(--border);border-radius:var(--rl);padding:1.1rem 1.25rem;transition:border-color .2s;}
 .card:hover{border-color:var(--border2);}
 .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
 .card-title{font-family:var(--font-serif);font-size:.85rem;font-weight:600;color:var(--gold);}
 
-/* LAYOUT */
+/* ═══ LAYOUT ═══ */
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
 .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;}
-.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem;}
 .grid-12{display:grid;grid-template-columns:1.45fr 1fr;gap:1rem;}
 .mb-1{margin-bottom:1rem;}
 .chart-wrap{position:relative;height:220px;}
 .chart-wrap.sm{height:160px;}
 
-/* WEEKLY SUMMARY */
+/* ═══ WEEKLY SUMMARY ═══ */
 .weekly-summary{background:linear-gradient(135deg,rgba(201,168,76,.08) 0%,rgba(201,168,76,.03) 100%);border:1px solid var(--border2);border-radius:var(--rl);padding:1.1rem 1.25rem;margin-bottom:1rem;}
 .weekly-summary-title{font-family:var(--font-serif);font-size:.85rem;color:var(--gold);margin-bottom:.85rem;}
 .weekly-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.75rem;}
@@ -149,8 +154,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 .weekly-stat-change.down{color:var(--red);}
 .weekly-stat-change.neutral{color:var(--slate);}
 
-/* BEST PERFORMERS */
-.best-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--rl);padding:1rem 1.25rem;}
+/* ═══ BEST PERFORMERS ═══ */
 .best-item{display:flex;align-items:center;gap:.75rem;padding:.55rem 0;border-bottom:1px solid var(--border);}
 .best-item:last-child{border-bottom:none;}
 .best-rank{font-family:var(--font-mono);font-size:.7rem;color:var(--slate);width:18px;flex-shrink:0;}
@@ -158,7 +162,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 .best-label{flex:1;font-size:.8rem;color:var(--text);}
 .best-val{font-family:var(--font-mono);font-size:.78rem;color:var(--gold2);font-weight:600;}
 
-/* PIPELINE */
+/* ═══ PIPELINE ═══ */
 .pipeline-wrap{display:flex;gap:.75rem;overflow-x:auto;padding-bottom:.5rem;-webkit-overflow-scrolling:touch;}
 .pipeline-col{flex-shrink:0;width:220px;}
 .pipeline-col-header{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.5rem .75rem;border-radius:6px 6px 0 0;margin-bottom:.4rem;}
@@ -169,7 +173,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 .pipeline-card-date{font-family:var(--font-mono);font-size:.65rem;color:var(--slate);margin-top:.2rem;}
 .pipeline-count{font-family:var(--font-mono);font-size:.68rem;color:var(--slate);padding:.2rem .5rem;background:var(--s3);border-radius:10px;margin-left:.4rem;}
 
-/* FORECAST */
+/* ═══ FORECAST ═══ */
 .forecast-row{display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--border);}
 .forecast-row:last-child{border-bottom:none;}
 .forecast-month{font-size:.72rem;font-weight:700;color:var(--slate2);text-transform:uppercase;letter-spacing:.06em;width:36px;flex-shrink:0;}
@@ -181,11 +185,11 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 .forecast-tag.actual{background:rgba(34,197,94,.12);color:var(--green);}
 .forecast-tag.projected{background:rgba(201,168,76,.12);color:var(--gold);}
 
-/* EXPORT BTN */
+/* ═══ EXPORT BTN ═══ */
 .export-btn{background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.25);color:var(--teal);border-radius:var(--r);padding:.45rem .85rem;font-family:var(--font-body);font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .export-btn:hover{background:rgba(20,184,166,.2);}
 
-/* CLIENT PROFILE */
+/* ═══ CLIENT ═══ */
 .client-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;transition:border-color .2s,transform .15s;cursor:pointer;}
 .client-card:hover{border-color:var(--border2);transform:translateY(-2px);}
 .client-name{font-family:var(--font-serif);font-size:1rem;color:var(--white);font-weight:600;margin-bottom:.35rem;}
@@ -195,14 +199,36 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 .client-stat-val{font-family:var(--font-mono);font-size:.82rem;font-weight:600;color:var(--white);}
 .client-stat-label{font-size:.58rem;color:var(--slate);text-transform:uppercase;letter-spacing:.06em;margin-top:.1rem;}
 
-/* PRODUCT TARGET */
+/* ═══ COMMISSION CALENDAR ═══ */
+.comm-cal{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.5rem;}
+.comm-cal-month{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:.75rem;text-align:center;transition:border-color .2s;}
+.comm-cal-month.has-payout{border-color:var(--border2);background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.02));}
+.comm-cal-label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--slate);margin-bottom:.35rem;}
+.comm-cal-val{font-family:var(--font-mono);font-size:.88rem;font-weight:600;color:var(--gold2);}
+.comm-cal-sub{font-size:.6rem;color:var(--slate);margin-top:.2rem;}
+
+/* ═══ SOURCE ROI ═══ */
+.source-roi-row{display:flex;align-items:center;gap:.75rem;padding:.65rem 0;border-bottom:1px solid var(--border);}
+.source-roi-row:last-child{border-bottom:none;}
+.source-roi-name{font-size:.8rem;font-weight:600;color:var(--white);flex:1;}
+.source-roi-grid{display:grid;grid-template-columns:repeat(3,80px);gap:.4rem;flex-shrink:0;}
+.source-roi-cell{text-align:center;}
+.source-roi-val{font-family:var(--font-mono);font-size:.72rem;color:var(--white);}
+.source-roi-label{font-size:.58rem;color:var(--slate);text-transform:uppercase;letter-spacing:.05em;}
+
+/* ═══ DUP WARNING ═══ */
+.dup-warning{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:var(--r);padding:.65rem .85rem;font-size:.78rem;color:var(--amber);margin-bottom:.75rem;display:none;}
+.dup-warning.show{display:block;}
+.dup-link{color:var(--gold);text-decoration:underline;cursor:pointer;}
+
+/* ═══ PRODUCT TARGET ═══ */
 .prod-target-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.8rem;}
 .prod-target-label{font-size:.75rem;font-weight:600;width:60px;flex-shrink:0;}
 .prod-target-bar-wrap{flex:1;height:8px;background:var(--s2);border-radius:4px;overflow:hidden;}
 .prod-target-bar{height:100%;border-radius:4px;transition:width .7s cubic-bezier(.4,0,.2,1);}
 .prod-target-pct{font-family:var(--font-mono);font-size:.68rem;color:var(--slate);width:40px;text-align:right;flex-shrink:0;}
 
-/* OUTLOOK CALENDAR */
+/* ═══ OUTLOOK CAL ═══ */
 .outlook-panel{background:var(--s1);border:1px solid var(--border);border-radius:var(--rl);padding:1.1rem 1.25rem;margin-bottom:1rem;}
 .outlook-panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.75rem;}
 .outlook-panel-title{font-family:var(--font-serif);font-size:.85rem;font-weight:600;color:var(--gold);}
@@ -225,7 +251,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 .mob-cal-event-title{font-weight:600;color:var(--white);font-size:.85rem;margin-bottom:.25rem;}
 .mob-cal-event-meta{font-family:var(--font-mono);font-size:.68rem;color:#7bbfef;}
 
-/* TABLES */
+/* ═══ TABLES ═══ */
 .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
 table{width:100%;border-collapse:collapse;font-size:.78rem;}
 thead th{background:var(--s2);color:var(--slate);font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.6rem .8rem;text-align:left;white-space:nowrap;border-bottom:1px solid var(--border2);position:sticky;top:0;}
@@ -238,7 +264,7 @@ tr.row-paid{opacity:.5;}
 tr.row-paid td:first-child{opacity:1;}
 tr.row-followup{border-left:2px solid var(--amber);}
 
-/* MOBILE CARDS */
+/* ═══ MOBILE CARDS ═══ */
 .mob-list{display:none;flex-direction:column;gap:.6rem;}
 .mob-card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:.9rem 1rem;display:flex;flex-direction:column;gap:.5rem;}
 .mob-card-row{display:flex;align-items:center;justify-content:space-between;gap:.5rem;}
@@ -250,7 +276,7 @@ tr.row-followup{border-left:2px solid var(--amber);}
 .mob-card-meta{font-size:.7rem;color:var(--slate);}
 .mob-edit-btn{background:var(--s3);border:1px solid var(--border);color:var(--gold);font-size:.68rem;padding:.28rem .65rem;border-radius:6px;cursor:pointer;font-family:var(--font-body);font-weight:600;flex-shrink:0;}
 
-/* BADGES */
+/* ═══ BADGES ═══ */
 .badge{display:inline-flex;align-items:center;padding:.18rem .55rem;border-radius:20px;font-size:.62rem;font-weight:600;letter-spacing:.04em;white-space:nowrap;font-family:var(--font-body);}
 .badge-closed,.badge-meetclose{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.2);}
 .badge-meetnosale{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.2);}
@@ -261,7 +287,7 @@ tr.row-followup{border-left:2px solid var(--amber);}
 .badge-second{background:rgba(20,184,166,.12);color:var(--teal);border:1px solid rgba(20,184,166,.2);}
 .badge-nothing{background:rgba(100,116,139,.12);color:#64748b;border:1px solid rgba(100,116,139,.2);}
 
-/* CONTROLS */
+/* ═══ CONTROLS ═══ */
 .controls{display:flex;gap:.6rem;margin-bottom:1rem;flex-wrap:wrap;align-items:center;}
 .search-box{background:var(--s2);border:1px solid var(--border);color:var(--white);border-radius:var(--r);padding:.5rem .85rem;font-family:var(--font-body);font-size:.8rem;outline:none;width:220px;transition:border-color .2s;}
 .search-box::placeholder{color:var(--slate);}
@@ -272,9 +298,11 @@ select.filter-sel{background:var(--s2);border:1px solid var(--border);color:var(
 .btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--gold);border-radius:var(--r);padding:.5rem .85rem;font-family:var(--font-body);font-size:.78rem;font-weight:500;cursor:pointer;transition:all .15s;}
 .btn-ghost:hover{background:var(--gold3);}
 .btn-sm{padding:.28rem .6rem;font-size:.7rem;}
+.btn-clear{background:transparent;border:1px solid rgba(239,68,68,.3);color:var(--red);border-radius:var(--r);padding:.5rem .75rem;font-family:var(--font-body);font-size:.72rem;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn-clear:hover{background:rgba(239,68,68,.08);}
 .count-label{font-size:.7rem;color:var(--slate);margin-left:auto;font-family:var(--font-mono);}
 
-/* CHECKBOXES */
+/* ═══ CHECKBOXES ═══ */
 .seen-chk,.paid-chk{appearance:none;-webkit-appearance:none;width:18px;height:18px;border-radius:4px;cursor:pointer;border:1.5px solid var(--border2);background:var(--s2);display:inline-flex;align-items:center;justify-content:center;transition:all .15s;vertical-align:middle;position:relative;flex-shrink:0;}
 .seen-chk:checked{background:var(--blue);border-color:var(--blue);}
 .paid-chk:checked{background:var(--gold);border-color:var(--gold);}
@@ -282,7 +310,7 @@ select.filter-sel{background:var(--s2);border:1px solid var(--border);color:var(
 .seen-chk:checked::after,.paid-chk:checked::after{content:'✓';font-size:10px;font-weight:800;position:absolute;line-height:1;color:#fff;}
 .paid-chk:checked::after{color:#0a0f1e;}
 
-/* MODAL */
+/* ═══ MODAL ═══ */
 .modal-overlay{position:fixed;inset:0;background:rgba(5,8,18,.82);display:none;align-items:flex-end;justify-content:center;z-index:1000;backdrop-filter:blur(5px);}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--s1);border:1px solid var(--border2);border-radius:20px 20px 0 0;padding:1.4rem 1.5rem calc(1.5rem + var(--safe-b));width:100%;max-height:92dvh;overflow-y:auto;position:relative;animation:sheetUp .25s cubic-bezier(.32,.72,0,1);}
@@ -303,7 +331,10 @@ select.filter-sel{background:var(--s2);border:1px solid var(--border);color:var(
 .modal-actions{display:flex;gap:.6rem;margin-top:1.2rem;justify-content:flex-end;align-items:center;padding-top:1rem;border-top:1px solid var(--border);}
 .btn-danger{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25);border-radius:var(--r);padding:.5rem 1rem;font-family:var(--font-body);font-size:.78rem;font-weight:600;cursor:pointer;margin-right:auto;}
 
-/* TARGET BARS */
+/* ═══ LINK BADGE ═══ */
+.linked-sale-badge{display:inline-flex;align-items:center;gap:.35rem;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);border-radius:6px;padding:.3rem .6rem;font-size:.68rem;color:var(--green);margin-top:.5rem;}
+
+/* ═══ TARGET BARS ═══ */
 .target-row{margin-bottom:.9rem;}
 .target-row-top{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.28rem;}
 .target-month{font-size:.65rem;font-weight:700;color:var(--slate2);text-transform:uppercase;letter-spacing:.08em;min-width:28px;}
@@ -318,23 +349,23 @@ select.filter-sel{background:var(--s2);border:1px solid var(--border);color:var(
 .bar-fill.empty{background:rgba(201,168,76,.1);}
 .target-goal-label{font-family:var(--font-mono);font-size:.58rem;color:var(--slate);margin-top:.18rem;text-align:right;}
 
-/* RATIO */
+/* ═══ RATIO ═══ */
 .ratio-cell{text-align:center;}
 .ratio-pill{display:inline-block;padding:.15rem .45rem;border-radius:4px;min-width:38px;font-size:.65rem;font-weight:600;font-family:var(--font-mono);text-align:center;}
 
-/* PRODUCT */
+/* ═══ PRODUCT COLORS ═══ */
 .prod{font-weight:700;font-family:var(--font-mono);font-size:.7rem;}
 .prod-PPPWP{color:#60a5fa;}.prod-PPPUL{color:var(--purple);}.prod-ULSP{color:var(--teal);}.prod-FP{color:var(--amber);}
 
-/* NOTES */
+/* ═══ NOTES ═══ */
 .notes-preview{color:var(--slate);font-size:.73rem;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;}
 .notes-preview:hover{color:var(--gold);}
 
-/* SECTION */
+/* ═══ SECTION ═══ */
 .section-heading{font-size:.6rem;font-weight:700;color:var(--slate);letter-spacing:.12em;text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:.45rem;margin-bottom:.8rem;margin-top:1.1rem;}
 .section-heading:first-child{margin-top:0;}
 
-/* MONTHLY */
+/* ═══ MONTHLY ═══ */
 .monthly-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:.7rem;}
 .monthly-header{padding:.9rem 1.25rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;gap:.75rem;}
 .monthly-header:hover{background:rgba(201,168,76,.03);}
@@ -353,7 +384,11 @@ select.filter-sel{background:var(--s2);border:1px solid var(--border);color:var(
 .mini-kpi .val{font-family:var(--font-mono);font-size:.95rem;color:var(--white);font-weight:500;}
 .mini-kpi .sub{font-size:.6rem;color:var(--slate);margin-top:.12rem;}
 
-/* DESKTOP */
+/* ═══ BACKUP/RESTORE ═══ */
+.backup-zone{border:2px dashed var(--border2);border-radius:var(--rl);padding:2rem;text-align:center;transition:border-color .2s;}
+.backup-zone:hover{border-color:var(--gold);}
+
+/* ═══ DESKTOP ═══ */
 @media(min-width:768px){
   .desk-only{display:block !important;}
   .mob-only{display:none !important;}
@@ -364,7 +399,7 @@ select.filter-sel{background:var(--s2);border:1px solid var(--border);color:var(
   .save-indicator{bottom:1rem;}
 }
 
-/* MOBILE */
+/* ═══ MOBILE ═══ */
 @media(max-width:767px){
   .nav-tabs{display:none;}
   .app-header{height:48px;padding:0 .85rem;}
@@ -372,15 +407,15 @@ select.filter-sel{background:var(--s2);border:1px solid var(--border);color:var(
   .logo-name{font-size:.85rem;}
   .global-search{width:130px;}
   .global-search:focus{width:170px;}
-  .bot-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:calc(var(--bot-h) + var(--safe-b));background:var(--s1);border-top:1px solid var(--border2);z-index:200;padding-bottom:var(--safe-b);}
-  .bot-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;color:var(--slate);cursor:pointer;font-family:var(--font-body);font-size:.52rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:.35rem 0;transition:color .2s;}
-  .bot-btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .bot-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:calc(var(--bot-h) + var(--safe-b));background:var(--s1);border-top:1px solid var(--border2);z-index:200;padding-bottom:var(--safe-b);overflow-x:auto;}
+  .bot-btn{flex-shrink:0;min-width:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;color:var(--slate);cursor:pointer;font-family:var(--font-body);font-size:.48rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:.35rem .4rem;transition:color .2s;}
+  .bot-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
   .bot-btn.active{color:var(--gold);}
   .page{padding:.85rem .9rem calc(var(--bot-h) + var(--safe-b) + .5rem);}
   .kpi-strip{grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.85rem;}
   .kpi{padding:.8rem .9rem;}
   .kpi-value{font-size:1.2rem;}
-  .grid-2,.grid-3,.grid-4,.grid-12{grid-template-columns:1fr;}
+  .grid-2,.grid-3,.grid-12{grid-template-columns:1fr;}
   .chart-wrap{height:170px;}
   .desk-only{display:none !important;}
   .mob-only{display:flex !important;}
@@ -393,1204 +428,16 @@ select.filter-sel{background:var(--s2);border:1px solid var(--border);color:var(
   .monthly-body .inner-grid{grid-template-columns:1fr !important;}
   .pipeline-col{width:180px;}
   .weekly-stats{grid-template-columns:1fr 1fr;}
+  .pacing-grid{grid-template-columns:1fr 1fr;}
+  .source-roi-grid{grid-template-columns:repeat(2,70px);}
 }
-@media(max-width:380px){.kpi-value{font-size:1.05rem;}.bot-btn{font-size:.48rem;}}
+@media(max-width:380px){.kpi-value{font-size:1.05rem;}.bot-btn{font-size:.44rem;min-width:50px;}}
+
+/* ═══ KEYBOARD SHORTCUT TOAST ═══ */
+.kb-toast{position:fixed;top:70px;right:1rem;background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:.55rem 1rem;font-size:.75rem;color:var(--text);z-index:600;opacity:0;transform:translateY(-8px);transition:all .25s;pointer-events:none;font-family:var(--font-mono);}
+.kb-toast.show{opacity:1;transform:none;}
+kbd{background:var(--s3);border:1px solid var(--border2);border-radius:4px;padding:.1rem .35rem;font-size:.7rem;}
 </style>
-</head>
-<body>
-
-<!-- AUTH -->
-<div class="auth-screen" id="auth-screen">
-  <div class="auth-box">
-    <div class="auth-logo">
-      <div class="auth-logo-name">Karus</div>
-      <div class="auth-logo-sub">2026 SALES PLATFORM</div>
-    </div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" onclick="switchAuthTab('login',this)">Sign In</button>
-      <button class="auth-tab" onclick="switchAuthTab('register',this)">Register</button>
-    </div>
-    <div class="auth-error" id="auth-error"></div>
-    <div id="auth-login-form">
-      <div class="auth-field"><label>Email</label><input type="email" id="login-email" placeholder="your@email.com" autocomplete="email"></div>
-      <div class="auth-field"><label>Password</label><input type="password" id="login-password" placeholder="Password" autocomplete="current-password"></div>
-      <button class="auth-btn" onclick="doLogin()">Sign In</button>
-    </div>
-    <div id="auth-register-form" style="display:none">
-      <div class="auth-field"><label>Name</label><input type="text" id="reg-name" placeholder="Your name"></div>
-      <div class="auth-field"><label>Email</label><input type="email" id="reg-email" placeholder="your@email.com" autocomplete="email"></div>
-      <div class="auth-field"><label>Password</label><input type="password" id="reg-password" placeholder="Min 6 characters" autocomplete="new-password"></div>
-      <button class="auth-btn" onclick="doRegister()">Create Account</button>
-    </div>
-  </div>
-</div>
-
-<div class="save-indicator" id="save-indicator"></div>
-
-<!-- HEADER -->
-<header class="app-header" id="app-header" style="display:none">
-  <div class="logo">
-    <div><div class="logo-name">Karus</div><div class="logo-year">2026 PLATFORM</div></div>
-  </div>
-  <nav class="nav-tabs">
-    <button class="tab-btn active" onclick="showPage('dashboard',this)">Dashboard</button>
-    <button class="tab-btn" onclick="showPage('sales',this)">Sales</button>
-    <button class="tab-btn" onclick="showPage('meetings',this)">Meetings</button>
-    <button class="tab-btn" onclick="showPage('pipeline',this)">Pipeline</button>
-    <button class="tab-btn" onclick="showPage('clients',this)">Clients</button>
-    <button class="tab-btn" onclick="showPage('targets',this)">Targets</button>
-    <button class="tab-btn" onclick="showPage('monthly',this)">Monthly</button>
-    <button class="tab-btn" onclick="showPage('leaderboard',this)">Stats</button>
-    <button class="tab-btn" onclick="showPage('import',this)">Import</button>
-  </nav>
-  <div class="header-right">
-    <div class="global-search-wrap">
-      <span class="global-search-icon">🔍</span>
-      <input class="global-search" type="text" placeholder="Search everything…" oninput="globalSearch(this.value)" onblur="setTimeout(()=>hideGlobalSearch(),200)">
-      <div class="global-search-results" id="global-search-results"></div>
-    </div>
-    <span class="header-email" id="header-email"></span>
-    <button class="theme-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
-    <button class="theme-btn" onclick="toggleNotifPanel()" id="notif-bell" style="position:relative">🔔<span id="notif-badge" style="display:none;position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:var(--red);border-radius:50%"></span></button>
-    <button class="outlook-btn" id="outlook-connect-btn" onclick="connectOutlook()"><span id="outlook-btn-text">📅 Outlook</span></button>
-    <button class="signout-btn" onclick="doSignOut()">Sign Out</button>
-  </div>
-</header>
-
-<!-- DASHBOARD -->
-<div id="page-dashboard" class="page active" style="display:none">
-  <div id="reminder-banner" class="reminder-banner">
-    <div class="reminder-banner-title">⚠️ Follow-up Reminders</div>
-    <div id="reminder-list"></div>
-  </div>
-  <div class="weekly-summary" id="weekly-summary"></div>
-  <div class="kpi-strip" id="kpi-strip"></div>
-  <div class="grid-12 mb-1">
-    <div class="card"><div class="card-header"><div class="card-title">Commission Earned by Month</div></div><div class="chart-wrap"><canvas id="chart-commission"></canvas></div></div>
-    <div class="card"><div class="card-header"><div class="card-title">Meetings by Status</div></div><div class="chart-wrap"><canvas id="chart-status-donut"></canvas></div></div>
-  </div>
-  <div class="grid-3 mb-1">
-    <div class="card"><div class="card-header"><div class="card-title">Commission Forecast</div></div><div id="forecast-container" style="padding:.25rem 0"></div></div>
-    <div class="card"><div class="card-header"><div class="card-title">Best Month</div><div class="card-title" style="font-size:.7rem;color:var(--slate)">by API</div></div><div id="best-months"></div></div>
-    <div class="card"><div class="card-header"><div class="card-title">Best Source</div></div><div id="best-sources"></div></div>
-  </div>
-  <div class="grid-3 mb-1">
-    <div class="card"><div class="card-header"><div class="card-title">Close Ratio / Month</div></div><div class="chart-wrap sm"><canvas id="chart-ratio-close"></canvas></div></div>
-    <div class="card"><div class="card-header"><div class="card-title">No Show Ratio / Month</div></div><div class="chart-wrap sm"><canvas id="chart-ratio-noshow"></canvas></div></div>
-    <div class="card"><div class="card-header"><div class="card-title">Cancel Ratio / Month</div></div><div class="chart-wrap sm"><canvas id="chart-ratio-cancel"></canvas></div></div>
-  </div>
-  <div class="grid-2">
-    <div class="card"><div class="card-header"><div class="card-title">Reschedule Ratio / Month</div></div><div class="chart-wrap sm"><canvas id="chart-ratio-reschedule"></canvas></div></div>
-    <div class="card"><div class="card-header"><div class="card-title">Target vs Actual — 2026</div></div><div class="chart-wrap sm"><canvas id="chart-target"></canvas></div></div>
-  </div>
-</div>
-
-<!-- SALES -->
-<div id="page-sales" class="page" style="display:none">
-  <div class="kpi-strip" id="sales-kpi"></div>
-  <div class="card">
-    <div class="controls">
-      <input class="search-box" type="text" id="sales-search" placeholder="Search name, product…" oninput="renderSales()">
-      <select class="filter-sel" id="sales-product-filter" onchange="renderSales()"><option value="">All Products</option><option>PPPWP</option><option>PPPUL</option><option>ULSP</option><option>FP</option></select>
-      <select class="filter-sel" id="sales-month-filter" onchange="renderSales()"><option value="">All Months</option><option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option><option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option></select>
-      <button class="btn-primary" onclick="openSaleModal()">+ Add Sale</button>
-      <button class="export-btn" onclick="exportSalesCSV()">⬇ Export CSV</button>
-      <span class="count-label" id="sales-count"></span>
-    </div>
-    <div class="desk-only tbl-wrap"><table><thead><tr><th style="text-align:center;width:34px">Paid</th><th>Date</th><th>Name</th><th>ID</th><th>Product</th><th>Freq</th><th>Term</th><th>Source</th><th>Shared</th><th>Total API</th><th>My API</th><th>Fee</th><th>Tii 1</th><th>Tii 2</th><th>Comm%</th><th>Tii%</th><th>CCG</th><th>Commission</th><th>Payout Mo.</th><th></th></tr></thead><tbody id="sales-tbody"></tbody></table></div>
-    <div class="mob-only mob-list" id="sales-mob-list"></div>
-  </div>
-</div>
-
-<!-- MEETINGS -->
-<div id="page-meetings" class="page" style="display:none">
-  <div class="kpi-strip" id="meetings-kpi"></div>
-  <div class="outlook-panel" id="outlook-calendar-panel">
-    <div class="outlook-panel-header">
-      <div class="outlook-panel-title">📅 Outlook Calendar — Click to import</div>
-      <div class="outlook-panel-controls">
-        <button class="cal-nav-btn" onclick="calNav(-1)">‹</button>
-        <span class="cal-week-label" id="cal-week-label"></span>
-        <button class="cal-nav-btn" onclick="calNav(1)">›</button>
-        <button class="cal-nav-btn" onclick="calNav(0)">Today</button>
-      </div>
-    </div>
-    <div id="cal-grid-container"></div>
-  </div>
-  <div class="card mb-1 desk-only">
-    <div class="card-header"><div class="card-title">Monthly Conversion Ratios</div></div>
-    <div class="tbl-wrap"><table><thead><tr id="ratio-header"></tr></thead><tbody id="ratio-tbody"></tbody></table></div>
-  </div>
-  <div class="card">
-    <div class="controls">
-      <input class="search-box" type="text" id="meet-search" placeholder="Search name, phone…" oninput="renderMeetings()">
-      <select class="filter-sel" id="meet-status-filter" onchange="renderMeetings()"><option value="">All Statuses</option><option>Meeting Close</option><option>Meeting No Sale</option><option>Meeting Reschedule</option><option>Client No Show</option><option>Client Cancel</option><option>Follow Up</option><option>Second Meeting</option></select>
-      <select class="filter-sel" id="meet-month-filter" onchange="renderMeetings()"><option value="">All Months</option><option value="01">Jan</option><option value="02">Feb</option><option value="03">Mar</option><option value="04">Apr</option><option value="05">May</option><option value="06">Jun</option><option value="07">Jul</option><option value="08">Aug</option><option value="09">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option></select>
-      <button class="btn-primary" onclick="openMeetModal()">+ Add</button>
-      <button class="export-btn" onclick="exportMeetingsCSV()">⬇ Export CSV</button>
-      <span class="count-label" id="meet-count"></span>
-    </div>
-    <div class="desk-only tbl-wrap"><table><thead><tr><th style="text-align:center;width:34px">Seen</th><th>Date</th><th>Name</th><th>Phone</th><th>Product</th><th>Source</th><th>Other PPP</th><th>Status</th><th>Follow Up</th><th>Notes</th><th></th></tr></thead><tbody id="meetings-tbody"></tbody></table></div>
-    <div class="mob-only mob-list" id="meetings-mob-list"></div>
-  </div>
-</div>
-
-<!-- PIPELINE -->
-<div id="page-pipeline" class="page" style="display:none">
-  <div class="kpi-strip" id="pipeline-kpi"></div>
-  <div class="card">
-    <div class="card-header"><div class="card-title">Sales Pipeline — Meeting Stages</div></div>
-    <div class="pipeline-wrap" id="pipeline-board"></div>
-  </div>
-</div>
-
-<!-- CLIENTS -->
-<div id="page-clients" class="page" style="display:none">
-  <div class="kpi-strip" id="clients-kpi"></div>
-  <div class="controls">
-    <input class="search-box" type="text" id="clients-search" placeholder="Search client…" oninput="renderClients()">
-  </div>
-  <div id="clients-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem"></div>
-</div>
-
-<!-- TARGETS -->
-<div id="page-targets" class="page" style="display:none">
-  <div class="kpi-strip" id="target-kpi"></div>
-  <div class="grid-2 mb-1">
-    <div class="card"><div class="card-header"><div class="card-title">Monthly Progress</div></div><div id="target-bars"></div></div>
-    <div class="card"><div class="card-header"><div class="card-title">Edit Actuals</div></div><div id="target-editor"></div></div>
-  </div>
-  <div class="card">
-    <div class="card-header"><div class="card-title">Product Targets</div></div>
-    <div id="prod-targets"></div>
-  </div>
-</div>
-
-<!-- MONTHLY -->
-<div id="page-monthly" class="page" style="display:none">
-  <div class="kpi-strip" id="monthly-kpi"></div>
-  <div id="monthly-report-cards"></div>
-</div>
-
-<!-- BOTTOM NAV -->
-<nav class="bot-nav" id="bot-nav" style="display:none">
-  <button class="bot-btn active" onclick="showPage('dashboard',this)" data-page="dashboard"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dash</button>
-  <button class="bot-btn" onclick="showPage('sales',this)" data-page="sales"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Sales</button>
-  <button class="bot-btn" onclick="showPage('meetings',this)" data-page="meetings"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Meets</button>
-  <button class="bot-btn" onclick="showPage('pipeline',this)" data-page="pipeline"><svg viewBox="0 0 24 24"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>Pipeline</button>
-  <button class="bot-btn" onclick="showPage('targets',this)" data-page="targets"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Targets</button>
-</nav>
-
-<!-- MEETING MODAL -->
-<div class="modal-overlay" id="meet-modal-overlay">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeMeetModal()">✕</button>
-    <div class="modal-title" id="meet-modal-title">Add Meeting</div>
-    <div class="modal-subtitle" id="meet-modal-subtitle"></div>
-    <div class="field-grid">
-      <div class="field"><label>Date</label><input type="date" id="m-date"></div>
-      <div class="field"><label>Full Name</label><input type="text" id="m-name"></div>
-      <div class="field"><label>Phone</label><input type="tel" id="m-phone"></div>
-      <div class="field"><label>Source</label><input type="text" id="m-source"></div>
-      <div class="field"><label>Product 1</label><select id="m-product1"><option value="">—</option><option>PPPWP</option><option>PPPUL</option><option>ULSP</option><option>FP</option></select></div>
-      <div class="field"><label>Product 2</label><select id="m-product2"><option value="">—</option><option>PPPWP</option><option>PPPUL</option><option>ULSP</option><option>FP</option></select></div>
-      <div class="field"><label>Other PPP</label><select id="m-otherppp"><option value="">—</option><option>IVALIFE</option><option>LIFESTAR</option><option>HSBC</option><option>APS</option><option>No</option></select></div>
-      <div class="field"><label>Status</label><select id="m-status"><option value="">—</option><option>Meeting Close</option><option>Meeting No Sale</option><option>Meeting Reschedule</option><option>Client No Show</option><option>Client Cancel</option><option>Follow Up</option><option>Second Meeting</option></select></div>
-      <div class="field"><label>Seen</label><select id="m-seen"><option value="false">No</option><option value="true">Yes</option></select></div>
-      <div class="field"><label>Follow Up Date</label><input type="date" id="m-followup"></div>
-      <div class="field field-full"><label>Notes</label><textarea id="m-notes" placeholder="Notes…"></textarea></div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-danger btn-sm" id="meet-delete-btn" onclick="deleteMeeting()" style="display:none">Delete</button>
-      <button class="btn-ghost" onclick="closeMeetModal()">Cancel</button>
-      <button class="btn-primary" onclick="saveMeeting()">Save</button>
-    </div>
-  </div>
-</div>
-
-<!-- SALE MODAL -->
-<div class="modal-overlay" id="sale-modal-overlay">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeSaleModal()">✕</button>
-    <div class="modal-title" id="sale-modal-title">Add Sale</div>
-    <div class="field-grid">
-      <div class="field"><label>Date</label><input type="date" id="s-date"></div>
-      <div class="field"><label>Full Name</label><input type="text" id="s-name"></div>
-      <div class="field"><label>ID Card</label><input type="text" id="s-idcard"></div>
-      <div class="field"><label>Phone</label><input type="tel" id="s-phone"></div>
-      <div class="field"><label>Product</label><select id="s-product"><option value="">—</option><option>PPPWP</option><option>PPPUL</option><option>ULSP</option><option>FP</option></select></div>
-      <div class="field"><label>Frequency</label><select id="s-freq"><option>Monthly</option><option>Quarterly</option><option>Annual</option></select></div>
-      <div class="field"><label>Term (yrs)</label><input type="number" id="s-term" min="1" max="40" oninput="calcCommission()"></div>
-      <div class="field"><label>Source</label><input type="text" id="s-source"></div>
-      <div class="field"><label>Shared?</label><select id="s-shared"><option>Yes</option><option>No</option></select></div>
-      <div class="field"><label>Total API (€)</label><input type="number" id="s-totalapi" oninput="calcCommission()"></div>
-      <div class="field"><label>My API (€)</label><input type="number" id="s-myapi" oninput="calcCommission()"></div>
-      <div class="field"><label>Policy Fee (€)</label><input type="number" id="s-policyfee"></div>
-      <div class="field"><label>Tii 1</label><input type="text" id="s-tii1"></div>
-      <div class="field"><label>Tii 2</label><input type="text" id="s-tii2"></div>
-      <div class="field"><label>Lead Agent</label><input type="text" id="s-lead"></div>
-      <div class="field"><label>Comm Rate</label><input type="text" id="s-commrate" readonly></div>
-      <div class="field"><label>Tii Rate</label><input type="number" step="0.01" id="s-tiirate" value="0.35" oninput="calcCommission()"></div>
-      <div class="field"><label>CCG (€)</label><input type="number" id="s-ccg" readonly></div>
-      <div class="field"><label>Commission (€)</label><input type="number" id="s-commission" readonly></div>
-      <div class="field"><label>Paid Month</label><select id="s-paidmonth"><option value="">—</option><option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option><option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option></select></div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-danger btn-sm" id="sale-delete-btn" onclick="deleteSale()" style="display:none">Delete</button>
-      <button class="btn-ghost" onclick="closeSaleModal()">Cancel</button>
-      <button class="btn-primary" onclick="saveSale()">Save</button>
-    </div>
-  </div>
-</div>
-
-<!-- LEADERBOARD PAGE -->
-<div id="page-leaderboard" class="page" style="display:none">
-  <div class="kpi-strip" id="lb-kpi"></div>
-  <div class="grid-2 mb-1">
-    <div class="card"><div class="card-header"><div class="card-title">🏆 My API — All Time</div></div><div id="lb-api"></div></div>
-    <div class="card"><div class="card-header"><div class="card-title">🎯 Close Rate by Month</div></div><div id="lb-close"></div></div>
-  </div>
-  <div class="card mb-1">
-    <div class="card-header">
-      <div class="card-title">📅 Daily Breakdown</div>
-      <input type="month" id="daily-month-picker" class="search-box" style="width:140px;padding:.4rem .65rem;font-size:.78rem" onchange="renderDailyBreakdown()">
-    </div>
-    <div id="daily-breakdown"></div>
-  </div>
-  <div class="card">
-    <div class="card-header"><div class="card-title">📆 Weekly Breakdown</div></div>
-    <div id="weekly-breakdown"></div>
-  </div>
-</div>
-
-<!-- IMPORT PAGE -->
-<div id="page-import" class="page" style="display:none">
-  <div class="card mb-1">
-    <div class="card-header"><div class="card-title">📥 Bulk Import Meetings from CSV</div></div>
-    <div style="color:var(--slate);font-size:.82rem;margin-bottom:1rem;line-height:1.6">Required columns: <span style="font-family:var(--font-mono);color:var(--gold);font-size:.72rem">date, name, phone, source, product1, status, notes</span> — first row = header, date format: YYYY-MM-DD</div>
-    <div style="border:2px dashed var(--border2);border-radius:var(--rl);padding:2.5rem;text-align:center;cursor:pointer;transition:border-color .2s" onclick="document.getElementById('csv-meet-input').click()" ondragover="event.preventDefault();this.style.borderColor='var(--gold)'" ondragleave="this.style.borderColor=''" ondrop="handleMeetCSVDrop(event)">
-      <div style="font-size:2rem;margin-bottom:.5rem">📁</div>
-      <div style="color:var(--white);font-weight:600;margin-bottom:.25rem">Drop CSV here or click to browse</div>
-      <div style="color:var(--slate);font-size:.75rem">.csv files only</div>
-      <input type="file" id="csv-meet-input" accept=".csv" style="display:none" onchange="handleMeetCSVFile(this.files[0])">
-    </div>
-    <div id="meet-import-preview" style="margin-top:1rem"></div>
-  </div>
-  <div class="card">
-    <div class="card-header"><div class="card-title">📥 Bulk Import Sales from CSV</div></div>
-    <div style="color:var(--slate);font-size:.82rem;margin-bottom:1rem;line-height:1.6">Required columns: <span style="font-family:var(--font-mono);color:var(--gold);font-size:.72rem">date, name, idCard, product, freq, term, source, totalAPI, myAPI, policyFee, tiiRate, paidMonth</span></div>
-    <div style="border:2px dashed var(--border2);border-radius:var(--rl);padding:2.5rem;text-align:center;cursor:pointer;transition:border-color .2s" onclick="document.getElementById('csv-sales-input').click()" ondragover="event.preventDefault();this.style.borderColor='var(--gold)'" ondragleave="this.style.borderColor=''" ondrop="handleSalesCSVDrop(event)">
-      <div style="font-size:2rem;margin-bottom:.5rem">📁</div>
-      <div style="color:var(--white);font-weight:600;margin-bottom:.25rem">Drop CSV here or click to browse</div>
-      <div style="color:var(--slate);font-size:.75rem">.csv files only</div>
-      <input type="file" id="csv-sales-input" accept=".csv" style="display:none" onchange="handleSalesCSVFile(this.files[0])">
-    </div>
-    <div id="sales-import-preview" style="margin-top:1rem"></div>
-  </div>
-</div>
-
-<!-- NOTIFICATION PANEL -->
-<div id="notif-panel" style="position:fixed;top:var(--nav-h);right:0;width:300px;max-height:calc(100dvh - var(--nav-h));background:var(--s1);border-left:1px solid var(--border2);z-index:400;transform:translateX(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);overflow-y:auto;padding:1.1rem;box-shadow:-8px 0 32px rgba(0,0,0,.3)">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
-    <div style="font-family:var(--font-serif);font-size:1rem;color:var(--gold);font-weight:600">Notifications</div>
-    <button onclick="toggleNotifPanel()" style="background:var(--s2);border:1px solid var(--border);color:var(--slate2);border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center">✕</button>
-  </div>
-  <div id="notif-list"></div>
-</div>
-
-<!-- OFFLINE BANNER -->
-<div id="offline-banner" style="display:none;position:fixed;bottom:calc(var(--bot-h) + var(--safe-b) + .75rem);left:50%;transform:translateX(-50%);background:rgba(239,68,68,.92);color:#fff;border-radius:20px;padding:.45rem 1.1rem;font-size:.78rem;font-weight:600;z-index:500;white-space:nowrap">
-  📡 Offline — changes saved locally
-</div>
-
-<!-- NOTES MODAL -->
-<div class="modal-overlay" id="notes-modal-overlay">
-  <div class="modal" style="max-width:500px">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="document.getElementById('notes-modal-overlay').classList.remove('open')">✕</button>
-    <div class="modal-title" id="notes-modal-name"></div>
-    <p style="color:var(--text);font-size:.85rem;line-height:1.7;white-space:pre-wrap" id="notes-modal-body"></p>
-  </div>
-</div>
-
-<!-- FIREBASE -->
-<script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import{getFirestore,doc,getDoc,setDoc}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-const app=initializeApp({apiKey:"AIzaSyCoaAEMSJDBI22iy5IovGWkx4QBrG09hQc",authDomain:"year-planner-bbc5a.firebaseapp.com",projectId:"year-planner-bbc5a",storageBucket:"year-planner-bbc5a.firebasestorage.app",messagingSenderId:"182620827791",appId:"1:182620827791:web:a43b5d7e0e9c53178b40fa"});
-const auth=getAuth(app);const db=getFirestore(app);
-const DEF={meetings:[],sales:[],targets:{Jan:{target:10000,actual:0},Feb:{target:10000,actual:0},Mar:{target:10000,actual:0},Apr:{target:10000,actual:0},May:{target:10000,actual:0},Jun:{target:10000,actual:0},Jul:{target:10000,actual:0},Aug:{target:10000,actual:0},Sep:{target:10000,actual:0},Oct:{target:10000,actual:0},Nov:{target:10000,actual:0},Dec:{target:10000,actual:0}},annualTarget:120000,productTargets:{PPPWP:50000,PPPUL:50000,ULSP:10000,FP:10000}};
-let saveTimeout=null;
-window._auth=auth;window._db=db;window._currentUser=null;
-window.doLogin=async()=>{const email=document.getElementById('login-email').value.trim(),pass=document.getElementById('login-password').value;showAuthError('');try{await signInWithEmailAndPassword(auth,email,pass);}catch(e){showAuthError(friendlyError(e.code));}};
-window.doRegister=async()=>{const name=document.getElementById('reg-name').value.trim(),email=document.getElementById('reg-email').value.trim(),pass=document.getElementById('reg-password').value;showAuthError('');if(!name)return showAuthError('Please enter your name.');try{const cred=await createUserWithEmailAndPassword(auth,email,pass);await updateProfile(cred.user,{displayName:name});await setDoc(doc(db,'users',cred.user.uid),DEF);}catch(e){showAuthError(friendlyError(e.code));}};
-window.doSignOut=async()=>{await signOut(auth);};
-window.saveData=async()=>{if(!window._currentUser)return;clearTimeout(saveTimeout);showSaveIndicator('saving');saveTimeout=setTimeout(async()=>{try{await setDoc(doc(db,'users',window._currentUser.uid),{meetings:window.meetings,sales:window.sales,targets:window.targets,annualTarget:window.ANNUAL_TARGET,productTargets:window.productTargets});showSaveIndicator('saved');setTimeout(()=>hideSaveIndicator(),2000);}catch(e){console.error(e);}},800);};
-onAuthStateChanged(auth,async(user)=>{
-  if(user){
-    window._currentUser=user;
-    document.getElementById('header-email').textContent=user.displayName||user.email;
-    const snap=await getDoc(doc(db,'users',user.uid));
-    if(snap.exists()){const d=snap.data();window.meetings=d.meetings||[];window.sales=d.sales||[];window.targets=d.targets||DEF.targets;window.ANNUAL_TARGET=d.annualTarget||120000;window.productTargets=d.productTargets||DEF.productTargets;}
-    else{window.meetings=[];window.sales=[];window.targets=JSON.parse(JSON.stringify(DEF.targets));window.ANNUAL_TARGET=120000;window.productTargets=JSON.parse(JSON.stringify(DEF.productTargets));await setDoc(doc(db,'users',user.uid),DEF);}
-    document.getElementById('auth-screen').style.display='none';
-    document.getElementById('app-header').style.display='flex';
-    document.getElementById('bot-nav').style.display='flex';
-    document.querySelectorAll('.page').forEach(p=>p.style.display='');
-    renderDashboard();renderCalendar();checkReminders();
-  }else{
-    window._currentUser=null;
-    document.getElementById('auth-screen').style.display='flex';
-    document.getElementById('app-header').style.display='none';
-    document.getElementById('bot-nav').style.display='none';
-    document.querySelectorAll('.page').forEach(p=>p.style.display='none');
-  }
-});
-function friendlyError(c){const m={'auth/user-not-found':'No account found.','auth/wrong-password':'Incorrect password.','auth/invalid-email':'Invalid email.','auth/email-already-in-use':'Email already in use.','auth/weak-password':'Password must be 6+ characters.','auth/invalid-credential':'Incorrect email or password.','auth/too-many-requests':'Too many attempts. Try again later.'};return m[c]||'Something went wrong. Please try again.';}
-</script>
-
-<script>
-window.meetings=[];window.sales=[];window.targets={};window.ANNUAL_TARGET=120000;window.productTargets={PPPWP:50000,PPPUL:50000,ULSP:10000,FP:10000};
-const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const PROD_COLORS={PPPWP:'#60a5fa',PPPUL:'#a78bfa',ULSP:'#14b8a6',FP:'#f59e0b'};
-const STATUS_COLORS={'Closed':'#22c55e','Meeting Close':'#22c55e','Meeting No Sale':'#ef4444','Meeting Reschedule':'#a78bfa','Client No Show':'#ef4444','Client Cancel':'#94a3b8','Follow Up':'#f59e0b','Second Meeting':'#14b8a6','No Show':'#ef4444','Nothing':'#64748b','Cancelled':'#475569'};
-const PIPELINE_STAGES=['Follow Up','Second Meeting','Meeting Close','Meeting No Sale','Meeting Reschedule','Client No Show','Client Cancel'];
-let editMeetIdx=-1,editSaleIdx=-1;
-const charts={};
-Chart.defaults.color='#6b7fa0';
-Chart.defaults.font.family="-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif";
-
-// OUTLOOK
-const MSAL_CLIENT_ID='cbbcd98d-a42e-4613-aeab-e664d81962b3';
-const MSAL_REDIRECT=window.location.origin+window.location.pathname;
-let outlookToken=null,calWeekOffset=0;
-
-function connectOutlook(){
-  const params=new URLSearchParams({client_id:MSAL_CLIENT_ID,response_type:'token',redirect_uri:MSAL_REDIRECT,scope:'Calendars.Read User.Read',response_mode:'fragment',nonce:Math.random().toString(36)});
-  window.location.href=`https://login.microsoftonline.com/common/oauth2/v2.0/authorize?${params}`;
-}
-function checkOutlookToken(){
-  const hash=window.location.hash;
-  if(hash.includes('access_token')){const p=new URLSearchParams(hash.substring(1));outlookToken=p.get('access_token');history.replaceState(null,null,window.location.pathname);setOutlookConnected(true);renderCalendar();return;}
-  const stored=sessionStorage.getItem('outlook_token');
-  if(stored){outlookToken=stored;setOutlookConnected(true);}
-  if(outlookToken)sessionStorage.setItem('outlook_token',outlookToken);
-}
-function setOutlookConnected(c){const btn=document.getElementById('outlook-connect-btn'),txt=document.getElementById('outlook-btn-text');if(c){btn.classList.add('connected');txt.textContent='📅 Outlook ✓';}else{btn.classList.remove('connected');txt.textContent='📅 Outlook';}}
-async function fetchCalendarEvents(){
-  if(!outlookToken)return null;
-  const now=new Date(),ws=new Date(now);
-  ws.setDate(now.getDate()-now.getDay()+calWeekOffset*7);ws.setHours(0,0,0,0);
-  const we=new Date(ws);we.setDate(ws.getDate()+7);
-  try{
-    const res=await fetch(`https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${ws.toISOString()}&endDateTime=${we.toISOString()}&$orderby=start/dateTime&$top=50`,{headers:{Authorization:`Bearer ${outlookToken}`}});
-    if(res.status===401){outlookToken=null;sessionStorage.removeItem('outlook_token');setOutlookConnected(false);return null;}
-    return(await res.json()).value||[];
-  }catch(e){return null;}
-}
-function getWeekDates(){const now=new Date(),s=new Date(now);s.setDate(now.getDate()-now.getDay()+calWeekOffset*7);s.setHours(0,0,0,0);return Array.from({length:7},(_,i)=>{const d=new Date(s);d.setDate(s.getDate()+i);return d;});}
-function calNav(dir){if(dir===0)calWeekOffset=0;else calWeekOffset+=dir;renderCalendar();}
-async function renderCalendar(){
-  const container=document.getElementById('cal-grid-container');
-  const wd=getWeekDates();
-  const f2=d=>d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-  document.getElementById('cal-week-label').textContent=`${f2(wd[0])} – ${f2(wd[6])}`;
-  if(!outlookToken){container.innerHTML=`<div class="connect-outlook-cta"><p>Connect your Outlook calendar to import meetings directly.</p><button class="btn-primary" onclick="connectOutlook()">Connect Outlook Calendar</button></div>`;return;}
-  container.innerHTML='<div style="text-align:center;color:var(--slate);padding:1.5rem;font-size:.8rem">Loading calendar…</div>';
-  const events=await fetchCalendarEvents();
-  if(!events){container.innerHTML='<div style="text-align:center;color:var(--red);padding:1.5rem;font-size:.8rem">Could not load. <button class="btn-ghost btn-sm" onclick="connectOutlook()" style="margin-left:.5rem">Reconnect</button></div>';return;}
-  const today=new Date();today.setHours(0,0,0,0);
-  const isMob=window.innerWidth<768;
-  if(isMob){
-    let html='<div style="display:flex;flex-direction:column;gap:.5rem">';
-    if(!events.length)html+='<div style="text-align:center;color:var(--slate);padding:1.5rem;font-size:.8rem">No events this week</div>';
-    events.forEach(ev=>{const s=new Date(ev.start.dateTime||ev.start.date);const t=ev.start.dateTime?s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'All day';const d=s.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});html+=`<div class="mob-cal-event" onclick='importOutlookEvent(${JSON.stringify(ev).replace(/'/g,"\\'")})'><div class="mob-cal-event-title">${ev.subject||'(No title)'}</div><div class="mob-cal-event-meta">${d} · ${t}</div></div>`;});
-    html+='</div>';container.innerHTML=html;
-  }else{
-    const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    let html='<div class="cal-grid">';
-    wd.forEach((day,i)=>{
-      const isToday=day.getTime()===today.getTime();
-      const dayEvs=events.filter(ev=>new Date(ev.start.dateTime||ev.start.date).toDateString()===day.toDateString());
-      html+=`<div class="cal-day"><div class="cal-day-header">${DAYS[i]}</div><div class="${isToday?'cal-day-num today':'cal-day-num'}">${day.getDate()}</div>`;
-      dayEvs.forEach(ev=>{const s=new Date(ev.start.dateTime||ev.start.date);const t=ev.start.dateTime?s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'All day';const safe=JSON.stringify(ev).replace(/"/g,'&quot;');html+=`<div class="cal-event" onclick="importOutlookEvent(${safe})" title="${ev.subject||''}"><div class="cal-event-time">${t}</div><div class="cal-event-title">${ev.subject||'(No title)'}</div></div>`;});
-      if(!dayEvs.length)html+=`<div style="font-size:.6rem;color:var(--s3);text-align:center;margin-top:.5rem">—</div>`;
-      html+='</div>';
-    });
-    html+='</div>';container.innerHTML=html;
-  }
-}
-function importOutlookEvent(ev){
-  if(typeof ev==='string')ev=JSON.parse(ev);
-  const start=new Date(ev.start.dateTime||ev.start.date);
-  const dateStr=start.toISOString().split('T')[0];
-  let name=ev.subject||'';
-  name=name.replace(/^(home meeting\s*-?\s*|cnf home meeting\s*-?\s*|cnx home meeting\s*-?\s*|close\s*-?\s*|follow up\s*-?\s*|meeting\s*with\s*|meeting\s*-?\s*)/i,'').replace(/\s*Michele Dim.*$/i,'').trim();
-  if(!name)name=ev.subject||'';
-  openMeetModal();
-  document.getElementById('m-date').value=dateStr;
-  document.getElementById('m-name').value=name;
-  document.getElementById('meet-modal-title').textContent='Import from Outlook';
-  document.getElementById('meet-modal-subtitle').textContent=`📅 "${ev.subject}" · ${start.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}`;
-}
-
-// THEME
-function toggleTheme(){
-  const html=document.documentElement;
-  const isDark=html.getAttribute('data-theme')==='dark';
-  html.setAttribute('data-theme',isDark?'light':'dark');
-  document.getElementById('theme-btn').textContent=isDark?'🌙':'☀️';
-  localStorage.setItem('karus_theme',isDark?'light':'dark');
-  Object.values(charts).forEach(c=>{if(c)c.update();});
-}
-function loadTheme(){const t=localStorage.getItem('karus_theme')||'dark';document.documentElement.setAttribute('data-theme',t);document.getElementById('theme-btn').textContent=t==='dark'?'🌙':'☀️';}
-
-// REMINDERS
-function checkReminders(){
-  const today=new Date();today.setHours(0,0,0,0);
-  const due=meetings.filter(m=>{
-    if(!m.followUpDate)return false;
-    const fd=new Date(m.followUpDate);fd.setHours(0,0,0,0);
-    return fd<=today&&m.status!=='Meeting Close'&&m.status!=='Closed';
-  });
-  const banner=document.getElementById('reminder-banner');
-  const list=document.getElementById('reminder-list');
-  if(due.length){
-    banner.classList.add('show');
-    list.innerHTML=due.slice(0,5).map(m=>`<div class="reminder-item"><div class="reminder-dot"></div><span><b>${m.name}</b> — Follow up due ${m.followUpDate} (${m.status||'No status'})</span></div>`).join('');
-  }else{banner.classList.remove('show');}
-}
-
-// GLOBAL SEARCH
-function globalSearch(q){
-  const res=document.getElementById('global-search-results');
-  if(!q||q.length<2){res.classList.remove('show');return;}
-  const ql=q.toLowerCase();
-  const results=[];
-  meetings.filter(m=>[m.name,m.phone,m.notes].some(f=>(f||'').toLowerCase().includes(ql))).slice(0,4).forEach(m=>{results.push({type:'Meeting',name:m.name,sub:`${m.date||''} · ${m.status||''}`,action:`showPage('meetings',document.querySelector('[data-page=meetings]'))`});});
-  sales.filter(s=>[s.name,s.idCard,s.product].some(f=>(f||'').toLowerCase().includes(ql))).slice(0,4).forEach(s=>{results.push({type:'Sale',name:s.name,sub:`${s.date||''} · ${s.product||''} · ${fmt(s.commission)}`,action:`showPage('sales',document.querySelector('[data-page=sales]'))`});});
-  if(!results.length){res.innerHTML='<div class="search-result-item"><div class="search-result-name" style="color:var(--slate)">No results found</div></div>';res.classList.add('show');return;}
-  res.innerHTML=results.map(r=>`<div class="search-result-item" onclick="${r.action}"><div class="search-result-type">${r.type}</div><div class="search-result-name">${r.name}</div><div class="search-result-sub">${r.sub}</div></div>`).join('');
-  res.classList.add('show');
-}
-function hideGlobalSearch(){document.getElementById('global-search-results').classList.remove('show');}
-
-// AUTH UI
-function switchAuthTab(tab,btn){document.querySelectorAll('.auth-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('auth-login-form').style.display=tab==='login'?'block':'none';document.getElementById('auth-register-form').style.display=tab==='register'?'block':'none';showAuthError('');}
-function showAuthError(msg){const el=document.getElementById('auth-error');el.textContent=msg;el.classList.toggle('show',!!msg);}
-function showSaveIndicator(state){const el=document.getElementById('save-indicator');el.className='save-indicator show '+state;el.textContent=state==='saving'?'↑ Saving…':'✓ Saved';}
-function hideSaveIndicator(){document.getElementById('save-indicator').classList.remove('show');}
-
-// NAV
-function showPage(id,btn){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn,.bot-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  if(btn)btn.classList.add('active');
-  document.querySelectorAll(`[data-page="${id}"]`).forEach(b=>b.classList.add('active'));
-  if(id==='dashboard')renderDashboard();
-  if(id==='sales')renderSales();
-  if(id==='meetings'){renderMeetings();renderCalendar();}
-  if(id==='pipeline')renderPipeline();
-  if(id==='clients')renderClients();
-  if(id==='targets')renderTargets();
-  if(id==='monthly')renderMonthly();
-}
-
-// HELPERS
-const fmt=(n,d=2)=>'€'+(parseFloat(n)||0).toFixed(d).replace(/\B(?=(\d{3})+(?!\d))/g,',');
-const pct=n=>((parseFloat(n)||0)*100).toFixed(1)+'%';
-const monthStr=m=>m?MONTHS[parseInt(m)-1]||'':'';
-function getMeetMonth(m){const d=m.date||'';if(/^\d{4}-\d{2}-\d{2}$/.test(d))return parseInt(d.slice(5,7));const p=d.split('/');return p.length===3?parseInt(p[1]):null;}
-function getSaleDateMonth(s){const d=s.date||'';if(/^\d{4}-\d{2}-\d{2}$/.test(d))return parseInt(d.slice(5,7));const p=d.split('/');return p.length===3?parseInt(p[1]):null;}
-function commForSaleMonth(mo){return sales.filter(s=>getSaleDateMonth(s)===mo).reduce((a,s)=>a+(parseFloat(s.commission)||0),0);}
-function meetingsByStatus(){const c={};meetings.forEach(m=>{c[m.status]=(c[m.status]||0)+1;});return c;}
-function computeCommRate(t){const n=parseFloat(t)||0;return n>=20?.5:Math.max(0,.5-(20-n)*.02);}
-function calcCommission(){const term=document.getElementById('s-term').value,myAPI=document.getElementById('s-myapi').value,tr=document.getElementById('s-tiirate').value;const cr=computeCommRate(term),ccg=(parseFloat(myAPI)||0)*cr,comm=ccg*(parseFloat(tr)||.35);document.getElementById('s-commrate').value=(cr*100).toFixed(0)+'%';document.getElementById('s-ccg').value=ccg.toFixed(2);document.getElementById('s-commission').value=comm.toFixed(2);}
-function statusBadge(s){const m={'Closed':'closed','Meeting Close':'meetclose','Meeting No Sale':'meetnosale','Meeting Reschedule':'meetreschedule','Client No Show':'clientnoshow','Client Cancel':'clientcancel','Follow Up':'followup','Second Meeting':'second','No Show':'noshow','Nothing':'nothing','Cancelled':'cancelled'};return`<span class="badge badge-${m[s]||'nothing'}">${s||'—'}</span>`;}
-function kpi(cls,label,value,sub=''){return`<div class="kpi ${cls}"><div class="kpi-accent"></div><div class="kpi-label">${label}</div><div class="kpi-value">${value}</div>${sub?`<div class="kpi-sub">${sub}</div>`:''}</div>`;}
-function makeChart(id,cfg){if(charts[id])charts[id].destroy();const el=document.getElementById(id);if(!el)return;charts[id]=new Chart(el.getContext('2d'),cfg);}
-const rOpts=()=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.parsed.y.toFixed(1)}%`},backgroundColor:'rgba(10,15,30,.9)',borderColor:'rgba(201,168,76,.2)',borderWidth:1,padding:8}},scales:{x:{ticks:{color:'#6b7fa0',font:{size:9}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#6b7fa0',font:{size:9},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.04)'},border:{display:false},beginAtZero:true,max:100}}});
-
-// CSV EXPORT
-function exportSalesCSV(){
-  const headers=['Date','Name','ID Card','Product','Freq','Term','Source','Total API','My API','Commission','Paid Month','Paid'];
-  const rows=sales.map(s=>[s.date,s.name,s.idCard,s.product,s.freq,s.term,s.source,s.totalAPI,s.myAPI,s.commission,monthStr(s.paidMonth),s.paid?'Yes':'No']);
-  downloadCSV('karus_sales.csv',[headers,...rows]);
-}
-function exportMeetingsCSV(){
-  const headers=['Date','Name','Phone','Source','Product','Status','Seen','Follow Up','Notes'];
-  const rows=meetings.map(m=>[m.date,m.name,m.phone,m.source,m.product1,m.status,m.seen?'Yes':'No',m.followUpDate||'',( m.notes||'').replace(/\\n/g,' ')]);
-  downloadCSV('karus_meetings.csv',[headers,...rows]);
-}
-function downloadCSV(filename,rows){
-  const csv=rows.map(r=>r.map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob=new Blob([csv],{type:'text/csv'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();
-}
-
-// DASHBOARD
-function renderDashboard(){
-  const nowMo=new Date().getMonth()+1,prevMo=nowMo===1?12:nowMo-1;
-  const myTotal=sales.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);
-  const totalCCG=sales.reduce((a,s)=>a+(parseFloat(s.ccg)||0),0);
-  const sc=meetingsByStatus(),tot=meetings.length;
-  const closed=(sc['Meeting Close']||0)+(sc['Closed']||0);
-  const annualActual=Object.values(targets).reduce((a,t)=>a+(t.actual||0),0);
-  const myThisMo=sales.filter(s=>getSaleDateMonth(s)===nowMo).reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);
-  const payout=commForSaleMonth(prevMo);
-  const rem=ANNUAL_TARGET-annualActual;
-
-  // Weekly summary
-  const now=new Date(),weekStart=new Date(now);weekStart.setDate(now.getDate()-now.getDay());weekStart.setHours(0,0,0,0);
-  const prevWeekStart=new Date(weekStart);prevWeekStart.setDate(weekStart.getDate()-7);
-  const thisWeekSales=sales.filter(s=>{const d=new Date(s.date);return d>=weekStart;});
-  const prevWeekSales=sales.filter(s=>{const d=new Date(s.date);return d>=prevWeekStart&&d<weekStart;});
-  const thisWeekMeets=meetings.filter(m=>{const d=new Date(m.date);return d>=weekStart;});
-  const twAPI=thisWeekSales.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);
-  const pwAPI=prevWeekSales.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);
-  const twComm=thisWeekSales.reduce((a,s)=>a+(parseFloat(s.commission)||0),0);
-  const twClosed=thisWeekMeets.filter(m=>['Meeting Close','Closed'].includes(m.status)).length;
-  const apiChange=pwAPI>0?((twAPI-pwAPI)/pwAPI*100):null;
-  document.getElementById('weekly-summary').innerHTML=`<div class="weekly-summary-title">📊 This Week — ${weekStart.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div><div class="weekly-stats"><div class="weekly-stat"><div class="weekly-stat-val">${thisWeekSales.length}</div><div class="weekly-stat-label">Sales</div></div><div class="weekly-stat"><div class="weekly-stat-val">${fmt(twAPI,0)}</div><div class="weekly-stat-label">My API</div>${apiChange!==null?`<div class="weekly-stat-change ${apiChange>=0?'up':'down'}">${apiChange>=0?'↑':'↓'}${Math.abs(apiChange).toFixed(0)}% vs last wk</div>`:'<div class="weekly-stat-change neutral">first week</div>'}</div><div class="weekly-stat"><div class="weekly-stat-val">${fmt(twComm,0)}</div><div class="weekly-stat-label">Commission</div></div><div class="weekly-stat"><div class="weekly-stat-val">${thisWeekMeets.length}</div><div class="weekly-stat-label">Meetings</div></div><div class="weekly-stat"><div class="weekly-stat-val">${twClosed}</div><div class="weekly-stat-label">Closed</div></div></div>`;
-
-  document.getElementById('kpi-strip').innerHTML=kpi('gold','My API — YTD',fmt(myTotal,0),`${sales.length} policies`)+kpi('purple',`My API — ${MONTHS[nowMo-1]}`,fmt(myThisMo,0),'this month')+kpi('green','Total CCG',fmt(totalCCG,0),'gross commissionable')+kpi('teal',`Payout — ${MONTHS[nowMo-1]}`,fmt(payout,0),`from ${MONTHS[prevMo-1]} sales`)+kpi('amber','Meetings',tot,`${closed} closed · ${pct(closed/Math.max(1,tot))}`)+kpi(rem<=0?'green':'red','To Target',fmt(Math.abs(rem),0),rem<=0?'🎯 Achieved!':'remaining');
-
-  // Commission chart
-  const cbm=MONTHS.map((_,i)=>commForSaleMonth(i+1));
-  makeChart('chart-commission',{type:'bar',data:{labels:MONTHS,datasets:[{data:cbm,backgroundColor:cbm.map(v=>v>0?'rgba(201,168,76,.65)':'rgba(201,168,76,.1)'),borderColor:cbm.map(v=>v>0?'rgba(201,168,76,.9)':'rgba(201,168,76,.2)'),borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`€${c.parsed.y.toFixed(2)}`},backgroundColor:'rgba(10,15,30,.9)',borderColor:'rgba(201,168,76,.2)',borderWidth:1,padding:8}},scales:{x:{ticks:{color:'#6b7fa0',font:{size:9}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#6b7fa0',font:{size:9},callback:v=>'€'+v},grid:{color:'rgba(255,255,255,.04)'},border:{display:false},beginAtZero:true}}}});
-
-  // Donut
-  const ds=['Meeting Close','Meeting No Sale','Meeting Reschedule','Client No Show','Client Cancel','Follow Up','Second Meeting'];
-  const dc=ds.map(s=>STATUS_COLORS[s]||'#6b7fa0');
-  makeChart('chart-status-donut',{type:'doughnut',data:{labels:ds,datasets:[{data:ds.map(s=>sc[s]||0),backgroundColor:dc.map(c=>c+'bb'),borderColor:dc,borderWidth:1,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'right',labels:{color:'#8a9ab8',font:{size:9},padding:6,boxWidth:8,usePointStyle:true}},tooltip:{backgroundColor:'rgba(10,15,30,.9)',borderColor:'rgba(201,168,76,.2)',borderWidth:1,padding:8}}}});
-
-  // Forecast
-  const avgComm=cbm.filter(v=>v>0).reduce((a,v)=>a+v,0)/Math.max(1,cbm.filter(v=>v>0).length);
-  document.getElementById('forecast-container').innerHTML=MONTHS.map((m,i)=>{
-    const actual=cbm[i],isActual=actual>0,val=isActual?actual:avgComm;
-    const maxVal=Math.max(...cbm.filter(v=>v>0),avgComm,1);
-    const w=Math.min(100,(val/maxVal)*100);
-    return`<div class="forecast-row"><span class="forecast-month">${m}</span><div class="forecast-bar-wrap"><div class="forecast-bar ${isActual?'':'projected'}" style="width:${w}%"></div></div><span class="forecast-val">${fmt(val,0)}</span><span class="forecast-tag ${isActual?'actual':'projected'}">${isActual?'✓':'~'}</span></div>`;
-  }).join('');
-
-  // Best months
-  const monthAPIData=MONTHS.map((m,i)=>({m,api:sales.filter(s=>getSaleDateMonth(s)===i+1).reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0)})).filter(x=>x.api>0).sort((a,b)=>b.api-a.api);
-  document.getElementById('best-months').innerHTML=monthAPIData.slice(0,5).map((x,i)=>`<div class="best-item"><span class="best-rank ${i===0?'gold':''}">${i===0?'🥇':i+1}</span><span class="best-label">${x.m} 2026</span><span class="best-val">${fmt(x.api,0)}</span></div>`).join('')||'<div style="color:var(--slate);font-size:.8rem;padding:.5rem">No data yet</div>';
-
-  // Best sources
-  const srcMap={};sales.forEach(s=>{const src=s.source||'Unknown';srcMap[src]=(srcMap[src]||0)+(parseFloat(s.myAPI)||0);});
-  const srcArr=Object.entries(srcMap).sort((a,b)=>b[1]-a[1]);
-  document.getElementById('best-sources').innerHTML=srcArr.slice(0,5).map((x,i)=>`<div class="best-item"><span class="best-rank ${i===0?'gold':''}">${i===0?'🥇':i+1}</span><span class="best-label">${x[0]}</span><span class="best-val">${fmt(x[1],0)}</span></div>`).join('')||'<div style="color:var(--slate);font-size:.8rem;padding:.5rem">No data yet</div>';
-
-  // Ratio charts
-  function rpm(ss){return MONTHS.map((_,i)=>{const mo=i+1,t2=meetings.filter(m=>getMeetMonth(m)===mo).length,c=meetings.filter(m=>ss.includes(m.status)&&getMeetMonth(m)===mo).length;return t2>0?parseFloat(((c/t2)*100).toFixed(1)):0;});}
-  [['chart-ratio-close',rpm(['Meeting Close','Closed']),'#22c55e'],['chart-ratio-noshow',rpm(['Client No Show','No Show']),'#ef4444'],['chart-ratio-cancel',rpm(['Client Cancel','Cancelled']),'#94a3b8'],['chart-ratio-reschedule',rpm(['Meeting Reschedule']),'#a78bfa']].forEach(([id,data,color])=>{makeChart(id,{type:'bar',data:{labels:MONTHS,datasets:[{data,backgroundColor:data.map(v=>v>0?color+'99':color+'18'),borderColor:data.map(v=>v>0?color:color+'44'),borderWidth:1,borderRadius:3}]},options:rOpts()});});
-
-  // Target chart
-  const act=MONTHS.map(m=>targets[m]?.actual||0),gls=MONTHS.map(m=>targets[m]?.target||10000);
-  makeChart('chart-target',{type:'bar',data:{labels:MONTHS,datasets:[{label:'Actual',data:act,backgroundColor:act.map((a,i)=>a>=gls[i]?'rgba(34,197,94,.6)':'rgba(245,158,11,.6)'),borderColor:act.map((a,i)=>a>=gls[i]?'#22c55e':'#f59e0b'),borderWidth:1,borderRadius:4},{label:'Target',data:gls,type:'line',borderColor:'rgba(201,168,76,.7)',borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false,tension:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8a9ab8',font:{size:9},padding:10,usePointStyle:true}},tooltip:{backgroundColor:'rgba(10,15,30,.9)',borderColor:'rgba(201,168,76,.2)',borderWidth:1,padding:8}},scales:{x:{ticks:{color:'#6b7fa0',font:{size:9}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#6b7fa0',font:{size:9},callback:v=>'€'+v.toLocaleString()},grid:{color:'rgba(255,255,255,.04)'},border:{display:false},beginAtZero:true}}}});
-}
-
-// SALES
-function toggleSalePaid(idx){sales[idx].paid=!sales[idx].paid;renderSales();saveData();}
-function renderSales(){
-  const q=document.getElementById('sales-search').value.toLowerCase();
-  const prod=document.getElementById('sales-product-filter').value;
-  const month=document.getElementById('sales-month-filter').value;
-  const nowMo=new Date().getMonth()+1;
-  const filtered=sales.filter(s=>{const mq=!q||[s.name,s.idCard,s.product,s.source].some(f=>(f||'').toLowerCase().includes(q));return mq&&(!prod||s.product===prod)&&(!month||String(s.paidMonth)===month);});
-  const tAPI=filtered.reduce((a,s)=>a+(parseFloat(s.totalAPI)||0),0);
-  const mAPI=filtered.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);
-  const tCCG=filtered.reduce((a,s)=>a+(parseFloat(s.ccg)||0),0);
-  const mThisMo=sales.filter(s=>getSaleDateMonth(s)===nowMo).reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);
-  const unpaid=sales.filter(s=>!s.paid).reduce((a,s)=>a+(parseFloat(s.commission)||0),0);
-  document.getElementById('sales-kpi').innerHTML=kpi('gold','Total API',fmt(tAPI,0),`${filtered.length} records`)+kpi('purple','My API',fmt(mAPI,0),'personal')+kpi('amber',`My API — ${MONTHS[nowMo-1]}`,fmt(mThisMo,0),'this month')+kpi('teal','CCG',fmt(tCCG,0),'gross')+kpi('red','Unpaid Commission',fmt(unpaid,0),'pending');
-  document.getElementById('sales-count').textContent=`${filtered.length}/${sales.length}`;
-  document.getElementById('sales-tbody').innerHTML=filtered.map(s=>{const ri=sales.indexOf(s);return`<tr class="${s.paid?'row-paid':''}"><td style="text-align:center"><input type="checkbox" class="paid-chk" ${s.paid?'checked':''} onchange="toggleSalePaid(${ri})"></td><td>${s.date||'—'}</td><td style="font-weight:500;color:var(--white)">${s.name}</td><td style="color:var(--slate)">${s.idCard||'—'}</td><td><span class="prod prod-${s.product}">${s.product||'—'}</span></td><td style="color:var(--slate)">${s.freq||'—'}</td><td>${s.term||'—'}</td><td style="color:var(--slate)">${s.source||'—'}</td><td style="color:var(--slate)">${s.shared||'—'}</td><td style="color:var(--gold)">${fmt(s.totalAPI,0)}</td><td>${fmt(s.myAPI,0)}</td><td style="color:var(--slate)">${s.policyFee||0}</td><td style="color:var(--slate)">${s.tii1||'—'}</td><td style="color:var(--slate)">${s.tii2||'—'}</td><td>${((s.commRate||0)*100).toFixed(0)}%</td><td style="color:var(--slate)">${((s.tiiRate||0)*100).toFixed(0)}%</td><td style="color:var(--slate)">${fmt(s.ccg)}</td><td style="color:${s.paid?'var(--slate)':'var(--gold2)'};font-weight:${s.paid?400:600}">${fmt(s.commission)}</td><td style="color:var(--slate)">${s.paidMonth?monthStr(s.paidMonth):'—'}</td><td><button class="btn-ghost btn-sm" onclick="openSaleModal(${ri})">Edit</button></td></tr>`;}).join('');
-  document.getElementById('sales-mob-list').innerHTML=filtered.map(s=>{const ri=sales.indexOf(s),c=PROD_COLORS[s.product]||'var(--slate)';return`<div class="mob-card" style="opacity:${s.paid?.55:1}"><div class="mob-card-row"><span class="mob-card-name">${s.name}</span><span class="mob-card-date">${s.date||'—'}</span></div><div class="mob-card-row"><div class="mob-card-sub"><span class="mob-pill" style="background:${c}22;color:${c};border:1px solid ${c}44">${s.product||'—'}</span><span class="mob-card-meta">${s.term}yr</span>${s.paid?`<span class="mob-pill" style="background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.25)">Paid ✓</span>`:`<span class="mob-pill" style="background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.25)">Unpaid</span>`}</div><button class="mob-edit-btn" onclick="openSaleModal(${ri})">Edit</button></div><div class="mob-card-row" style="gap:.75rem"><span class="mob-card-meta">My API <span class="mob-card-val" style="color:var(--gold2)">${fmt(s.myAPI,0)}</span></span><span class="mob-card-meta">Comm <span class="mob-card-val" style="color:${s.paid?'var(--slate)':'var(--gold2)'}">${fmt(s.commission)}</span></span><span class="mob-card-meta" style="margin-left:auto">Pay: <b style="color:var(--white)">${s.paidMonth?monthStr(s.paidMonth):'—'}</b></span></div></div>`;}).join('');
-}
-
-// MEETINGS
-function toggleMeetSeen(idx){meetings[idx].seen=!meetings[idx].seen;renderMeetings();saveData();}
-function renderMeetings(){
-  const tot=meetings.length,sc=meetingsByStatus();
-  const closed=(sc['Meeting Close']||0)+(sc['Closed']||0);
-  const seen=meetings.filter(m=>m.seen).length;
-  const noShow=(sc['Client No Show']||0)+(sc['No Show']||0);
-  const cancel=(sc['Client Cancel']||0)+(sc['Cancelled']||0);
-  const reschedule=sc['Meeting Reschedule']||0;
-  const followUp=sc['Follow Up']||0;
-  document.getElementById('meetings-kpi').innerHTML=kpi('gold','Meetings Set',tot,'total')+kpi('blue','Seen',seen,pct(seen/Math.max(1,tot)))+kpi('green','Closed',closed,pct(closed/Math.max(1,tot)))+kpi('red','No Show',noShow,pct(noShow/Math.max(1,tot)))+kpi('grey','Cancelled',cancel,pct(cancel/Math.max(1,tot)))+kpi('amber','Follow Up',followUp,pct(followUp/Math.max(1,tot)));
-  renderRatioTable();
-  const q=document.getElementById('meet-search').value.toLowerCase();
-  const status=document.getElementById('meet-status-filter').value;
-  const month=document.getElementById('meet-month-filter').value;
-  const filtered=meetings.filter(m=>{const mq=!q||[m.name,m.phone,m.notes,m.source].some(f=>(f||'').toLowerCase().includes(q));return mq&&(!status||m.status===status)&&(!month||(m.date||'').slice(5,7)===month);});
-  document.getElementById('meet-count').textContent=`${filtered.length}/${meetings.length}`;
-  const today=new Date();today.setHours(0,0,0,0);
-  document.getElementById('meetings-tbody').innerHTML=filtered.map(m=>{const ri=meetings.indexOf(m);const np=(m.notes||'').slice(0,50).replace(/\n/g,' ');const fuDue=m.followUpDate&&new Date(m.followUpDate)<=today&&m.status!=='Meeting Close'&&m.status!=='Closed';return`<tr class="${fuDue?'row-followup':''}"><td style="text-align:center"><input type="checkbox" class="seen-chk" ${m.seen?'checked':''} onchange="toggleMeetSeen(${ri})"></td><td>${m.date||'—'}</td><td style="font-weight:500;color:var(--white)">${m.name}</td><td>${m.phone||'—'}</td><td><span class="prod prod-${m.product1}">${m.product1||'—'}</span></td><td style="color:var(--slate)">${m.source||'—'}</td><td style="color:var(--slate)">${m.otherPPP||'—'}</td><td>${statusBadge(m.status)}</td><td style="color:${fuDue?'var(--amber)':'var(--slate)'};font-size:.68rem">${m.followUpDate||'—'}</td><td><span class="notes-preview" onclick="showNotes(${ri})">${np||'—'}</span></td><td><button class="btn-ghost btn-sm" onclick="openMeetModal(${ri})">Edit</button></td></tr>`;}).join('');
-  document.getElementById('meetings-mob-list').innerHTML=filtered.map(m=>{const ri=meetings.indexOf(m);const np=(m.notes||'').slice(0,80).replace(/\\n/g,' ').replace(/\n/g,' ');const pc=PROD_COLORS[m.product1];const fuDue=m.followUpDate&&new Date(m.followUpDate)<=today;return`<div class="mob-card" style="${fuDue?'border-left:2px solid var(--amber)':''}"><div class="mob-card-row"><span class="mob-card-name">${m.name}</span><span class="mob-card-date">${m.date||'—'}</span></div><div class="mob-card-row"><div class="mob-card-sub">${statusBadge(m.status)}${pc?`<span class="mob-pill" style="background:${pc}22;color:${pc};border:1px solid ${pc}44">${m.product1}</span>`:''}${m.phone?`<span class="mob-card-meta">${m.phone}</span>`:''}<span class="mob-pill" style="background:${m.seen?'rgba(96,165,250,.15)':'rgba(100,116,139,.1)'};color:${m.seen?'var(--blue)':'var(--slate)'};border:1px solid ${m.seen?'rgba(96,165,250,.3)':'rgba(100,116,139,.2)'};cursor:pointer" onclick="toggleMeetSeen(${ri})">${m.seen?'Seen ✓':'Not Seen'}</span></div><button class="mob-edit-btn" onclick="openMeetModal(${ri})">Edit</button></div>${fuDue?`<div style="font-size:.68rem;color:var(--amber)">⚠️ Follow up: ${m.followUpDate}</div>`:''}${np?`<div style="font-size:.72rem;color:var(--slate);line-height:1.45;cursor:pointer" onclick="showNotes(${ri})">${np}${(m.notes||'').length>80?'…':''}</div>`:''}</div>`;}).join('');
-}
-
-function renderRatioTable(){
-  const tot=meetings.length;
-  if(!tot){document.getElementById('ratio-tbody').innerHTML='<tr><td colspan="14" style="text-align:center;color:var(--slate);padding:1.5rem">No meetings yet</td></tr>';return;}
-  const mT=new Array(12).fill(0);meetings.forEach(m=>{const mo=getMeetMonth(m);if(mo>=1&&mo<=12)mT[mo-1]++;});
-  const statuses=['Meeting Close','Meeting No Sale','Meeting Reschedule','Client No Show','Client Cancel','Follow Up','Second Meeting'];
-  const cMap={'Meeting Close':'#22c55e','Meeting No Sale':'#ef4444','Meeting Reschedule':'#a78bfa','Client No Show':'#ef4444','Client Cancel':'#94a3b8','Follow Up':'#f59e0b','Second Meeting':'#14b8a6'};
-  document.getElementById('ratio-header').innerHTML=`<th>Status</th><th>Full Year</th>${MONTHS.map(m=>`<th class="ratio-mo-col">${m}</th>`).join('')}`;
-  document.getElementById('ratio-tbody').innerHTML=statuses.map(s=>{const color=cMap[s]||'#6b7fa0',cnt=meetings.filter(m=>m.status===s).length,fy=tot>0?cnt/tot:0;const mCells=MONTHS.map((_,i)=>{const mc=meetings.filter(m=>m.status===s&&getMeetMonth(m)===i+1).length;const r=mT[i]>0?mc/mT[i]:0;const al=r>0?Math.round((.12+r*.55)*255).toString(16).padStart(2,'0'):'11';return`<td class="ratio-cell ratio-mo-col"><span class="ratio-pill" style="background:${color}${al};color:${r>0?color:'rgba(255,255,255,.15)'}">${mc>0?(r*100).toFixed(0)+'%':'—'}</span></td>`;}).join('');const fa=fy>0?Math.round((.12+fy*.55)*255).toString(16).padStart(2,'0'):'11';return`<tr><td style="background:${color}22;border-left:2px solid ${color};color:${color};font-weight:600;padding:.55rem .8rem;font-size:.75rem;white-space:nowrap">${s}</td><td class="ratio-cell"><span class="ratio-pill" style="background:${color}${fa};color:${color};font-weight:700">${(fy*100).toFixed(0)}%</span></td>${mCells}</tr>`;}).join('');
-}
-
-// PIPELINE
-function renderPipeline(){
-  const stageCounts=PIPELINE_STAGES.map(s=>meetings.filter(m=>m.status===s).length);
-  const total=stageCounts.reduce((a,v)=>a+v,0);
-  document.getElementById('pipeline-kpi').innerHTML=kpi('gold','Total in Pipeline',total,'across all stages')+kpi('amber','Follow Up',stageCounts[0],`${pct(stageCounts[0]/Math.max(1,total))}`)+kpi('teal','Second Meeting',stageCounts[1],`${pct(stageCounts[1]/Math.max(1,total))}`)+kpi('green','Meeting Close',stageCounts[2],`${pct(stageCounts[2]/Math.max(1,total))}`);
-  const stageColors={'Follow Up':'rgba(245,158,11,.2)','Second Meeting':'rgba(20,184,166,.2)','Meeting Close':'rgba(34,197,94,.2)','Meeting No Sale':'rgba(239,68,68,.2)','Meeting Reschedule':'rgba(167,139,250,.2)','Client No Show':'rgba(239,68,68,.15)','Client Cancel':'rgba(100,116,139,.15)'};
-  const stageTextColors={'Follow Up':'var(--amber)','Second Meeting':'var(--teal)','Meeting Close':'var(--green)','Meeting No Sale':'var(--red)','Meeting Reschedule':'var(--purple)','Client No Show':'var(--red)','Client Cancel':'var(--grey)'};
-  let html='';
-  PIPELINE_STAGES.forEach(stage=>{
-    const stageMs=meetings.filter(m=>m.status===stage);
-    const bg=stageColors[stage]||'rgba(100,116,139,.1)';
-    const tc=stageTextColors[stage]||'var(--slate)';
-    html+=`<div class="pipeline-col"><div class="pipeline-col-header" style="background:${bg};color:${tc}">${stage}<span class="pipeline-count">${stageMs.length}</span></div>`;
-    if(!stageMs.length)html+=`<div style="font-size:.72rem;color:var(--slate);text-align:center;padding:.75rem">Empty</div>`;
-    stageMs.forEach(m=>{const ri=meetings.indexOf(m);html+=`<div class="pipeline-card" onclick="openMeetModal(${ri})"><div class="pipeline-card-name">${m.name}</div><div class="pipeline-card-meta">${m.phone||m.source||'—'}</div><div class="pipeline-card-date">${m.date||'—'}${m.followUpDate?` · FU: ${m.followUpDate}`:''}</div></div>`;});
-    html+='</div>';
-  });
-  document.getElementById('pipeline-board').innerHTML=html;
-}
-
-// CLIENTS
-function renderClients(){
-  const q=(document.getElementById('clients-search')?.value||'').toLowerCase();
-  // Build unique clients from both meetings and sales
-  const clientMap={};
-  meetings.forEach(m=>{if(!m.name)return;const k=m.name.toLowerCase();if(!clientMap[k])clientMap[k]={name:m.name,meetings:[],sales:[]};clientMap[k].meetings.push(m);});
-  sales.forEach(s=>{if(!s.name)return;const k=s.name.toLowerCase();if(!clientMap[k])clientMap[k]={name:s.name,meetings:[],sales:[]};clientMap[k].sales.push(s);});
-  let clients=Object.values(clientMap);
-  if(q)clients=clients.filter(c=>c.name.toLowerCase().includes(q));
-  clients.sort((a,b)=>b.sales.length-a.sales.length||a.name.localeCompare(b.name));
-  document.getElementById('clients-kpi').innerHTML=kpi('gold','Total Clients',clients.length,'unique names')+kpi('green','With Sales',clients.filter(c=>c.sales.length>0).length,'converted')+kpi('amber','Meetings Only',clients.filter(c=>c.sales.length===0).length,'not yet closed')+kpi('teal','Total Revenue',fmt(clients.reduce((a,c)=>a+c.sales.reduce((b,s)=>b+(parseFloat(s.myAPI)||0),0),0),0),'my API');
-  const grid=document.getElementById('clients-grid');
-  if(!clients.length){grid.innerHTML='<div style="color:var(--slate);font-size:.85rem;padding:1rem;grid-column:1/-1">No clients found</div>';return;}
-  grid.innerHTML=clients.map(c=>{
-    const totalAPI=c.sales.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);
-    const totalComm=c.sales.reduce((a,s)=>a+(parseFloat(s.commission)||0),0);
-    const latestMeet=c.meetings.sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
-    const latestStatus=latestMeet?.status||'—';
-    return`<div class="client-card" onclick="openClientDetail('${c.name.replace(/'/g,"\\'")}')">
-      <div class="client-name">${c.name}</div>
-      <div class="client-meta">${statusBadge(latestStatus)} ${latestMeet?.date||''}</div>
-      <div class="client-stats">
-        <div class="client-stat"><div class="client-stat-val">${c.meetings.length}</div><div class="client-stat-label">Meetings</div></div>
-        <div class="client-stat"><div class="client-stat-val">${c.sales.length}</div><div class="client-stat-label">Sales</div></div>
-        <div class="client-stat"><div class="client-stat-val">${fmt(totalAPI,0)}</div><div class="client-stat-label">My API</div></div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function openClientDetail(name){
-  const c={name,meetings:meetings.filter(m=>m.name===name),sales:sales.filter(s=>s.name===name)};
-  // Find the meeting index to open edit modal for latest meeting
-  const latestMeet=c.meetings.sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
-  if(latestMeet){const ri=meetings.indexOf(latestMeet);openMeetModal(ri);}
-}
-
-// TARGETS
-function renderTargets(){
-  const aa=Object.values(targets).reduce((a,t)=>a+(t.actual||0),0),ou=aa-ANNUAL_TARGET;
-  document.getElementById('target-kpi').innerHTML=kpi('gold','Annual Target',fmt(ANNUAL_TARGET,0))+kpi(aa>=ANNUAL_TARGET?'green':'amber','YTD Actual',fmt(aa,0),`${pct(aa/ANNUAL_TARGET)} achieved`)+kpi(ou>=0?'green':'red','Over / Under',(ou>=0?'+':'')+fmt(ou,0))+kpi('teal','Monthly Target','€10,000');
-  document.getElementById('target-bars').innerHTML=MONTHS.map(m=>{const t=targets[m]?.target||10000,a=targets[m]?.actual||0;const pw=Math.min(100,(a/t)*100),ov=a>=t,diff=a-t;const bc=a===0?'empty':ov?'over':'under';const dl=a>0?(ov?`<span class="target-diff over-val">+${fmt(diff,0)}</span>`:`<span class="target-diff under-val">${fmt(diff,0)}</span>`):'';return`<div class="target-row"><div class="target-row-top"><span class="target-month">${m}</span><span class="target-amount">${a>0?fmt(a,0):'—'}</span>${dl}</div><div class="bar-track"><div class="bar-fill ${bc}" style="width:${Math.max(a>0?2:0,pw)}%"></div></div><div class="target-goal-label">Target: ${fmt(t,0)}</div></div>`;}).join('');
-  document.getElementById('target-editor').innerHTML=`<div style="display:grid;grid-template-columns:56px 1fr 1fr;gap:.45rem;align-items:center;margin-bottom:.5rem"><span style="font-size:.6rem;color:var(--slate);text-transform:uppercase;letter-spacing:.1em">Mo.</span><span style="font-size:.6rem;color:var(--slate);text-transform:uppercase;letter-spacing:.1em">Target</span><span style="font-size:.6rem;color:var(--slate);text-transform:uppercase;letter-spacing:.1em">Actual</span></div>`+MONTHS.map(m=>`<div style="display:grid;grid-template-columns:56px 1fr 1fr;gap:.45rem;align-items:center;margin-bottom:.4rem"><span style="font-size:.75rem;color:var(--gold);font-weight:700">${m}</span><input class="search-box" style="width:100%;padding:.4rem .55rem;font-size:.75rem" type="number" value="${targets[m]?.target||10000}" onchange="updateTarget('${m}','target',this.value)"><input class="search-box" style="width:100%;padding:.4rem .55rem;font-size:.75rem" type="number" value="${targets[m]?.actual||''}" onchange="updateTarget('${m}','actual',this.value)" placeholder="Actual"></div>`).join('')+`<button class="btn-primary" style="margin-top:.75rem;width:100%" onclick="renderTargets();saveData()">Update & Save</button>`;
-
-  // Product targets
-  const prods=['PPPWP','PPPUL','ULSP','FP'];
-  const prodColors={PPPWP:'#60a5fa',PPPUL:'#a78bfa',ULSP:'#14b8a6',FP:'#f59e0b'};
-  document.getElementById('prod-targets').innerHTML=prods.map(p=>{
-    const actual=sales.filter(s=>s.product===p).reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);
-    const target=productTargets[p]||10000;
-    const pw=Math.min(100,(actual/target)*100);
-    const color=prodColors[p];
-    return`<div class="prod-target-row">
-      <span class="prod-target-label" style="color:${color}">${p}</span>
-      <div class="prod-target-bar-wrap"><div class="prod-target-bar" style="width:${pw}%;background:${color}"></div></div>
-      <span class="prod-target-pct">${pw.toFixed(0)}%</span>
-      <input class="search-box" style="width:90px;padding:.35rem .5rem;font-size:.72rem;flex-shrink:0" type="number" value="${target}" onchange="productTargets['${p}']=parseFloat(this.value)||0;renderTargets();" title="Set target for ${p}">
-    </div>
-    <div style="display:flex;justify-content:space-between;font-size:.65rem;color:var(--slate);margin-top:-.45rem;margin-bottom:.6rem;padding-left:68px"><span>Actual: ${fmt(actual,0)}</span><span>Target: ${fmt(target,0)}</span></div>`;
-  }).join('');
-}
-function updateTarget(m,f,v){if(!targets[m])targets[m]={target:10000,actual:0};targets[m][f]=parseFloat(v)||0;}
-
-// MONTHLY
-function renderMonthly(){
-  const nowMo=new Date().getMonth()+1;
-  const ytdS=sales.filter(s=>getSaleDateMonth(s)<=nowMo);
-  const ytdAPI=ytdS.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);
-  const ytdComm=ytdS.reduce((a,s)=>a+(parseFloat(s.commission)||0),0);
-  const ytdClose=meetings.filter(m=>['Meeting Close','Closed'].includes(m.status)&&getMeetMonth(m)<=nowMo).length;
-  const ytdMeet=meetings.filter(m=>{const mo=getMeetMonth(m);return mo&&mo<=nowMo;}).length;
-  document.getElementById('monthly-kpi').innerHTML=kpi('gold','YTD My API',fmt(ytdAPI,0),`Jan–${MONTHS[nowMo-1]}`)+kpi('green','YTD Commission',fmt(ytdComm,0),'earned')+kpi('amber','YTD Meetings',ytdMeet,`${ytdClose} closed`)+kpi('teal','YTD Close Rate',pct(ytdClose/Math.max(1,ytdMeet)),'meetings → close');
-  const container=document.getElementById('monthly-report-cards');container.innerHTML='';
-  const active=MONTHS.filter((_,i)=>{const mo=i+1;return sales.some(s=>getSaleDateMonth(s)===mo)||meetings.some(m=>getMeetMonth(m)===mo);}).reverse();
-  active.forEach(m=>{const mo=MONTHS.indexOf(m)+1;const ms=sales.filter(s=>getSaleDateMonth(s)===mo);const mm=meetings.filter(x=>getMeetMonth(x)===mo);const myAPI=ms.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);const tAPI=ms.reduce((a,s)=>a+(parseFloat(s.totalAPI)||0),0);const ccg=ms.reduce((a,s)=>a+(parseFloat(s.ccg)||0),0);const comm=ms.reduce((a,s)=>a+(parseFloat(s.commission)||0),0);const mTot=mm.length,mClose=mm.filter(x=>['Meeting Close','Closed'].includes(x.status)).length;const mNoSale=mm.filter(x=>x.status==='Meeting No Sale').length;const mNoShow=mm.filter(x=>['Client No Show','No Show'].includes(x.status)).length;const mCancel=mm.filter(x=>['Client Cancel','Cancelled'].includes(x.status)).length;const mRes=mm.filter(x=>x.status==='Meeting Reschedule').length;const mFU=mm.filter(x=>x.status==='Follow Up').length;const cr=mTot>0?mClose/mTot:0,nsr=mTot>0?mNoShow/mTot:0,caR=mTot>0?mCancel/mTot:0;const nxt=mo===12?MONTHS[0]:MONTHS[mo];const crc=cr>=.25?'var(--green)':cr>0?'var(--amber)':'var(--slate)';const card=document.createElement('div');card.className='monthly-card';card.innerHTML=`<div class="monthly-header" onclick="toggleMonthly(this)"><div class="monthly-month-label">${m} 2026</div><div class="monthly-summary"><div class="monthly-summary-item"><div class="val">${fmt(myAPI,0)}</div><div class="lbl">My API</div></div><div class="monthly-summary-item"><div class="val">${fmt(comm,0)}</div><div class="lbl">Commission</div></div><div class="monthly-summary-item"><div class="val">${mClose}/${mTot}</div><div class="lbl">Closed</div></div><div class="monthly-summary-item"><div class="val" style="color:${crc}">${pct(cr)}</div><div class="lbl">Close Rate</div></div></div><div class="monthly-toggle">▾</div></div><div class="monthly-body"><div class="inner-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem"><div><div class="section-heading">Sales</div><div class="monthly-grid"><div class="mini-kpi"><div class="lbl">Policies</div><div class="val">${ms.length}</div></div><div class="mini-kpi"><div class="lbl">Total API</div><div class="val" style="color:var(--gold)">${fmt(tAPI,0)}</div></div><div class="mini-kpi"><div class="lbl">My API</div><div class="val">${fmt(myAPI,0)}</div></div><div class="mini-kpi"><div class="lbl">CCG</div><div class="val">${fmt(ccg,0)}</div></div><div class="mini-kpi"><div class="lbl">Commission</div><div class="val" style="color:var(--gold2)">${fmt(comm)}</div><div class="sub">Paid in ${nxt}</div></div></div>${ms.length?`<div class="tbl-wrap" style="margin-top:.65rem"><table><thead><tr><th>Name</th><th>Product</th><th>My API</th><th>Comm</th></tr></thead><tbody>${ms.map(s=>`<tr><td style="font-size:.75rem">${s.name}</td><td><span class="prod prod-${s.product}">${s.product||'—'}</span></td><td>${fmt(s.myAPI,0)}</td><td style="color:var(--gold2)">${fmt(s.commission)}</td></tr>`).join('')}</tbody></table></div>`:''}</div><div><div class="section-heading">Meetings</div><div class="monthly-grid"><div class="mini-kpi"><div class="lbl">Set</div><div class="val">${mTot}</div></div><div class="mini-kpi"><div class="lbl">Closed</div><div class="val" style="color:var(--green)">${mClose}</div><div class="sub">${pct(cr)}</div></div><div class="mini-kpi"><div class="lbl">No Show</div><div class="val" style="color:var(--red)">${mNoShow}</div><div class="sub">${pct(nsr)}</div></div><div class="mini-kpi"><div class="lbl">Cancelled</div><div class="val" style="color:#94a3b8">${mCancel}</div><div class="sub">${pct(caR)}</div></div><div class="mini-kpi"><div class="lbl">No Sale</div><div class="val" style="color:var(--red)">${mNoSale}</div></div><div class="mini-kpi"><div class="lbl">Reschedule</div><div class="val" style="color:var(--purple)">${mRes}</div></div><div class="mini-kpi"><div class="lbl">Follow Up</div><div class="val" style="color:var(--amber)">${mFU}</div></div></div></div></div></div>`;container.appendChild(card);});
-}
-function toggleMonthly(h){const b=h.nextElementSibling,t=h.querySelector('.monthly-toggle');b.classList.toggle('open');t.classList.toggle('open');}
-
-// MODALS
-function openMeetModal(idx=-1){
-  editMeetIdx=idx;const m=idx>=0?meetings[idx]:{};
-  document.getElementById('meet-modal-title').textContent=idx>=0?'Edit Meeting':'Add Meeting';
-  document.getElementById('meet-modal-subtitle').textContent='';
-  ['date','name','phone','source'].forEach(f=>document.getElementById('m-'+f).value=m[f]||'');
-  document.getElementById('m-product1').value=m.product1||'';
-  document.getElementById('m-product2').value=m.product2||'';
-  document.getElementById('m-otherppp').value=m.otherPPP||'';
-  document.getElementById('m-status').value=m.status||'';
-  document.getElementById('m-seen').value=m.seen?'true':'false';
-  document.getElementById('m-followup').value=m.followUpDate||'';
-  document.getElementById('m-notes').value=(m.notes||'').replace(/\\n/g,'\n');
-  document.getElementById('meet-delete-btn').style.display=idx>=0?'flex':'none';
-  document.getElementById('meet-modal-overlay').classList.add('open');
-}
-function closeMeetModal(){document.getElementById('meet-modal-overlay').classList.remove('open');}
-function saveMeeting(){
-  const g=id=>document.getElementById(id).value;
-  const m={date:g('m-date'),name:g('m-name'),phone:g('m-phone'),source:g('m-source'),product1:g('m-product1'),product2:g('m-product2'),otherPPP:g('m-otherppp'),status:g('m-status'),seen:g('m-seen')==='true',followUpDate:g('m-followup')||null,notes:g('m-notes').replace(/\n/g,'\\n')};
-  if(!m.name)return alert('Name is required');
-  if(editMeetIdx>=0)meetings[editMeetIdx]=m;else meetings.push(m);
-  closeMeetModal();renderMeetings();checkReminders();saveData();
-}
-function deleteMeeting(){if(editMeetIdx<0)return;if(!confirm('Delete this meeting?'))return;meetings.splice(editMeetIdx,1);closeMeetModal();renderMeetings();saveData();}
-function showNotes(idx){const m=meetings[idx];document.getElementById('notes-modal-name').textContent=m.name;document.getElementById('notes-modal-body').textContent=(m.notes||'—').replace(/\\n/g,'\n');document.getElementById('notes-modal-overlay').classList.add('open');}
-
-function openSaleModal(idx=-1){
-  editSaleIdx=idx;const s=idx>=0?sales[idx]:{};
-  document.getElementById('sale-modal-title').textContent=idx>=0?'Edit Sale':'Add Sale';
-  const set=(id,v)=>document.getElementById(id).value=v;
-  set('s-date',s.date||'');set('s-name',s.name||'');set('s-idcard',s.idCard||'');set('s-phone',s.phone||'');
-  set('s-product',s.product||'');set('s-freq',s.freq||'Monthly');set('s-term',s.term||'');
-  set('s-source',s.source||'');set('s-shared',s.shared||'Yes');set('s-totalapi',s.totalAPI||'');
-  set('s-myapi',s.myAPI||'');set('s-policyfee',s.policyFee||'');set('s-tii1',s.tii1||'');
-  set('s-tii2',s.tii2||'');set('s-lead',s.leadAgent||'');set('s-tiirate',s.tiiRate||.35);
-  set('s-paidmonth',s.paidMonth||'');
-  calcCommission();
-  if(idx>=0){set('s-commrate',((s.commRate||0)*100).toFixed(0)+'%');set('s-ccg',(s.ccg||0).toFixed(2));set('s-commission',(s.commission||0).toFixed(2));}
-  document.getElementById('sale-delete-btn').style.display=idx>=0?'flex':'none';
-  document.getElementById('sale-modal-overlay').classList.add('open');
-}
-function closeSaleModal(){document.getElementById('sale-modal-overlay').classList.remove('open');}
-function saveSale(){
-  const g=id=>document.getElementById(id).value;
-  const term=g('s-term'),myAPI=parseFloat(g('s-myapi'))||0,tiiRate=parseFloat(g('s-tiirate'))||.35;
-  const cr=computeCommRate(term),ccg=myAPI*cr,comm=ccg*tiiRate;
-  const s={date:g('s-date'),name:g('s-name'),idCard:g('s-idcard'),phone:g('s-phone'),product:g('s-product'),freq:g('s-freq'),term,source:g('s-source'),shared:g('s-shared'),totalAPI:parseFloat(g('s-totalapi'))||0,myAPI,policyFee:parseFloat(g('s-policyfee'))||0,tii1:g('s-tii1'),tii2:g('s-tii2'),leadAgent:g('s-lead'),commRate:cr,tiiRate,ccg,commission:Math.round(comm*100)/100,paidMonth:parseInt(g('s-paidmonth'))||null};
-  if(!s.name)return alert('Name is required');
-  if(editSaleIdx>=0)sales[editSaleIdx]=s;else sales.push(s);
-  closeSaleModal();renderSales();saveData();
-}
-function deleteSale(){if(editSaleIdx<0)return;if(!confirm('Delete this sale?'))return;sales.splice(editSaleIdx,1);closeSaleModal();renderSales();saveData();}
-
-window.addEventListener('DOMContentLoaded',()=>{loadTheme();checkOutlookToken();});
-
-// ═══════════════════════════════════════
-//  PHASE 2 FEATURES
-// ═══════════════════════════════════════
-
-// ── OFFLINE MODE ─────────────────────
-let isOffline = false;
-let pendingSync = false;
-window.addEventListener('online', () => {
-  isOffline = false;
-  document.getElementById('offline-banner').style.display = 'none';
-  if(pendingSync && window._currentUser) { saveData(); pendingSync = false; addNotif('✅ Back online — data synced!', 'success'); }
-});
-window.addEventListener('offline', () => {
-  isOffline = true;
-  document.getElementById('offline-banner').style.display = 'block';
-  addNotif('📡 You are offline. Changes saved locally.', 'warning');
-});
-
-// Override saveData for offline support
-const _origSaveData = window.saveData;
-window.saveData = async function() {
-  // Always save to localStorage as backup
-  try {
-    localStorage.setItem('karus_offline_meetings', JSON.stringify(window.meetings));
-    localStorage.setItem('karus_offline_sales', JSON.stringify(window.sales));
-    localStorage.setItem('karus_offline_targets', JSON.stringify(window.targets));
-  } catch(e) {}
-  if(isOffline) { pendingSync = true; showSaveIndicator('saving'); setTimeout(()=>{ document.getElementById('save-indicator').textContent = '💾 Saved locally'; }, 500); return; }
-  return _origSaveData();
-};
-
-// Load from localStorage if Firebase is slow
-function loadOfflineBackup() {
-  try {
-    const om = localStorage.getItem('karus_offline_meetings');
-    const os = localStorage.getItem('karus_offline_sales');
-    const ot = localStorage.getItem('karus_offline_targets');
-    if(om && !window.meetings.length) window.meetings = JSON.parse(om);
-    if(os && !window.sales.length) window.sales = JSON.parse(os);
-    if(ot && !Object.keys(window.targets).length) window.targets = JSON.parse(ot);
-  } catch(e) {}
-}
-
-// ── NOTIFICATIONS ─────────────────────
-let notifications = [];
-let notifPanelOpen = false;
-
-function addNotif(msg, type='info') {
-  const n = { id: Date.now(), msg, type, time: new Date().toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'}), read: false };
-  notifications.unshift(n);
-  if(notifications.length > 50) notifications = notifications.slice(0, 50);
-  updateNotifBadge();
-  renderNotifList();
-}
-
-function updateNotifBadge() {
-  const unread = notifications.filter(n => !n.read).length;
-  const badge = document.getElementById('notif-badge');
-  if(badge) { badge.style.display = unread > 0 ? 'block' : 'none'; }
-}
-
-function toggleNotifPanel() {
-  notifPanelOpen = !notifPanelOpen;
-  const panel = document.getElementById('notif-panel');
-  panel.style.transform = notifPanelOpen ? 'translateX(0)' : 'translateX(100%)';
-  if(notifPanelOpen) {
-    notifications.forEach(n => n.read = true);
-    updateNotifBadge();
-    renderNotifList();
-  }
-}
-
-function renderNotifList() {
-  const el = document.getElementById('notif-list');
-  if(!el) return;
-  if(!notifications.length) {
-    el.innerHTML = '<div style="color:var(--slate);font-size:.82rem;text-align:center;padding:2rem">No notifications yet</div>';
-    return;
-  }
-  const typeColors = { success:'var(--green)', warning:'var(--amber)', info:'var(--blue)', error:'var(--red)' };
-  el.innerHTML = notifications.map(n => `
-    <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:.75rem;margin-bottom:.5rem;border-left:3px solid ${typeColors[n.type]||'var(--slate)'}">
-      <div style="font-size:.8rem;color:var(--text)">${n.msg}</div>
-      <div style="font-size:.65rem;color:var(--slate);margin-top:.25rem;font-family:var(--font-mono)">${n.time}</div>
-    </div>`).join('');
-}
-
-// Trigger smart notifications
-function runNotifChecks() {
-  const today = new Date(); today.setHours(0,0,0,0);
-  const nowMo = today.getMonth() + 1;
-
-  // Follow-ups due today
-  const dueTodayFollowups = meetings.filter(m => {
-    if(!m.followUpDate) return false;
-    const fd = new Date(m.followUpDate); fd.setHours(0,0,0,0);
-    return fd.getTime() === today.getTime();
-  });
-  if(dueTodayFollowups.length) addNotif(`📋 ${dueTodayFollowups.length} follow-up(s) due today`, 'warning');
-
-  // Target check
-  const monthActual = sales.filter(s => getSaleDateMonth(s) === nowMo).reduce((a,s) => a+(parseFloat(s.myAPI)||0), 0);
-  const monthTarget = window.targets[MONTHS[nowMo-1]]?.target || 10000;
-  if(monthActual >= monthTarget) addNotif(`🎯 Monthly target hit! ${fmt(monthActual,0)} achieved`, 'success');
-  else if(monthActual >= monthTarget * 0.8) addNotif(`🔥 80% of monthly target reached — ${fmt(monthActual,0)} / ${fmt(monthTarget,0)}`, 'info');
-
-  // Unpaid commission
-  const unpaid = sales.filter(s => !s.paid).reduce((a,s) => a+(parseFloat(s.commission)||0), 0);
-  if(unpaid > 0) addNotif(`💰 ${fmt(unpaid,0)} commission pending payment`, 'info');
-}
-
-// ── LEADERBOARD & BREAKDOWNS ──────────
-function renderLeaderboard() {
-  const nowMo = new Date().getMonth() + 1;
-  const totalMyAPI = sales.reduce((a,s) => a+(parseFloat(s.myAPI)||0), 0);
-  const totalComm = sales.reduce((a,s) => a+(parseFloat(s.commission)||0), 0);
-  const sc = meetingsByStatus();
-  const closed = (sc['Meeting Close']||0) + (sc['Closed']||0);
-
-  document.getElementById('lb-kpi').innerHTML =
-    kpi('gold','Total My API',fmt(totalMyAPI,0),`${sales.length} policies`) +
-    kpi('green','Total Commission',fmt(totalComm,0),'earned all time') +
-    kpi('teal','Total Meetings',meetings.length,`${closed} closed`) +
-    kpi('purple','Close Rate',pct(closed/Math.max(1,meetings.length)),'all time');
-
-  // API by month leaderboard
-  const monthData = MONTHS.map((m,i) => ({
-    m, mo: i+1,
-    api: sales.filter(s => getSaleDateMonth(s) === i+1).reduce((a,s) => a+(parseFloat(s.myAPI)||0), 0),
-    comm: sales.filter(s => getSaleDateMonth(s) === i+1).reduce((a,s) => a+(parseFloat(s.commission)||0), 0),
-    count: sales.filter(s => getSaleDateMonth(s) === i+1).length
-  })).filter(x => x.api > 0).sort((a,b) => b.api - a.api);
-
-  const maxAPI = monthData[0]?.api || 1;
-  document.getElementById('lb-api').innerHTML = monthData.length ?
-    monthData.map((x,i) => `
-      <div style="display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--border)">
-        <span style="font-family:var(--font-mono);font-size:.75rem;color:${i===0?'var(--gold)':'var(--slate)'};width:20px;flex-shrink:0">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</span>
-        <div style="flex:1">
-          <div style="font-size:.8rem;font-weight:600;color:var(--white)">${x.m} 2026</div>
-          <div style="height:4px;background:var(--s2);border-radius:2px;margin-top:.3rem;overflow:hidden"><div style="height:100%;border-radius:2px;background:var(--gold);width:${(x.api/maxAPI*100).toFixed(0)}%"></div></div>
-        </div>
-        <div style="text-align:right;flex-shrink:0">
-          <div style="font-family:var(--font-mono);font-size:.78rem;color:var(--gold2);font-weight:600">${fmt(x.api,0)}</div>
-          <div style="font-size:.62rem;color:var(--slate)">${x.count} ${x.count===1?'sale':'sales'}</div>
-        </div>
-      </div>`).join('') :
-    '<div style="color:var(--slate);font-size:.82rem;padding:1rem">No sales data yet</div>';
-
-  // Close rate by month
-  const closeData = MONTHS.map((m,i) => {
-    const mo = i+1;
-    const tot = meetings.filter(mt => getMeetMonth(mt) === mo).length;
-    const cl = meetings.filter(mt => ['Meeting Close','Closed'].includes(mt.status) && getMeetMonth(mt) === mo).length;
-    return { m, mo, tot, cl, rate: tot > 0 ? cl/tot : 0 };
-  }).filter(x => x.tot > 0).sort((a,b) => b.rate - a.rate);
-
-  document.getElementById('lb-close').innerHTML = closeData.length ?
-    closeData.map((x,i) => `
-      <div style="display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--border)">
-        <span style="font-family:var(--font-mono);font-size:.75rem;color:${i===0?'var(--gold)':'var(--slate)'};width:20px;flex-shrink:0">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</span>
-        <div style="flex:1">
-          <div style="font-size:.8rem;font-weight:600;color:var(--white)">${x.m} 2026</div>
-          <div style="height:4px;background:var(--s2);border-radius:2px;margin-top:.3rem;overflow:hidden"><div style="height:100%;border-radius:2px;background:var(--green);width:${(x.rate*100).toFixed(0)}%"></div></div>
-        </div>
-        <div style="text-align:right;flex-shrink:0">
-          <div style="font-family:var(--font-mono);font-size:.78rem;color:var(--green);font-weight:600">${(x.rate*100).toFixed(0)}%</div>
-          <div style="font-size:.62rem;color:var(--slate)">${x.cl}/${x.tot} meetings</div>
-        </div>
-      </div>`).join('') :
-    '<div style="color:var(--slate);font-size:.82rem;padding:1rem">No meeting data yet</div>';
-
-  renderDailyBreakdown();
-  renderWeeklyBreakdown();
-}
-
-function renderDailyBreakdown() {
-  const picker = document.getElementById('daily-month-picker');
-  const now = new Date();
-  const val = picker?.value || `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  if(picker && !picker.value) picker.value = val;
-  const [yr, mo] = val.split('-').map(Number);
-  const daysInMonth = new Date(yr, mo, 0).getDate();
-
-  let html = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.75rem">';
-  html += '<thead><tr><th style="padding:.5rem .75rem;background:var(--s2);color:var(--slate);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;text-align:left">Day</th><th style="padding:.5rem .75rem;background:var(--s2);color:var(--slate);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">Sales</th><th style="padding:.5rem .75rem;background:var(--s2);color:var(--slate);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">My API</th><th style="padding:.5rem .75rem;background:var(--s2);color:var(--slate);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">Commission</th><th style="padding:.5rem .75rem;background:var(--s2);color:var(--slate);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">Meetings</th><th style="padding:.5rem .75rem;background:var(--s2);color:var(--slate);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">Closed</th></tr></thead><tbody>';
-
-  let hasData = false;
-  for(let d = 1; d <= daysInMonth; d++) {
-    const dateStr = `${yr}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const daySales = sales.filter(s => s.date === dateStr);
-    const dayMeets = meetings.filter(m => m.date === dateStr);
-    const dayAPI = daySales.reduce((a,s) => a+(parseFloat(s.myAPI)||0), 0);
-    const dayComm = daySales.reduce((a,s) => a+(parseFloat(s.commission)||0), 0);
-    const dayClosed = dayMeets.filter(m => ['Meeting Close','Closed'].includes(m.status)).length;
-    if(!daySales.length && !dayMeets.length) continue;
-    hasData = true;
-    const dow = new Date(yr, mo-1, d).toLocaleDateString('en-GB', {weekday:'short'});
-    html += `<tr style="border-bottom:1px solid var(--border)">
-      <td style="padding:.5rem .75rem;font-family:var(--font-mono);color:var(--slate2)">${dow} ${d}</td>
-      <td style="padding:.5rem .75rem;text-align:center;color:${daySales.length?'var(--white)':'var(--slate)'}">${daySales.length||'—'}</td>
-      <td style="padding:.5rem .75rem;text-align:center;color:${dayAPI?'var(--gold2)':'var(--slate)'};font-family:var(--font-mono)">${dayAPI?fmt(dayAPI,0):'—'}</td>
-      <td style="padding:.5rem .75rem;text-align:center;color:${dayComm?'var(--gold)':'var(--slate)'};font-family:var(--font-mono)">${dayComm?fmt(dayComm):'—'}</td>
-      <td style="padding:.5rem .75rem;text-align:center;color:${dayMeets.length?'var(--white)':'var(--slate)'}">${dayMeets.length||'—'}</td>
-      <td style="padding:.5rem .75rem;text-align:center;color:${dayClosed?'var(--green)':'var(--slate)'}">${dayClosed||'—'}</td>
-    </tr>`;
-  }
-  if(!hasData) html += '<tr><td colspan="6" style="padding:1.5rem;text-align:center;color:var(--slate)">No activity this month</td></tr>';
-  html += '</tbody></table></div>';
-  const el = document.getElementById('daily-breakdown');
-  if(el) el.innerHTML = html;
-}
-
-function renderWeeklyBreakdown() {
-  // Get all weeks that have data
-  const allDates = [...new Set([...sales.map(s=>s.date), ...meetings.map(m=>m.date)])].filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d)).sort();
-  if(!allDates.length) { const el=document.getElementById('weekly-breakdown');if(el)el.innerHTML='<div style="color:var(--slate);font-size:.82rem;padding:1rem">No data yet</div>';return; }
-
-  const firstDate = new Date(allDates[0]);
-  const lastDate = new Date(allDates[allDates.length-1]);
-
-  // Get monday of first week
-  const start = new Date(firstDate);
-  start.setDate(firstDate.getDate() - ((firstDate.getDay()+6)%7));
-
-  const weeks = [];
-  let cursor = new Date(start);
-  while(cursor <= lastDate) {
-    const wEnd = new Date(cursor); wEnd.setDate(cursor.getDate()+6);
-    const wStart = new Date(cursor);
-    const wSales = sales.filter(s => { const d=new Date(s.date); return d>=wStart&&d<=wEnd; });
-    const wMeets = meetings.filter(m => { const d=new Date(m.date); return d>=wStart&&d<=wEnd; });
-    if(wSales.length || wMeets.length) {
-      weeks.push({
-        label: `${wStart.toLocaleDateString('en-GB',{day:'numeric',month:'short'})} – ${wEnd.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}`,
-        sales: wSales.length,
-        api: wSales.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0),
-        comm: wSales.reduce((a,s)=>a+(parseFloat(s.commission)||0),0),
-        meets: wMeets.length,
-        closed: wMeets.filter(m=>['Meeting Close','Closed'].includes(m.status)).length
-      });
-    }
-    cursor.setDate(cursor.getDate()+7);
-  }
-
-  weeks.reverse();
-  let html = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.75rem">';
-  html += '<thead><tr><th style="padding:.5rem .75rem;background:var(--s2);color:var(--slate);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;text-align:left">Week</th><th style="padding:.5rem .75rem;background:var(--s2);color:var(--slate);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">Sales</th><th style="padding:.5rem .75rem;background:var(--s2);color:var(--slate);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">My API</th><th style="padding:.5rem .75rem;background:var(--s2);color:var(--slate);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">Commission</th><th style="padding:.5rem .75rem;background:var(--s2);color:var(--slate);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">Meetings</th><th style="padding:.5rem .75rem;background:var(--s2);color:var(--slate);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">Closed</th></tr></thead><tbody>';
-  weeks.forEach(w => {
-    html += `<tr style="border-bottom:1px solid var(--border)">
-      <td style="padding:.5rem .75rem;font-size:.72rem;color:var(--slate2)">${w.label}</td>
-      <td style="padding:.5rem .75rem;text-align:center;color:var(--white)">${w.sales||'—'}</td>
-      <td style="padding:.5rem .75rem;text-align:center;color:var(--gold2);font-family:var(--font-mono)">${w.api?fmt(w.api,0):'—'}</td>
-      <td style="padding:.5rem .75rem;text-align:center;color:var(--gold);font-family:var(--font-mono)">${w.comm?fmt(w.comm):'—'}</td>
-      <td style="padding:.5rem .75rem;text-align:center;color:var(--white)">${w.meets||'—'}</td>
-      <td style="padding:.5rem .75rem;text-align:center;color:${w.closed?'var(--green)':'var(--slate)'}">${w.closed||'—'}</td>
-    </tr>`;
-  });
-  html += '</tbody></table></div>';
-  const el = document.getElementById('weekly-breakdown');
-  if(el) el.innerHTML = html;
-}
-
-// ── CSV IMPORT ────────────────────────
-function parseCSV(text) {
-  const lines = text.trim().split('\n');
-  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g,'').toLowerCase());
-  return lines.slice(1).map(line => {
-    const vals = [];
-    let cur = '', inQ = false;
-    for(let c of line) {
-      if(c==='"') inQ = !inQ;
-      else if(c===',' && !inQ) { vals.push(cur.trim()); cur=''; }
-      else cur += c;
-    }
-    vals.push(cur.trim());
-    const obj = {};
-    headers.forEach((h,i) => { obj[h] = (vals[i]||'').replace(/^"|"$/g,''); });
-    return obj;
-  }).filter(r => Object.values(r).some(v => v));
-}
-
-function handleMeetCSVDrop(e) {
-  e.preventDefault();
-  e.currentTarget.style.borderColor = '';
-  const file = e.dataTransfer.files[0];
-  if(file) handleMeetCSVFile(file);
-}
-
-function handleMeetCSVFile(file) {
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const rows = parseCSV(e.target.result);
-      const imported = rows.map(r => ({
-        date: r.date||'', name: r.name||'', phone: r.phone||'',
-        source: r.source||'CC', product1: r.product1||'', product2: r.product2||'',
-        otherPPP: r.otherppp||'', status: r.status||'', seen: false,
-        followUpDate: r.followupdate||null, notes: r.notes||''
-      })).filter(m => m.name);
-      const el = document.getElementById('meet-import-preview');
-      el.innerHTML = `<div style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);border-radius:var(--r);padding:1rem;margin-bottom:.75rem">
-        <div style="color:var(--green);font-weight:600;margin-bottom:.5rem">✓ Ready to import ${imported.length} meetings</div>
-        <div style="font-size:.75rem;color:var(--text)">${imported.slice(0,3).map(m=>`${m.date} · ${m.name}`).join('<br>')}${imported.length>3?`<br>...and ${imported.length-3} more`:''}</div>
-      </div>
-      <button class="btn-primary" onclick="confirmMeetImport(${JSON.stringify(imported).replace(/"/g,'&quot;')})">Import ${imported.length} Meetings</button>`;
-    } catch(err) {
-      document.getElementById('meet-import-preview').innerHTML = '<div style="color:var(--red);font-size:.82rem">❌ Could not parse CSV. Check format and try again.</div>';
-    }
-  };
-  reader.readAsText(file);
-}
-
-function confirmMeetImport(data) {
-  if(!confirm(`Import ${data.length} meetings? This will add them to your existing meetings.`)) return;
-  window.meetings = [...window.meetings, ...data];
-  saveData();
-  addNotif(`✅ Imported ${data.length} meetings successfully`, 'success');
-  document.getElementById('meet-import-preview').innerHTML = `<div style="color:var(--green);font-size:.85rem;padding:.75rem">✅ Successfully imported ${data.length} meetings!</div>`;
-}
-
-function handleSalesCSVDrop(e) {
-  e.preventDefault();
-  e.currentTarget.style.borderColor = '';
-  const file = e.dataTransfer.files[0];
-  if(file) handleSalesCSVFile(file);
-}
-
-function handleSalesCSVFile(file) {
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const rows = parseCSV(e.target.result);
-      const imported = rows.map(r => {
-        const term = parseFloat(r.term)||0;
-        const myAPI = parseFloat(r.myapi)||0;
-        const tiiRate = parseFloat(r.tiirate)||0.35;
-        const cr = computeCommRate(term);
-        const ccg = myAPI * cr;
-        const commission = Math.round(ccg * tiiRate * 100) / 100;
-        return {
-          date:r.date||'', name:r.name||'', idCard:r.idcard||'', phone:r.phone||'',
-          product:r.product||'', freq:r.freq||'Monthly', term:r.term||'',
-          source:r.source||'', shared:r.shared||'Yes',
-          totalAPI:parseFloat(r.totalapi)||0, myAPI, policyFee:parseFloat(r.policyfee)||0,
-          tii1:r.tii1||'', tii2:r.tii2||'', leadAgent:r.leadagent||'',
-          commRate:cr, tiiRate, ccg, commission,
-          paidMonth:parseInt(r.paidmonth)||null, paid:false
-        };
-      }).filter(s => s.name);
-      const el = document.getElementById('sales-import-preview');
-      el.innerHTML = `<div style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);border-radius:var(--r);padding:1rem;margin-bottom:.75rem">
-        <div style="color:var(--green);font-weight:600;margin-bottom:.5rem">✓ Ready to import ${imported.length} sales</div>
-        <div style="font-size:.75rem;color:var(--text)">${imported.slice(0,3).map(s=>`${s.date} · ${s.name} · ${s.product}`).join('<br>')}${imported.length>3?`<br>...and ${imported.length-3} more`:''}</div>
-      </div>
-      <button class="btn-primary" onclick="confirmSalesImport(${JSON.stringify(imported).replace(/"/g,'&quot;')})">Import ${imported.length} Sales</button>`;
-    } catch(err) {
-      document.getElementById('sales-import-preview').innerHTML = '<div style="color:var(--red);font-size:.82rem">❌ Could not parse CSV. Check format and try again.</div>';
-    }
-  };
-  reader.readAsText(file);
-}
-
-function confirmSalesImport(data) {
-  if(!confirm(`Import ${data.length} sales? This will add them to your existing sales.`)) return;
-  window.sales = [...window.sales, ...data];
-  saveData();
-  addNotif(`✅ Imported ${data.length} sales successfully`, 'success');
-  document.getElementById('sales-import-preview').innerHTML = `<div style="color:var(--green);font-size:.85rem;padding:.75rem">✅ Successfully imported ${data.length} sales!</div>`;
-}
-
-// ── PATCH showPage for new pages ──────
-const _origShowPage = window.showPage;
-window.showPage = function(id, btn) {
-  _origShowPage(id, btn);
-  if(id === 'leaderboard') renderLeaderboard();
-  if(id === 'import') {} // just show the page
-};
-
-// ── INIT PHASE 2 ──────────────────────
-const _origDOMReady = window.addEventListener;
-document.addEventListener('DOMContentLoaded', () => {
-  loadOfflineBackup();
-  setTimeout(() => {
-    if(window._currentUser) runNotifChecks();
-  }, 3000);
-});
-
-window.addEventListener('resize',()=>{if(document.getElementById('page-meetings').classList.contains('active'))renderCalendar();});
-</script>
-</body>
-</html>
+ENDOFPART1
+echo "Part 1 written: $(wc -l < /home/claude/karus_part1.html) lines"
+Output
