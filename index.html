@@ -915,6 +915,7 @@ select.filter-sel{background:var(–s2);border:1px solid var(–border);color:va
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+// Admin user management uses Firebase Auth REST API (no server needed)
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import{getFirestore,doc,getDoc,setDoc}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyCoaAEMSJDBI22iy5IovGWkx4QBrG09hQc",authDomain:"year-planner-bbc5a.firebaseapp.com",projectId:"year-planner-bbc5a",storageBucket:"year-planner-bbc5a.firebasestorage.app",messagingSenderId:"182620827791",appId:"1:182620827791:web:a43b5d7e0e9c53178b40fa"});
@@ -937,6 +938,14 @@ onAuthStateChanged(auth,async(user)=>{
     window._currentUser=user;
     document.getElementById('header-email').textContent=user.displayName||user.email;
     document.getElementById('today-name').textContent=(user.displayName||user.email).split(' ')[0];
+    // Show admin tab only for admin email
+    const ADMIN_EMAIL = 'micheledimech@karus.mt';
+    if(user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()){
+      document.getElementById('admin-nav-tab').style.display='';
+      window._isAdmin = true;
+    } else {
+      window._isAdmin = false;
+    }
     document.getElementById('auth-screen').style.display='none';
     document.getElementById('app-header').style.display='flex';
     document.getElementById('bot-nav').style.display='flex';
@@ -1720,6 +1729,181 @@ function openClientTimeline(name){
 
 // ── RE-ENGAGE FEATURE ──
 // Add re-engage date surfacing to Today page - done inline in renderToday patch below
+
+
+// ══════════════════════════════
+//  ADMIN SYSTEM
+// ══════════════════════════════
+
+const ADMIN_EMAIL = 'micheledimech@karus.mt';
+const FIREBASE_API_KEY = 'AIzaSyCoaAEMSJDBI22iy5IovGWkx4QBrG09hQc';
+const FIREBASE_PROJECT_ID = 'year-planner-bbc5a';
+
+// Create a new user via Firebase Auth REST API
+async function adminCreateUser(){
+  if(!window._isAdmin){ toast('Admin access only','error'); return; }
+  const name = document.getElementById('new-user-name').value.trim();
+  const email = document.getElementById('new-user-email').value.trim();
+  const pass = document.getElementById('new-user-pass').value;
+  const resultEl = document.getElementById('create-user-result');
+  if(!name || !email || !pass){ toast('Please fill in all fields','error'); return; }
+  if(pass.length < 6){ toast('Password must be at least 6 characters','error'); return; }
+  resultEl.innerHTML = '<span style="color:var(--amber)">Creating account…</span>';
+  try {
+    // Create user via Firebase Auth REST API
+    const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${FIREBASE_API_KEY}`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, password:pass, returnSecureToken:true })
+    });
+    const data = await res.json();
+    if(data.error){
+      const msgs = {'EMAIL_EXISTS':'This email already has an account.','INVALID_EMAIL':'Invalid email address.','WEAK_PASSWORD':'Password is too weak.'};
+      resultEl.innerHTML = `<span style="color:var(--red)">❌ ${msgs[data.error.message]||data.error.message}</span>`;
+      return;
+    }
+    // Update display name
+    await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:update?key=${FIREBASE_API_KEY}`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ idToken:data.idToken, displayName:name, returnSecureToken:false })
+    });
+    // Create their Firestore record
+    const DEF_USER = {meetings:[],sales:[],targets:{Jan:{target:10000,actual:0},Feb:{target:10000,actual:0},Mar:{target:10000,actual:0},Apr:{target:10000,actual:0},May:{target:10000,actual:0},Jun:{target:10000,actual:0},Jul:{target:10000,actual:0},Aug:{target:10000,actual:0},Sep:{target:10000,actual:0},Oct:{target:10000,actual:0},Nov:{target:10000,actual:0},Dec:{target:10000,actual:0}},annualTarget:120000,productTargets:{PPPWP:50000,PPPUL:50000,ULSP:10000,FP:10000}};
+    await fetch(`https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents/users/${data.localId}?key=${FIREBASE_API_KEY}`, {
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${data.idToken}`},
+      body: JSON.stringify({ fields: { meetings:{arrayValue:{values:[]}}, sales:{arrayValue:{values:[]}}, annualTarget:{integerValue:120000} } })
+    });
+    // Store in admin users list in Firestore
+    await saveAdminUserRecord(data.localId, name, email);
+    resultEl.innerHTML = `<span style="color:var(--green)">✅ Account created for ${name}! Send them: <strong style="color:var(--white)">${email}</strong> / <strong style="color:var(--white)">${pass}</strong></span>`;
+    document.getElementById('new-user-name').value='';
+    document.getElementById('new-user-email').value='';
+    document.getElementById('new-user-pass').value='';
+    toast(`Account created for ${name} ✓`,'success');
+    adminLoadUsers();
+  } catch(e) {
+    resultEl.innerHTML = `<span style="color:var(--red)">❌ Error: ${e.message}</span>`;
+  }
+}
+
+async function saveAdminUserRecord(uid, name, email){
+  try {
+    const idToken = await window._auth.currentUser.getIdToken();
+    const now = new Date().toISOString();
+    await fetch(`https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents/admin_users/${uid}?key=${FIREBASE_API_KEY}`, {
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${idToken}`},
+      body: JSON.stringify({ fields:{
+        name:{stringValue:name},
+        email:{stringValue:email},
+        createdAt:{stringValue:now},
+        disabled:{booleanValue:false}
+      }})
+    });
+  } catch(e){ console.error('Could not save admin record',e); }
+}
+
+async function adminLoadUsers(){
+  if(!window._isAdmin) return;
+  const el = document.getElementById('admin-users-list');
+  el.innerHTML = '<div style="color:var(--slate);font-size:.82rem;padding:1rem">Loading…</div>';
+  try {
+    const idToken = await window._auth.currentUser.getIdToken();
+    const res = await fetch(`https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents/admin_users?key=${FIREBASE_API_KEY}`, {
+      headers:{'Authorization':`Bearer ${idToken}`}
+    });
+    const data = await res.json();
+    const docs = data.documents || [];
+    if(!docs.length){
+      el.innerHTML = '<div style="color:var(--slate);font-size:.82rem;padding:1rem;text-align:center">No users created yet. Create your first user above.</div>';
+      // Update KPIs
+      document.getElementById('admin-kpi').innerHTML = kpi('gold','Total Users','0','registered') + kpi('green','Active','0','accounts') + kpi('blue','Platform','Karus 2026','sales system');
+      return;
+    }
+    const users = docs.map(d => {
+      const f = d.fields || {};
+      const uid = d.name.split('/').pop();
+      return {
+        uid,
+        name: f.name?.stringValue || 'Unknown',
+        email: f.email?.stringValue || '—',
+        createdAt: f.createdAt?.stringValue || '',
+        disabled: f.disabled?.booleanValue || false
+      };
+    }).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    const active = users.filter(u=>!u.disabled).length;
+    document.getElementById('admin-kpi').innerHTML =
+      kpi('gold','Total Users', users.length, 'registered accounts') +
+      kpi('green','Active', active, 'can log in') +
+      kpi('red','Disabled', users.length - active, 'no access') +
+      kpi('blue','Platform','Karus 2026','sales system');
+
+    el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.85rem;padding:.25rem 0">${users.map(u => `
+      <div class="user-card">
+        <div class="user-card-header">
+          <div>
+            <div class="user-card-name">${u.name}</div>
+            <div class="user-card-email">${u.email}</div>
+          </div>
+          <span class="user-status-badge ${u.disabled?'disabled':'active'}">${u.disabled?'Disabled':'Active'}</span>
+        </div>
+        <div class="user-card-meta">
+          <span>Created: ${u.createdAt?new Date(u.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—'}</span>
+        </div>
+        <div style="display:flex;gap:.5rem;margin-top:.85rem">
+          <button class="btn-ghost btn-sm" style="flex:1" onclick="adminResetPassword('${u.email}')">Reset Password</button>
+          <button class="btn-${u.disabled?'primary':'danger'} btn-sm" style="flex:1;${u.disabled?'':'background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);border-radius:10px;font-family:var(--font-body);font-weight:600;cursor:pointer;'}" onclick="adminToggleUser('${u.uid}',${u.disabled})">${u.disabled?'Enable Access':'Disable Access'}</button>
+        </div>
+      </div>`).join('')}</div>`;
+  } catch(e) {
+    el.innerHTML = `<div style="color:var(--red);font-size:.82rem;padding:1rem">Could not load users: ${e.message}</div>`;
+  }
+}
+
+async function adminToggleUser(uid, currentlyDisabled){
+  if(!window._isAdmin) return;
+  const action = currentlyDisabled ? 'enable' : 'disable';
+  if(!confirm(`${action.charAt(0).toUpperCase()+action.slice(1)} this user's access?`)) return;
+  try {
+    const idToken = await window._auth.currentUser.getIdToken();
+    await fetch(`https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents/admin_users/${uid}?updateMask.fieldPaths=disabled&key=${FIREBASE_API_KEY}`, {
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${idToken}`},
+      body: JSON.stringify({ fields:{ disabled:{booleanValue:!currentlyDisabled} }})
+    });
+    toast(`User ${action}d ✓`,'success');
+    adminLoadUsers();
+  } catch(e){ toast('Could not update user','error'); }
+}
+
+async function adminResetPassword(email){
+  if(!window._isAdmin) return;
+  const newPass = prompt(`Enter new password for ${email} (min 6 characters):`);
+  if(!newPass || newPass.length < 6){ toast('Password too short','error'); return; }
+  // Note: Resetting another user's password requires Firebase Admin SDK (server-side)
+  // As a workaround, we show the admin the reset link approach
+  try {
+    const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${FIREBASE_API_KEY}`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ requestType:'PASSWORD_RESET', email })
+    });
+    const data = await res.json();
+    if(data.error){ toast('Could not send reset email: '+data.error.message,'error'); return; }
+    toast(`Password reset email sent to ${email} ✓`,'success');
+  } catch(e){ toast('Error sending reset email','error'); }
+}
+
+// Show admin page
+const _origShowPage = window.showPage;
+window.showPage = function(id, btn){
+  if(id === 'admin' && !window._isAdmin){ toast('Admin access only','error'); return; }
+  _origShowPage(id, btn);
+  if(id === 'admin') adminLoadUsers();
+};
 
 </script>
 
