@@ -944,7 +944,20 @@ onAuthStateChanged(auth,async(user)=>{
     document.getElementById('bot-nav').style.display='flex';
     document.querySelectorAll('.page').forEach(p=>p.style.display='');
     const snap=await getDoc(doc(db,'users',user.uid));
-    if(snap.exists()){const d=snap.data();window.meetings=d.meetings||[];window.sales=d.sales||[];window.targets=d.targets||DEF.targets;window.ANNUAL_TARGET=d.annualTarget||120000;window.productTargets=d.productTargets||DEF.productTargets;}
+    if(snap.exists()){
+      const d=snap.data();
+      window.meetings=d.meetings||[];
+      window.sales=d.sales||[];
+      // Merge saved targets with defaults so every month always has a `target` value
+      const savedT=d.targets||{};
+      window.targets={};
+      ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].forEach(m=>{
+        window.targets[m]={target:savedT[m]?.target||10000,actual:savedT[m]?.actual||0};
+      });
+      // Always derive ANNUAL_TARGET from sum of monthly targets (never trust the stored flat value)
+      window.ANNUAL_TARGET=Object.values(window.targets).reduce((a,t)=>a+(t.target||0),0);
+      window.productTargets=d.productTargets||DEF.productTargets;
+    }
     else{window.meetings=[];window.sales=[];window.targets=JSON.parse(JSON.stringify(DEF.targets));window.ANNUAL_TARGET=120000;window.productTargets=JSON.parse(JSON.stringify(DEF.productTargets));await setDoc(doc(db,'users',user.uid),DEF);}
     renderToday();
     document.getElementById('quick-add-btn').style.display='flex';
