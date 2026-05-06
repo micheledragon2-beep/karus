@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Karus 2026</title>
+<script>
+// Apply theme BEFORE any rendering to prevent flash
+(function(){
+  var t = localStorage.getItem('karus_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -22,6 +29,10 @@
 [data-theme="dark"]{--bg:#080d1a;--s1:#0d1526;--s2:#111d33;--s3:#162240;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);--gold-border:rgba(201,168,76,0.2);--gold-border2:rgba(201,168,76,0.35);--slate:#64748b;--slate2:#94a3b8;--text:#cbd5e1;--white:#f1f5f9;--shadow:0 4px 24px rgba(0,0,0,0.4);}
 [data-theme="light"]{--bg:#f8fafc;--s1:#ffffff;--s2:#f1f5f9;--s3:#e2e8f0;--border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.12);--gold-border:rgba(201,168,76,0.25);--gold-border2:rgba(201,168,76,0.4);--slate:#64748b;--slate2:#475569;--text:#334155;--white:#0f172a;--shadow:0 2px 12px rgba(0,0,0,0.08);}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+/* Prevent OS light-mode from overriding our theme */
+@media(prefers-color-scheme:light){
+  :root:not([data-theme="light"]){color-scheme:dark;}
+}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
 body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s;}
 ::-webkit-scrollbar{width:4px;height:4px;}
@@ -1056,8 +1067,8 @@ function importOutlookEvent(ev){
 }
 
 // ── THEME ──
-function toggleTheme(){const html=document.documentElement,d=html.getAttribute('data-theme')==='dark';html.setAttribute('data-theme',d?'light':'dark');document.getElementById('theme-btn').textContent=d?'☀️':'🌙';localStorage.setItem('karus_theme',d?'light':'dark');Object.values(charts).forEach(c=>{if(c)c.update();});}
-function loadTheme(){const t=localStorage.getItem('karus_theme')||'dark';document.documentElement.setAttribute('data-theme',t);const btn=document.getElementById('theme-btn');if(btn)btn.textContent=t==='dark'?'🌙':'☀️';}
+function loadTheme(){const t=localStorage.getItem('karus_theme')||'dark';document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;const btn=document.getElementById('theme-btn');if(btn)btn.textContent=t==='dark'?'🌙':'☀️';}
+function toggleTheme(){const html=document.documentElement,d=html.getAttribute('data-theme')==='dark';const next=d?'light':'dark';html.setAttribute('data-theme',next);html.style.colorScheme=next;document.getElementById('theme-btn').textContent=d?'☀️':'🌙';localStorage.setItem('karus_theme',next);Object.values(charts).forEach(c=>{if(c)c.update();});}
 
 // ── NOTIFICATIONS ──
 function addNotif(msg,type='info'){notifications.unshift({id:Date.now(),msg,type,time:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}),read:false});if(notifications.length>50)notifications=notifications.slice(0,50);const b=document.getElementById('notif-badge');if(b)b.style.display='block';renderNotifList();}
@@ -1404,8 +1415,14 @@ function openClientDetail(name){ openClientTimeline(name); }
 
 // ── TARGETS ──
 function renderTargets(){
-  const aa=Object.values(targets).reduce((a,t)=>a+(t.actual||0),0),ou=aa-ANNUAL_TARGET;
-  document.getElementById('target-kpi').innerHTML=kpi('gold','Annual Target',fmt(ANNUAL_TARGET,0))+kpi(aa>=ANNUAL_TARGET?'green':'amber','YTD Actual',fmt(aa,0),`${pct(aa/ANNUAL_TARGET)} achieved`)+kpi(ou>=0?'green':'red','Over / Under',(ou>=0?'+':'')+fmt(ou,0))+kpi('teal','Monthly Target','€10,000');
+  const annualT=Object.values(targets).reduce((a,t)=>a+(t.target||0),0);
+  window.ANNUAL_TARGET=annualT;
+  const aa=Object.values(targets).reduce((a,t)=>a+(t.actual||0),0),ou=aa-annualT;
+  document.getElementById('target-kpi').innerHTML=
+    kpi('gold','Annual Target',fmt(annualT,0),'sum of monthly targets')+
+    kpi(aa>=annualT?'green':'amber','YTD Actual',fmt(aa,0),`${pct(aa/Math.max(1,annualT))} achieved`)+
+    kpi(ou>=0?'green':'red','Over / Under',(ou>=0?'+':'')+fmt(ou,0))+
+    kpi('teal','Months Remaining',MONTHS.filter(m=>!(targets[m]?.actual>0)).length,'without actuals');
   document.getElementById('target-bars').innerHTML=MONTHS.map(m=>{const t=targets[m]?.target||10000,a=targets[m]?.actual||0;const pw=Math.min(100,(a/t)*100),ov=a>=t,diff=a-t;const bc=a===0?'empty':ov?'over':'under';const dl=a>0?(ov?`<span class="target-diff over-val">+${fmt(diff,0)}</span>`:`<span class="target-diff under-val">${fmt(diff,0)}</span>`):'';return`<div class="target-row"><div class="target-row-top"><span class="target-month">${m}</span><span class="target-amount">${a>0?fmt(a,0):'—'}</span>${dl}</div><div class="bar-track"><div class="bar-fill ${bc}" style="width:${Math.max(a>0?2:0,pw)}%"></div></div><div class="target-goal-label">Target: ${fmt(t,0)}</div></div>`;}).join('');
   document.getElementById('target-editor').innerHTML=`<div style="display:grid;grid-template-columns:56px 1fr 1fr;gap:.45rem;align-items:center;margin-bottom:.5rem"><span style="font-size:.6rem;color:var(--slate);text-transform:uppercase;letter-spacing:.1em">Mo.</span><span style="font-size:.6rem;color:var(--slate);text-transform:uppercase;letter-spacing:.1em">Target</span><span style="font-size:.6rem;color:var(--slate);text-transform:uppercase;letter-spacing:.1em">Actual</span></div>`+MONTHS.map(m=>`<div style="display:grid;grid-template-columns:56px 1fr 1fr;gap:.45rem;align-items:center;margin-bottom:.4rem"><span style="font-size:.75rem;color:var(--gold);font-weight:700;font-family:var(--font-mono)">${m}</span><input class="search-box" style="width:100%;padding:.4rem .55rem;font-size:.75rem" type="number" value="${targets[m]?.target||10000}" oninput="updateTargetLive('${m}','target',this.value)"><input class="search-box" style="width:100%;padding:.4rem .55rem;font-size:.75rem" type="number" value="${targets[m]?.actual||''}" oninput="updateTargetLive('${m}','actual',this.value)" placeholder="Actual"></div>`).join('')+`<div style="font-size:.68rem;color:var(--slate);text-align:center;margin-top:.6rem;font-family:var(--font-mono)">✓ Changes save automatically as you type</div>`;
   const yr=activeYear;
@@ -1417,13 +1434,22 @@ let _targetSaveTimer=null;
 function updateTargetLive(m,f,v){
   if(!targets[m])targets[m]={target:10000,actual:0};
   targets[m][f]=parseFloat(v)||0;
+  // Recalculate ANNUAL_TARGET as sum of all monthly targets whenever any target changes
+  window.ANNUAL_TARGET=Object.values(targets).reduce((a,t)=>a+(t.target||0),0);
   refreshTargetBarsOnly();
   clearTimeout(_targetSaveTimer);
   _targetSaveTimer=setTimeout(()=>{saveData();},1200);
 }
 function refreshTargetBarsOnly(){
-  const aa=Object.values(targets).reduce((a,t)=>a+(t.actual||0),0),ou=aa-ANNUAL_TARGET;
-  document.getElementById('target-kpi').innerHTML=kpi('gold','Annual Target',fmt(ANNUAL_TARGET,0))+kpi(aa>=ANNUAL_TARGET?'green':'amber','YTD Actual',fmt(aa,0),`${pct(aa/ANNUAL_TARGET)} achieved`)+kpi(ou>=0?'green':'red','Over / Under',(ou>=0?'+':'')+fmt(ou,0))+kpi('teal','Monthly Target','€10,000');
+  // Always recalculate from live data
+  const annualT=Object.values(targets).reduce((a,t)=>a+(t.target||0),0);
+  const aa=Object.values(targets).reduce((a,t)=>a+(t.actual||0),0);
+  const ou=aa-annualT;
+  document.getElementById('target-kpi').innerHTML=
+    kpi('gold','Annual Target',fmt(annualT,0),'sum of monthly targets')+
+    kpi(aa>=annualT?'green':'amber','YTD Actual',fmt(aa,0),`${pct(aa/Math.max(1,annualT))} achieved`)+
+    kpi(ou>=0?'green':'red','Over / Under',(ou>=0?'+':'')+fmt(ou,0))+
+    kpi('teal','Months Remaining',MONTHS.filter(m=>!(targets[m]?.actual>0)).length,'without actuals');
   document.getElementById('target-bars').innerHTML=MONTHS.map(m=>{const t=targets[m]?.target||10000,a=targets[m]?.actual||0;const pw=Math.min(100,(a/t)*100),ov=a>=t,diff=a-t;const bc=a===0?'empty':ov?'over':'under';const dl=a>0?(ov?`<span class="target-diff over-val">+${fmt(diff,0)}</span>`:`<span class="target-diff under-val">${fmt(diff,0)}</span>`):'';return`<div class="target-row"><div class="target-row-top"><span class="target-month">${m}</span><span class="target-amount">${a>0?fmt(a,0):'—'}</span>${dl}</div><div class="bar-track"><div class="bar-fill ${bc}" style="width:${Math.max(a>0?2:0,pw)}%"></div></div><div class="target-goal-label">Target: ${fmt(t,0)}</div></div>`;}).join('');
 }
 function updateProductTargetLive(p,v,actual){
