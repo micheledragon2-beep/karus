@@ -6,12 +6,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Karus 2026</title>
 <script>
-// Apply theme BEFORE any rendering to prevent flash
+// Apply theme BEFORE any rendering to prevent flash — including iOS Safari
 (function(){
   var t = localStorage.getItem('karus_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', t);
+  // iOS Safari respects this meta tag more than CSS color-scheme
+  var meta = document.createElement('meta');
+  meta.name = 'color-scheme';
+  meta.content = t === 'dark' ? 'dark' : 'light';
+  document.head.appendChild(meta);
+  // Also set inline style on html so no flash before CSS loads
+  document.documentElement.style.background = t === 'dark' ? '#080d1a' : '#f8fafc';
+  document.documentElement.style.colorScheme = t;
 })();
 </script>
+<meta name="supported-color-schemes" content="dark light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -30,11 +39,10 @@
 [data-theme="dark"]{--bg:#080d1a;--s1:#0d1526;--s2:#111d33;--s3:#162240;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);--gold-border:rgba(201,168,76,0.2);--gold-border2:rgba(201,168,76,0.35);--slate:#64748b;--slate2:#94a3b8;--text:#cbd5e1;--white:#f1f5f9;--shadow:0 4px 24px rgba(0,0,0,0.4);}
 [data-theme="light"]{--bg:#f8fafc;--s1:#ffffff;--s2:#f1f5f9;--s3:#e2e8f0;--border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.12);--gold-border:rgba(201,168,76,0.25);--gold-border2:rgba(201,168,76,0.4);--slate:#64748b;--slate2:#475569;--text:#334155;--white:#0f172a;--shadow:0 2px 12px rgba(0,0,0,0.08);}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-/* Prevent OS light-mode from overriding our theme */
-@media(prefers-color-scheme:light){
-  :root:not([data-theme="light"]){color-scheme:dark;}
-}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+/* Force dark theme colours at the root level so iOS Safari cannot override with system light mode */
+html[data-theme="dark"],html[data-theme="dark"] body{background-color:#080d1a !important;color:#cbd5e1 !important;}
+html[data-theme="light"],html[data-theme="light"] body{background-color:#f8fafc !important;color:#334155 !important;}
 body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s;}
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
@@ -126,6 +134,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 .today-header{margin-bottom:1.4rem;}
 .today-greeting{font-family:var(–font-head);font-size:1.75rem;font-weight:800;color:var(–white);letter-spacing:-.03em;line-height:1.15;}
 .today-greeting span{background:linear-gradient(135deg,var(–gold),var(–gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+#today-name-wrap{display:none;background:none;-webkit-text-fill-color:inherit;}
 .today-date-str{font-size:.82rem;color:var(–slate);margin-top:.3rem;}
 .today-five{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin-bottom:1.25rem;}
 .t5-card{background:var(–s1);border:1px solid var(–border);border-radius:var(–rl);padding:1.1rem 1.2rem;position:relative;overflow:hidden;transition:all .2s var(–ease);cursor:default;}
@@ -191,6 +200,15 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 
 /* ── CARDS ── */
 .card{background:var(–s1);border:1px solid var(–border);border-radius:var(–rl);padding:1.2rem 1.4rem;transition:all .2s var(–ease);box-shadow:var(–shadow);}
+html[data-theme=“dark”] .card{background:#0d1526 !important;border-color:rgba(255,255,255,0.06) !important;}
+html[data-theme=“dark”] .kpi{background:#0d1526 !important;border-color:rgba(255,255,255,0.06) !important;}
+html[data-theme=“dark”] .t5-card{background:#0d1526 !important;border-color:rgba(255,255,255,0.06) !important;}
+html[data-theme=“dark”] .today-card-block{background:#0d1526 !important;border-color:rgba(255,255,255,0.06) !important;}
+html[data-theme=“dark”] .weekly-summary{background:#0d1526 !important;border-color:rgba(255,255,255,0.06) !important;}
+html[data-theme=“dark”] .app-header{background:#0d1526 !important;border-color:rgba(255,255,255,0.06) !important;}
+html[data-theme=“dark”] .modal{background:#0d1526 !important;}
+html[data-theme=“dark”] .prediction-bar{background:linear-gradient(135deg,rgba(96,165,250,.08),rgba(96,165,250,.03)) !important;}
+html[data-theme=“dark”] .dq-banner{background:rgba(245,158,11,.07) !important;}
 .card:hover{border-color:var(–border2);}
 .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;}
 .card-title{font-family:var(–font-head);font-size:.88rem;font-weight:700;color:var(–gold);letter-spacing:-.01em;}
@@ -469,13 +487,17 @@ select.filter-sel{background:var(–s2);border:1px solid var(–border);color:va
 .gs-input{width:120px;}
 .gs-input:focus{width:160px;}
 .bot-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:calc(var(–bot-h) + var(–safe-b));background:var(–s1);border-top:1px solid var(–border);z-index:200;padding-bottom:var(–safe-b);}
+html[data-theme=“dark”] .bot-nav{background:#0d1526 !important;border-color:rgba(255,255,255,0.08) !important;}
 .bot-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;color:var(–slate);cursor:pointer;font-family:var(–font-body);font-size:.53rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase;padding:.38rem 0;transition:all .2s var(–ease);}
 .bot-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
 .bot-btn.active{color:var(–gold);}
 .page{padding:.9rem .95rem calc(var(–bot-h) + var(–safe-b) + .5rem);}
-.kpi-strip{grid-template-columns:1fr 1fr;gap:.55rem;margin-bottom:.9rem;}
-.kpi{padding:.85rem .95rem;}
-.kpi-value{font-size:1.25rem;}
+/* KPI strip: 2 cols, compact */
+.kpi-strip{grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.85rem;}
+.kpi{padding:.75rem .85rem;}
+.kpi-value{font-size:1.2rem;}
+.kpi-label{font-size:.58rem;}
+/* All grids go single column on mobile */
 .grid-2,.grid-3,.grid-12{grid-template-columns:1fr;}
 .chart-wrap{height:175px;}
 .chart-wrap.sm{height:155px;}
@@ -489,11 +511,22 @@ select.filter-sel{background:var(–s2);border:1px solid var(–border);color:va
 .ratio-mo-col{display:none;}
 .monthly-body .inner-grid{grid-template-columns:1fr !important;}
 .pipeline-col{width:185px;}
+/* Today page */
 .today-two-col{grid-template-columns:1fr;}
-.today-five{grid-template-columns:1fr 1fr;}
+.today-five{grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1rem;}
 .today-greeting{font-size:1.35rem;}
+.t5-card{padding:.9rem 1rem;}
+.t5-val{font-size:1.4rem;}
+.t5-label{font-size:.58rem;}
+/* Weekly summary mobile */
+.weekly-summary{padding:.85rem 1rem;margin-bottom:.85rem;}
+.weekly-stats{grid-template-columns:repeat(3,1fr);gap:.5rem;}
+.weekly-val{font-size:1.1rem;}
+/* Search */
 .gs-results{right:-.5rem;width:280px;}
 .toast-wrap{top:calc(50px + .5rem);right:.75rem;}
+/* Coaching on mobile */
+.coach-bar-label{width:62px;font-size:.72rem;}
 }
 @media(max-width:380px){.kpi-value{font-size:1.1rem;}.bot-btn{font-size:.48rem;}}
 
@@ -643,7 +676,7 @@ select.filter-sel{background:var(–s2);border:1px solid var(–border);color:va
     <div id="dq-list"></div>
   </div>
   <div class="today-header">
-    <div class="today-greeting">Good <span id="today-timeofday">morning</span>, <span id="today-name">Michele</span></div>
+    <div class="today-greeting">Good <span id="today-timeofday">morning</span><span id="today-name-wrap">, <span id="today-name"></span></span></div>
     <div class="today-date-str" id="today-date-str"></div>
   </div>
   <div class="today-five" id="today-five"></div>
@@ -1001,6 +1034,7 @@ onAuthStateChanged(auth,async(user)=>{
     window._currentUser=user;
     document.getElementById('header-email').textContent=user.displayName||user.email;
     document.getElementById('today-name').textContent=(user.displayName||user.email).split(' ')[0];
+    document.getElementById('today-name-wrap').style.display='';
     // Show admin tab only for admin email
     const ADMIN_EMAIL = 'micheledimech@karus.mt';
     if(user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()){
@@ -1150,8 +1184,8 @@ function importOutlookEvent(ev){
 }
 
 // ── THEME ──
-function loadTheme(){const t=localStorage.getItem('karus_theme')||'dark';document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;const btn=document.getElementById('theme-btn');if(btn)btn.textContent=t==='dark'?'🌙':'☀️';}
-function toggleTheme(){const html=document.documentElement,d=html.getAttribute('data-theme')==='dark';const next=d?'light':'dark';html.setAttribute('data-theme',next);html.style.colorScheme=next;document.getElementById('theme-btn').textContent=d?'☀️':'🌙';localStorage.setItem('karus_theme',next);Object.values(charts).forEach(c=>{if(c)c.update();});}
+function loadTheme(){const t=localStorage.getItem('karus_theme')||'dark';document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;document.documentElement.style.background=t==='dark'?'#080d1a':'#f8fafc';const btn=document.getElementById('theme-btn');if(btn)btn.textContent=t==='dark'?'🌙':'☀️';}
+function toggleTheme(){const html=document.documentElement,d=html.getAttribute('data-theme')==='dark';const next=d?'light':'dark';html.setAttribute('data-theme',next);html.style.colorScheme=next;html.style.background=next==='dark'?'#080d1a':'#f8fafc';document.getElementById('theme-btn').textContent=d?'☀️':'🌙';localStorage.setItem('karus_theme',next);const m=document.querySelector('meta[name="color-scheme"]');if(m)m.content=next;Object.values(charts).forEach(c=>{if(c)c.update();});}
 
 // ── NOTIFICATIONS ──
 function addNotif(msg,type='info'){notifications.unshift({id:Date.now(),msg,type,time:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}),read:false});if(notifications.length>50)notifications=notifications.slice(0,50);const b=document.getElementById('notif-badge');if(b)b.style.display='block';renderNotifList();}
