@@ -538,6 +538,24 @@ select.filter-sel{background:var(–s2);border:1px solid var(–border);color:va
 .timeline-notes{font-size:.75rem;color:var(–slate);line-height:1.5;margin-top:.25rem;}
 .timeline-api{font-family:var(–font-mono);font-size:.78rem;color:var(–gold2);font-weight:600;margin-top:.2rem;}
 
+/* ── COACHING INSIGHTS ── */
+.coach-need-row{display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(–border);}
+.coach-need-row:last-child{border-bottom:none;}
+.coach-need-label{flex:1;font-size:.8rem;color:var(–text);}
+.coach-need-val{font-family:var(–font-mono);font-size:.85rem;font-weight:700;}
+.coach-need-val.ok{color:var(–green);}
+.coach-need-val.warn{color:var(–amber);}
+.coach-need-val.bad{color:var(–red);}
+.coach-bar-row{display:flex;align-items:center;gap:.75rem;padding:.55rem 0;border-bottom:1px solid var(–border);}
+.coach-bar-row:last-child{border-bottom:none;}
+.coach-bar-label{font-size:.78rem;color:var(–text);width:80px;flex-shrink:0;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.coach-bar-wrap{flex:1;height:6px;background:var(–s2);border-radius:3px;overflow:hidden;}
+.coach-bar-fill{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.coach-bar-pct{font-family:var(–font-mono);font-size:.72rem;width:38px;text-align:right;flex-shrink:0;font-weight:600;}
+.coach-bar-cnt{font-size:.65rem;color:var(–slate);width:44px;text-align:right;flex-shrink:0;}
+.coach-insight-box{background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.15);border-radius:10px;padding:.7rem 1rem;font-size:.75rem;color:var(–text);line-height:1.6;margin:.5rem 0 .25rem;}
+.coach-insight-box strong{color:var(–gold);}
+
 /* ── ADMIN ── */
 .admin-tab{background:linear-gradient(135deg,rgba(239,68,68,.15),rgba(239,68,68,.08));border:1px solid rgba(239,68,68,.25);color:var(–red) !important;}
 .admin-tab.active{color:var(–red) !important;}
@@ -676,6 +694,40 @@ select.filter-sel{background:var(–s2);border:1px solid var(–border);color:va
   <div class="grid-2">
     <div class="card"><div class="card-header"><div class="card-title">Reschedule Ratio / Month</div></div><div class="chart-wrap sm"><canvas id="chart-ratio-reschedule"></canvas></div></div>
     <div class="card"><div class="card-header"><div class="card-title">Target vs Actual</div></div><div class="chart-wrap sm"><canvas id="chart-target"></canvas></div></div>
+  </div>
+
+  <!-- COACHING SECTION -->
+
+  <div style="margin-top:1.25rem">
+    <div style="font-family:var(--font-head);font-size:.72rem;font-weight:700;color:var(--slate);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem">🎓 Performance Coaching</div>
+    <div class="card mb-1" id="coach-target-card">
+      <div class="card-header">
+        <div class="card-title">🎯 Meetings Needed to Hit Target</div>
+        <span id="coach-target-badge" style="font-size:.7rem;font-weight:700;padding:.25rem .7rem;border-radius:20px"></span>
+      </div>
+      <div id="coach-target-body"></div>
+    </div>
+    <div class="grid-2 mb-1">
+      <div class="card">
+        <div class="card-header"><div class="card-title">📈 Close Rate Trend</div></div>
+        <div class="chart-wrap sm"><canvas id="chart-close-trend"></canvas></div>
+        <div id="coach-close-insight" style="padding:.6rem 0 .25rem;font-size:.75rem;color:var(--slate);line-height:1.5;margin-top:.25rem"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">🔄 Follow-up Effectiveness</div></div>
+        <div id="coach-followup-body" style="padding:.25rem 0"></div>
+      </div>
+    </div>
+    <div class="grid-2 mb-1">
+      <div class="card">
+        <div class="card-header"><div class="card-title">🏆 Close Rate by Product</div></div>
+        <div id="coach-product-body" style="padding:.25rem 0"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">📍 Close Rate by Source</div></div>
+        <div id="coach-source-body" style="padding:.25rem 0"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1373,6 +1425,119 @@ function renderDashboard(){
 
   const act=MONTHS.map(m=>targets[m]?.actual||0),gls=MONTHS.map(m=>targets[m]?.target||10000);
   makeChart('chart-target',{type:'bar',data:{labels:MONTHS,datasets:[{label:'Actual',data:act,backgroundColor:act.map((a,i)=>a>=gls[i]?'rgba(34,197,94,.55)':'rgba(245,158,11,.55)'),borderColor:act.map((a,i)=>a>=gls[i]?'#22c55e':'#f59e0b'),borderWidth:1,borderRadius:4},{label:'Target',data:gls,type:'line',borderColor:'rgba(201,168,76,.6)',borderWidth:1.5,borderDash:[5,3],pointRadius:0,fill:false,tension:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#94a3b8',font:{size:10},padding:10,usePointStyle:true}},tooltip:{...TT}},scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#64748b',font:{size:10},callback:v=>'€'+v.toLocaleString()},grid:{color:'rgba(255,255,255,.04)'},border:{display:false},beginAtZero:true}}}});
+
+  renderCoachingInsights(yr, yrMeets, yrSales, nowMo);
+}
+
+// ── COACHING INSIGHTS ──
+function renderCoachingInsights(yr, yrMeets, yrSales, nowMo){
+  const moTarget = window.targets[MONTHS[nowMo-1]]?.target || 10000;
+  const moAPI = yrSales.filter(s=>getSaleDateMonth(s)===nowMo).reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);
+  const remaining = Math.max(0, moTarget - moAPI);
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // ── 1. MEETINGS NEEDED ──
+  const closedMeets = yrMeets.filter(m=>['Meeting Close','Closed'].includes(m.status));
+  const totalWithStatus = yrMeets.filter(m=>m.status&&m.status!=='').length;
+  const closeRate = totalWithStatus > 0 ? closedMeets.length / totalWithStatus : 0;
+  const avgAPIPerClose = closedMeets.length > 0
+    ? yrSales.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0) / closedMeets.length
+    : (yrSales.length > 0 ? yrSales.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0)/yrSales.length : 1000);
+  const meetsNeeded = closeRate > 0 && avgAPIPerClose > 0 ? Math.ceil(remaining / (closeRate * avgAPIPerClose)) : '—';
+  const onTrack = moAPI >= moTarget;
+  const badge = document.getElementById('coach-target-badge');
+  badge.textContent = onTrack ? '✓ On Target' : `${remaining > 0 ? fmt(remaining,0)+' to go' : 'Achieved!'}`;
+  badge.style.background = onTrack ? 'rgba(34,197,94,.12)' : 'rgba(245,158,11,.12)';
+  badge.style.color = onTrack ? 'var(--green)' : 'var(--amber)';
+  badge.style.border = onTrack ? '1px solid rgba(34,197,94,.25)' : '1px solid rgba(245,158,11,.25)';
+  document.getElementById('coach-target-body').innerHTML = onTrack
+    ? `<div class="coach-insight-box">🎉 <strong>You've hit ${MONTHS[nowMo-1]}'s target!</strong> You're €${Math.abs(moAPI-moTarget).toLocaleString()} over. Keep going — every extra sale builds your year.</div>`
+    : `<div class="coach-need-row"><span class="coach-need-label">My API this month</span><span class="coach-need-val ${moAPI>0?'ok':'warn'}">${fmt(moAPI,0)}</span></div>
+       <div class="coach-need-row"><span class="coach-need-label">Monthly target</span><span class="coach-need-val">${fmt(moTarget,0)}</span></div>
+       <div class="coach-need-row"><span class="coach-need-label">Remaining to target</span><span class="coach-need-val bad">${fmt(remaining,0)}</span></div>
+       <div class="coach-need-row"><span class="coach-need-label">Your close rate</span><span class="coach-need-val">${(closeRate*100).toFixed(0)}%</span></div>
+       <div class="coach-need-row"><span class="coach-need-label">Avg API per close</span><span class="coach-need-val">${fmt(avgAPIPerClose,0)}</span></div>
+       <div class="coach-need-row" style="background:rgba(201,168,76,.06);margin:0 -.1rem;padding:.75rem .1rem;border-radius:8px;border:none"><span class="coach-need-label" style="font-weight:700;color:var(--white)">Meetings needed to close gap</span><span class="coach-need-val warn" style="font-size:1.1rem">${meetsNeeded}</span></div>
+       <div style="font-size:.72rem;color:var(--slate);margin-top:.6rem">Based on your ${(closeRate*100).toFixed(0)}% close rate and ${fmt(avgAPIPerClose,0)} avg API per closed meeting</div>`;
+
+  // ── 2. CLOSE RATE TREND ──
+  const closeTrend = MONTHS.map((_,i) => {
+    const moM = yrMeets.filter(m=>getMeetMonth(m)===i+1&&m.status&&m.status!=='');
+    const moCl = moM.filter(m=>['Meeting Close','Closed'].includes(m.status));
+    return moM.length >= 2 ? parseFloat(((moCl.length/moM.length)*100).toFixed(1)) : null;
+  });
+  const trendData = closeTrend.map(v => v === null ? 0 : v);
+  const trendLabels = MONTHS;
+  makeChart('chart-close-trend',{type:'line',data:{labels:trendLabels,datasets:[{data:trendData,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.08)',borderWidth:2,pointRadius:trendData.map((_,i)=>closeTrend[i]!==null?4:0),pointBackgroundColor:'#22c55e',fill:true,tension:.35,spanGaps:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>`${c.parsed.y.toFixed(1)}% close rate`}}},scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#64748b',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.04)'},border:{display:false},beginAtZero:true,max:100}}}});
+  // Trend insight
+  const validTrend = closeTrend.filter(v=>v!==null);
+  let trendInsight = '';
+  if(validTrend.length >= 2){
+    const last = validTrend[validTrend.length-1], prev = validTrend[validTrend.length-2];
+    const diff = last - prev;
+    if(diff > 5) trendInsight = `📈 <strong style="color:var(--green)">Improving</strong> — up ${diff.toFixed(0)}pp from last month. Keep doing what you're doing.`;
+    else if(diff < -5) trendInsight = `📉 <strong style="color:var(--red)">Dropping</strong> — down ${Math.abs(diff).toFixed(0)}pp from last month. Review recent no-sales: any patterns?`;
+    else trendInsight = `➡️ <strong style="color:var(--gold)">Stable</strong> at ~${last.toFixed(0)}%. Your overall average is ${(validTrend.reduce((a,v)=>a+v,0)/validTrend.length).toFixed(0)}%.`;
+  } else { trendInsight = 'Not enough data yet — needs 2+ months with at least 2 meetings each.'; }
+  document.getElementById('coach-close-insight').innerHTML = `<div class="coach-insight-box">${trendInsight}</div>`;
+
+  // ── 3. FOLLOW-UP EFFECTIVENESS ──
+  const fuMeets = yrMeets.filter(m=>m.status==='Follow Up'&&m.followUpDate);
+  const fuDone = fuMeets.filter(m=>new Date(m.followUpDate)<=today);
+  const fuConverted = fuDone.filter(m=>{
+    // Find if this client later had a close
+    const clientName = m.name;
+    const fuDate = new Date(m.followUpDate);
+    return yrMeets.some(m2=>m2.name===clientName&&['Meeting Close','Closed'].includes(m2.status)&&new Date(m2.date)>=fuDate);
+  });
+  const fuPending = fuMeets.filter(m=>new Date(m.followUpDate)>today);
+  const fuRate = fuDone.length > 0 ? fuConverted.length/fuDone.length : 0;
+  document.getElementById('coach-followup-body').innerHTML = `
+    <div class="coach-need-row"><span class="coach-need-label">Total follow-ups set</span><span class="coach-need-val">${fuMeets.length}</span></div>
+    <div class="coach-need-row"><span class="coach-need-label">Follow-ups due & done</span><span class="coach-need-val">${fuDone.length}</span></div>
+    <div class="coach-need-row"><span class="coach-need-label">Converted to close</span><span class="coach-need-val ${fuConverted.length>0?'ok':'warn'}">${fuConverted.length}</span></div>
+    <div class="coach-need-row"><span class="coach-need-label">Follow-up → close rate</span><span class="coach-need-val ${fuRate>=.3?'ok':fuRate>=.15?'warn':'bad'}">${(fuRate*100).toFixed(0)}%</span></div>
+    <div class="coach-need-row"><span class="coach-need-label">Pending (future dates)</span><span class="coach-need-val ${fuPending.length>0?'warn':''}">${fuPending.length}</span></div>
+    ${fuPending.length>0?`<div style="font-size:.72rem;color:var(--slate);margin-top:.4rem">Next follow-up: ${fuPending.sort((a,b)=>new Date(a.followUpDate)-new Date(b.followUpDate))[0]?.followUpDate||'—'}</div>`:''}`;
+
+  // ── 4. CLOSE RATE BY PRODUCT & SOURCE ──
+  const products = ['PPPWP','PPPUL','ULSP','FP'];
+  const prodColors = {PPPWP:'#60a5fa',PPPUL:'#a78bfa',ULSP:'#14b8a6',FP:'#f59e0b'};
+  const prodRows = products.map(p=>{
+    const pMeets = yrMeets.filter(m=>(m.product1===p||m.product2===p)&&m.status&&m.status!=='');
+    const pClose = pMeets.filter(m=>['Meeting Close','Closed'].includes(m.status));
+    const rate = pMeets.length > 0 ? pClose.length/pMeets.length : 0;
+    return {p, rate, meetings:pMeets.length, closes:pClose.length, color:prodColors[p]};
+  }).filter(x=>x.meetings>0).sort((a,b)=>b.rate-a.rate);
+  const maxProd = Math.max(...prodRows.map(x=>x.rate), 0.01);
+  document.getElementById('coach-product-body').innerHTML = prodRows.length
+    ? prodRows.map(x=>`
+      <div class="coach-bar-row">
+        <span class="coach-bar-label" style="color:${x.color}">${x.p}</span>
+        <div class="coach-bar-wrap"><div class="coach-bar-fill" style="width:${(x.rate/maxProd*100).toFixed(0)}%;background:${x.color}88"></div></div>
+        <span class="coach-bar-pct" style="color:${x.color}">${(x.rate*100).toFixed(0)}%</span>
+        <span class="coach-bar-cnt">${x.closes}/${x.meetings}</span>
+      </div>`).join('')
+    : '<div style="color:var(--slate);font-size:.82rem;padding:.75rem">No meeting data yet</div>';
+
+  const srcMap = {};
+  yrMeets.filter(m=>m.source&&m.status&&m.status!=='').forEach(m=>{
+    if(!srcMap[m.source]) srcMap[m.source]={total:0,closed:0};
+    srcMap[m.source].total++;
+    if(['Meeting Close','Closed'].includes(m.status)) srcMap[m.source].closed++;
+  });
+  const srcRows = Object.entries(srcMap).map(([src,v])=>({src,rate:v.closed/v.total,closes:v.closed,meetings:v.total})).filter(x=>x.meetings>=2).sort((a,b)=>b.rate-a.rate);
+  const maxSrc = Math.max(...srcRows.map(x=>x.rate), 0.01);
+  document.getElementById('coach-source-body').innerHTML = srcRows.length
+    ? srcRows.slice(0,6).map((x,i)=>{
+        const color = i===0?'var(--green)':i===srcRows.length-1&&srcRows.length>1?'var(--red)':'var(--teal)';
+        return `<div class="coach-bar-row">
+          <span class="coach-bar-label">${x.src}</span>
+          <div class="coach-bar-wrap"><div class="coach-bar-fill" style="width:${(x.rate/maxSrc*100).toFixed(0)}%;background:${color};opacity:.7"></div></div>
+          <span class="coach-bar-pct" style="color:${color}">${(x.rate*100).toFixed(0)}%</span>
+          <span class="coach-bar-cnt">${x.closes}/${x.meetings}</span>
+        </div>`;}).join('')
+    : '<div style="color:var(--slate);font-size:.82rem;padding:.75rem">Need 2+ meetings per source</div>';
 }
 
 // ── SALES ──
