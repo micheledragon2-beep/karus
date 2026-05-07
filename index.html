@@ -40,7 +40,7 @@ input,select,textarea,button{-webkit-tap-highlight-color:transparent;}button{tou
 .auth-field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.1);}
 .auth-btn{width:100%;background:linear-gradient(135deg,var(--gold) 0%,var(--gold2) 100%);color:#080d1a;border:none;border-radius:10px;padding:.9rem;font-family:var(--font-head);font-size:1rem;font-weight:700;cursor:pointer;margin-top:.5rem;transition:all .2s var(--ease);}
 .auth-btn:active{transform:scale(.98);}
-.auth-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--red);border-radius:10px;padding:.7rem .9rem;font-size:.8rem;margin-bottom:.9rem;display:none;}.auth-error.show{display:block;}
+.auth-error{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);color:#ff6b6b;border-radius:10px;padding:.8rem .9rem;font-size:.85rem;font-weight:600;margin-bottom:.9rem;display:none;text-align:center;}.auth-error.show{display:block;}
 .app-header{background:var(--s1);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:stretch;position:sticky;top:0;z-index:200;height:var(--nav-h);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
 .logo{display:flex;align-items:center;gap:10px;padding-right:1.5rem;border-right:1px solid var(--border);flex-shrink:0;}
 .logo-name{font-family:var(--font-head);font-size:1.05rem;font-weight:800;background:linear-gradient(135deg,var(--gold) 0%,var(--gold2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.02em;}
@@ -357,8 +357,8 @@ select.filter-sel{background:var(--s2);border:1px solid var(--border);color:var(
     <div class="auth-error" id="auth-error"></div>
     <div id="auth-login-form">
       <div class="auth-field"><label>Email</label><input type="email" id="login-email" placeholder="your@email.com" autocomplete="email" autocapitalize="none"></div>
-      <div class="auth-field"><label>Password</label><input type="password" id="login-password" placeholder="Password" autocomplete="current-password"></div>
-      <button class="auth-btn" onclick="doLogin()">Sign In</button>
+      <div class="auth-field"><label>Password</label><input type="password" id="login-password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="auth-btn" id="signin-btn" onclick="doLogin()">Sign In</button>
     </div>
     <div style="text-align:center;margin-top:1rem;font-size:.72rem;color:var(--slate)">No account? Contact your administrator.</div>
   </div>
@@ -737,3 +737,91 @@ select.filter-sel{background:var(--s2);border:1px solid var(--border);color:var(
     <div id="admin-users-list"><div style="color:var(--slate);font-size:.82rem;padding:1rem">Loading users&hellip;</div></div>
   </div>
 </div>
+
+<!-- FIREBASE COMPAT SDK - works on all origins including GitHub Pages -->
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+(function(){
+  firebase.initializeApp({
+    apiKey:"AIzaSyCoaAEMSJDBI22iy5IovGWkx4QBrG09hQc",
+    authDomain:"year-planner-bbc5a.firebaseapp.com",
+    projectId:"year-planner-bbc5a",
+    storageBucket:"year-planner-bbc5a.firebasestorage.app",
+    messagingSenderId:"182620827791",
+    appId:"1:182620827791:web:a43b5d7e0e9c53178b40fa"
+  });
+  const auth=firebase.auth();
+  const db=firebase.firestore();
+  const DEF={meetings:[],sales:[],targets:{Jan:{target:10000,actual:0},Feb:{target:10000,actual:0},Mar:{target:10000,actual:0},Apr:{target:10000,actual:0},May:{target:10000,actual:0},Jun:{target:10000,actual:0},Jul:{target:10000,actual:0},Aug:{target:10000,actual:0},Sep:{target:10000,actual:0},Oct:{target:10000,actual:0},Nov:{target:10000,actual:0},Dec:{target:10000,actual:0}},annualTarget:120000,productTargets:{PPPWP:50000,PPPUL:50000,ULSP:10000,FP:10000}};
+  let saveTimeout=null;
+  window._auth=auth;window._db=db;window._currentUser=null;
+  const fe=c=>({'auth/user-not-found':'No account found.','auth/wrong-password':'Incorrect password.','auth/invalid-email':'Invalid email.','auth/email-already-in-use':'Email already in use.','auth/weak-password':'Password must be 6+ characters.','auth/invalid-credential':'Incorrect email or password.','auth/too-many-requests':'Too many attempts. Try again later.'}[c]||'Something went wrong. Please try again.');
+  window.doLogin=async()=>{
+    const e=document.getElementById('login-email').value.trim(),p=document.getElementById('login-password').value;
+    if(!e||!p){showAuthError('Please enter your email and password.');return;}
+    showAuthError('');
+    const btn=document.querySelector('.auth-btn');
+    if(btn){btn.textContent='Signing in...';btn.disabled=true;}
+    try{
+      await auth.signInWithEmailAndPassword(e,p);
+    }catch(err){
+      console.error('Login error:',err.code,err.message);
+      showAuthError(fe(err.code));
+      if(btn){btn.textContent='Sign In';btn.disabled=false;}
+    }
+  };
+  window.doSignOut=async()=>{await auth.signOut();};
+  window.saveData=async()=>{
+    if(!window._currentUser)return;
+    try{localStorage.setItem('karus_bak',JSON.stringify({meetings:window.meetings,sales:window.sales,targets:window.targets}));}catch(e){}
+    if(window._offline){window._pendingSync=true;showSaveInd('saving');setTimeout(()=>{const el=document.getElementById('save-ind');if(el)el.textContent='&#x1F4BE; Saved locally';},600);return;}
+    clearTimeout(saveTimeout);showSaveInd('saving');
+    saveTimeout=setTimeout(async()=>{
+      try{
+        await db.collection('users').doc(window._currentUser.uid).set({meetings:window.meetings,sales:window.sales,targets:window.targets,annualTarget:window.ANNUAL_TARGET,productTargets:window.productTargets});
+        showSaveInd('saved');setTimeout(()=>hideSaveInd(),2200);
+      }catch(e){console.error(e);}
+    },900);
+  };
+  auth.onAuthStateChanged(async(user)=>{
+    if(user){
+      window._currentUser=user;
+      document.getElementById('header-email').textContent=user.displayName||user.email;
+      document.getElementById('today-name').textContent=(user.displayName||user.email).split(' ')[0];
+      window._isAdmin=user.email.toLowerCase()==='micheledimech@karus.mt';
+      if(window._isAdmin)document.getElementById('admin-nav-tab').style.display='';
+      document.getElementById('auth-screen').style.display='none';
+      document.getElementById('app-header').style.display='flex';
+      document.getElementById('bot-nav').style.display='flex';
+      document.querySelectorAll('.page').forEach(p=>p.style.display='');
+      const snap=await db.collection('users').doc(user.uid).get();
+      if(snap.exists){
+        const d=snap.data();
+        window.meetings=d.meetings||[];window.sales=d.sales||[];window.targets=d.targets||DEF.targets;
+        window.ANNUAL_TARGET=d.annualTarget||120000;window.productTargets=d.productTargets||DEF.productTargets;
+      }else{
+        window.meetings=[];window.sales=[];window.targets=JSON.parse(JSON.stringify(DEF.targets));
+        window.ANNUAL_TARGET=120000;window.productTargets=JSON.parse(JSON.stringify(DEF.productTargets));
+        await db.collection('users').doc(user.uid).set(DEF);
+      }
+      renderToday();
+      document.getElementById('quick-add-btn').style.display='flex';
+      setTimeout(()=>runNotifChecks(),2500);
+      toast('Welcome back, '+(user.displayName||'').split(' ')[0]+'! &#x1F44B;','success');
+    }else{
+      window._currentUser=null;
+      document.getElementById('auth-screen').style.display='flex';
+      document.getElementById('app-header').style.display='none';
+      document.getElementById('bot-nav').style.display='none';
+      document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+      document.getElementById('quick-add-btn').style.display='none';
+    }
+  });
+})();
+</script>
