@@ -13,7 +13,7 @@
     document.documentElement.setAttribute('data-theme', 'light');
     document.documentElement.style.background = '#f8fafc';
   } else {
-    // Dark — CSS default, just ensure attribute is set
+    // Dark -- CSS default, just ensure attribute is set
     document.documentElement.setAttribute('data-theme', 'dark');
     document.documentElement.style.background = '#080d1a';
     document.documentElement.style.colorScheme = 'dark';
@@ -26,7 +26,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
-/* ── BULLETPROOF DARK THEME — works on iOS Safari, Chrome, Firefox, everywhere ── */
+/* ── BULLETPROOF DARK THEME -- works on iOS Safari, Chrome, Firefox, everywhere ── */
 /* Strategy: hardcode ALL dark values directly. Light mode overrides via [data-theme=light]. */
 :root {
   --font-body:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
@@ -52,7 +52,7 @@
   --shadow:0 2px 12px rgba(0,0,0,0.08);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-/* Hard-set dark on html and body — no variables, no inheritance, no OS override */
+/* Hard-set dark on html and body -- no variables, no inheritance, no OS override */
 html{
   -webkit-text-size-adjust:100%;
   scroll-behavior:smooth;
@@ -70,7 +70,7 @@ body{
   line-height:1.5;
   -webkit-font-smoothing:antialiased;
 }
-/* Light mode overrides — only when explicitly chosen */
+/* Light mode overrides -- only when explicitly chosen */
 [data-theme="light"] html,[data-theme="light"] body,html[data-theme="light"],body[data-theme="light"]{
   background:#f8fafc !important;
   color:#334155 !important;
@@ -637,7 +637,7 @@ select.filter-sel{background:#111d33;border:1px solid rgba(255,255,255,0.09);col
 
 <div class="toast-wrap" id="toast-wrap"></div>
 <div class="save-ind" id="save-ind"></div>
-<div class="offline-banner" id="offline-banner">📡 Offline — changes saved locally</div>
+<div class="offline-banner" id="offline-banner">📡 Offline -- changes saved locally</div>
 
 <!-- AUTH -->
 
@@ -814,7 +814,7 @@ select.filter-sel{background:#111d33;border:1px solid rgba(255,255,255,0.09);col
   <div class="kpi-strip" id="meetings-kpi"></div>
   <div class="outlook-panel">
     <div class="outlook-panel-header">
-      <div class="outlook-panel-title">📅 Outlook Calendar — Click to import</div>
+      <div class="outlook-panel-title">📅 Outlook Calendar -- Click to import</div>
       <div class="cal-controls">
         <button class="cal-nav-btn" onclick="calNav(-1)">‹</button>
         <span class="cal-week-label" id="cal-week-label"></span>
@@ -880,7 +880,7 @@ select.filter-sel{background:#111d33;border:1px solid rgba(255,255,255,0.09);col
 <div id="page-stats" class="page" style="display:none">
   <div class="kpi-strip" id="stats-kpi"></div>
   <div class="grid-2 mb-1">
-    <div class="card"><div class="card-header"><div class="card-title">🏆 API by Month — Ranking</div></div><div id="lb-api"></div></div>
+    <div class="card"><div class="card-header"><div class="card-title">🏆 API by Month -- Ranking</div></div><div id="lb-api"></div></div>
     <div class="card"><div class="card-header"><div class="card-title">🎯 Close Rate by Month</div></div><div id="lb-close"></div></div>
   </div>
   <div class="card mb-1">
@@ -968,10 +968,10 @@ select.filter-sel{background:#111d33;border:1px solid rgba(255,255,255,0.09);col
       <div class="field"><label>Full Name</label><input type="text" id="m-name"></div>
       <div class="field"><label>Phone</label><input type="tel" id="m-phone"></div>
       <div class="field"><label>Source</label><input type="text" id="m-source"></div>
-      <div class="field"><label>Product 1</label><select id="m-product1"><option value="">—</option><option>PPPWP</option><option>PPPUL</option><option>ULSP</option><option>FP</option></select></div>
-      <div class="field"><label>Product 2</label><select id="m-product2"><option value="">—</option><option>PPPWP</option><option>PPPUL</option><option>ULSP</option><option>FP</option></select></div>
-      <div class="field"><label>Other PPP</label><select id="m-otherppp"><option value="">—</option><option>IVALIFE</option><option>LIFESTAR</option><option>HSBC</option><option>APS</option><option>No</option></select></div>
-      <div class="field"><label>Status</label><select id="m-status"><option value="">—</option><option>Meeting Close</option><option>Meeting No Sale</option><option>Meeting Reschedule</option><option>Client No Show</option><option>Client Cancel</option><option>Follow Up</option><option>Second Meeting</option></select></div>
+      <div class="field"><label>Product 1</label><select id="m-product1"><option value="">--</option><option>PPPWP</option><option>PPPUL</option><option>ULSP</option><option>FP</option></select></div>
+      <div class="field"><label>Product 2</label><select id="m-product2"><option value="">--</option><option>PPPWP</option><option>PPPUL</option><option>ULSP</option><option>FP</option></select></div>
+      <div class="field"><label>Other PPP</label><select id="m-otherppp"><option value="">--</option><option>IVALIFE</option><option>LIFESTAR</option><option>HSBC</option><option>APS</option><option>No</option></select></div>
+      <div class="field"><label>Status</label><select id="m-status"><option value="">--</option><option>Meeting Close</option><option>Meeting No Sale</option><option>Meeting Reschedule</option><option>Client No Show</option><option>Client Cancel</option><option>Follow Up</option><option>Second Meeting</option></select></div>
       <div class="field"><label>Seen</label><select id="m-seen"><option value="false">No</option><option value="true">Yes</option></select></div>
       <div class="field"><label>Follow Up Date</label><input type="date" id="m-followup"></div>
       <div class="field"><label>Re-engage Date</label><input type="date" id="m-reengage"></div>
@@ -997,7 +997,7 @@ select.filter-sel{background:#111d33;border:1px solid rgba(255,255,255,0.09);col
       <div class="field"><label>Full Name</label><input type="text" id="s-name"></div>
       <div class="field"><label>ID Card</label><input type="text" id="s-idcard"></div>
       <div class="field"><label>Phone</label><input type="tel" id="s-phone"></div>
-      <div class="field"><label>Product</label><select id="s-product"><option value="">—</option><option>PPPWP</option><option>PPPUL</option><option>ULSP</option><option>FP</option></select></div>
+      <div class="field"><label>Product</label><select id="s-product"><option value="">--</option><option>PPPWP</option><option>PPPUL</option><option>ULSP</option><option>FP</option></select></div>
       <div class="field"><label>Frequency</label><select id="s-freq"><option>Monthly</option><option>Quarterly</option><option>Annual</option></select></div>
       <div class="field"><label>Term (yrs)</label><input type="number" id="s-term" min="1" max="40" oninput="calcCommission()"></div>
       <div class="field"><label>Source</label><input type="text" id="s-source"></div>
@@ -1012,7 +1012,7 @@ select.filter-sel{background:#111d33;border:1px solid rgba(255,255,255,0.09);col
       <div class="field"><label>Tii Rate</label><input type="number" step="0.01" id="s-tiirate" value="0.35" oninput="calcCommission()"></div>
       <div class="field"><label>CCG (€)</label><input type="number" id="s-ccg" readonly></div>
       <div class="field"><label>Commission (€)</label><input type="number" id="s-commission" readonly></div>
-      <div class="field"><label>Paid Month</label><select id="s-paidmonth"><option value="">—</option><option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option><option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option></select></div>
+      <div class="field"><label>Paid Month</label><select id="s-paidmonth"><option value="">--</option><option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option><option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option></select></div>
     </div>
     <div class="modal-actions">
       <button class="btn-danger btn-sm" id="sale-delete-btn" onclick="deleteSale()" style="display:none">Delete</button>
@@ -1120,7 +1120,7 @@ Chart.defaults.font.family="'Inter',-apple-system,BlinkMacSystemFont,sans-serif"
 Chart.defaults.font.size=11;
 
 // ── OFFLINE ──
-window.addEventListener('online',()=>{window._offline=false;document.getElementById('offline-banner').style.display='none';if(window._pendingSync&&window._currentUser){saveData();window._pendingSync=false;toast('Back online — synced!','success');}});
+window.addEventListener('online',()=>{window._offline=false;document.getElementById('offline-banner').style.display='none';if(window._pendingSync&&window._currentUser){saveData();window._pendingSync=false;toast('Back online -- synced!','success');}});
 window.addEventListener('offline',()=>{window._offline=true;document.getElementById('offline-banner').style.display='block';toast('You are offline. Changes saved locally.','warning');});
 
 // ── TOAST ──
@@ -1149,7 +1149,7 @@ function getSalesForYear(yr){return sales.filter(s=>(s.date||'').startsWith(Stri
 function getMeetingsForYear(yr){return meetings.filter(m=>{const d=m.date||'';return d.startsWith(String(yr))||d.includes('/'+String(yr).slice(2));});}
 function computeCommRate(t){const n=parseFloat(t)||0;return n>=20?.5:Math.max(0,.5-(20-n)*.02);}
 function calcCommission(){const term=document.getElementById('s-term').value,myAPI=document.getElementById('s-myapi').value,tr=document.getElementById('s-tiirate').value;const cr=computeCommRate(term),ccg=(parseFloat(myAPI)||0)*cr,comm=ccg*(parseFloat(tr)||.35);document.getElementById('s-commrate').value=(cr*100).toFixed(0)+'%';document.getElementById('s-ccg').value=ccg.toFixed(2);document.getElementById('s-commission').value=comm.toFixed(2);}
-function statusBadge(s){const m={'Closed':'closed','Meeting Close':'meetclose','Meeting No Sale':'meetnosale','Meeting Reschedule':'meetreschedule','Client No Show':'clientnoshow','Client Cancel':'clientcancel','Follow Up':'followup','Second Meeting':'second','No Show':'noshow','Nothing':'nothing','Cancelled':'cancelled'};return`<span class="badge badge-${m[s]||'nothing'}">${s||'—'}</span>`;}
+function statusBadge(s){const m={'Closed':'closed','Meeting Close':'meetclose','Meeting No Sale':'meetnosale','Meeting Reschedule':'meetreschedule','Client No Show':'clientnoshow','Client Cancel':'clientcancel','Follow Up':'followup','Second Meeting':'second','No Show':'noshow','Nothing':'nothing','Cancelled':'cancelled'};return`<span class="badge badge-${m[s]||'nothing'}">${s||'--'}</span>`;}
 function kpi(cls,label,value,sub=''){return`<div class="kpi ${cls}"><div class="kpi-accent"></div><div class="kpi-label">${label}</div><div class="kpi-value">${value}</div>${sub?`<div class="kpi-sub">${sub}</div>`:''}</div>`;}
 function makeChart(id,cfg){if(charts[id])charts[id].destroy();const el=document.getElementById(id);if(!el)return;charts[id]=new Chart(el.getContext('2d'),cfg);}
 const TT={backgroundColor:'rgba(8,13,26,.95)',borderColor:'rgba(255,255,255,.1)',borderWidth:1,padding:10,cornerRadius:8};
@@ -1188,7 +1188,7 @@ async function renderCalendar(){
       const dayEvs=evs.filter(ev=>new Date(ev.start.dateTime||ev.start.date).toDateString()===day.toDateString());
       h+=`<div class="cal-day"><div class="cal-day-hdr">${DAYS[i]}</div><div class="${isToday?'cal-day-num today':'cal-day-num'}">${day.getDate()}</div>`;
       dayEvs.forEach(ev=>{const s=new Date(ev.start.dateTime||ev.start.date);const t=ev.start.dateTime?s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'All day';h+=`<div class="cal-event" onclick="importOutlookEvent(${JSON.stringify(ev).replace(/"/g,'&quot;')})" title="${ev.subject||''}"><div class="cal-event-time">${t}</div><div class="cal-event-title">${ev.subject||'(No title)'}</div></div>`;});
-      if(!dayEvs.length)h+=`<div style="font-size:.6rem;color:var(--border);text-align:center;padding:.3rem">—</div>`;
+      if(!dayEvs.length)h+=`<div style="font-size:.6rem;color:var(--border);text-align:center;padding:.3rem">--</div>`;
       h+='</div>';
     });
     h+='</div>';cont.innerHTML=h;
@@ -1206,7 +1206,7 @@ function importOutlookEvent(ev){
   document.getElementById('m-name').value=name;
   document.getElementById('meet-modal-title').textContent='Import from Outlook';
   document.getElementById('meet-modal-subtitle').textContent=`📅 "${ev.subject}" · ${s.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}`;
-  toast('Outlook event imported — fill in the details','info');
+  toast('Outlook event imported -- fill in the details','info');
 }
 
 // ── THEME ──
@@ -1224,7 +1224,7 @@ function runNotifChecks(){
   const ma=sales.filter(s=>getSaleDateMonth(s)===nowMo).reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);
   const mt=window.targets[MONTHS[nowMo-1]]?.target||10000;
   if(ma>=mt)addNotif(`🎯 Monthly target hit! ${fmt(ma,0)} achieved`,'success');
-  else if(ma>=mt*.8)addNotif(`🔥 80% of monthly target — ${fmt(ma,0)} / ${fmt(mt,0)}`,'info');
+  else if(ma>=mt*.8)addNotif(`🔥 80% of monthly target -- ${fmt(ma,0)} / ${fmt(mt,0)}`,'info');
   const unpaid=sales.filter(s=>!s.paid).reduce((a,s)=>a+(parseFloat(s.commission)||0),0);
   if(unpaid>0)addNotif(`💰 ${fmt(unpaid,0)} commission pending payment`,'info');
 }
@@ -1267,7 +1267,7 @@ function showPage(id,btn){
 }
 
 // ══════════════════════════════
-//  TODAY — THE MOST IMPORTANT PAGE
+//  TODAY -- THE MOST IMPORTANT PAGE
 // ══════════════════════════════
 function renderToday(){
   const now=new Date();
@@ -1286,9 +1286,9 @@ function renderToday(){
   // ── DATA QUALITY CHECK ──
   const issues=[];
   const noStatus=meetings.filter(m=>!m.status||m.status==='Nothing'||m.status==='No Show');
-  if(noStatus.length)issues.push(`${noStatus.length} meeting(s) have vague or missing status (e.g. "Nothing", "No Show") — consider updating to a proper status`);
+  if(noStatus.length)issues.push(`${noStatus.length} meeting(s) have vague or missing status (e.g. "Nothing", "No Show") -- consider updating to a proper status`);
   const badDates=meetings.filter(m=>m.date&&!/^\d{4}-\d{2}-\d{2}$/.test(m.date));
-  if(badDates.length)issues.push(`${badDates.length} meeting(s) have inconsistent date formats — dates should be YYYY-MM-DD`);
+  if(badDates.length)issues.push(`${badDates.length} meeting(s) have inconsistent date formats -- dates should be YYYY-MM-DD`);
   const noPhone=meetings.filter(m=>m.name&&(!m.phone||m.phone===''));
   if(noPhone.length>5)issues.push(`${noPhone.length} meetings have no phone number recorded`);
   const noIDCard=sales.filter(s=>!s.idCard||s.idCard==='');
@@ -1352,7 +1352,7 @@ function renderToday(){
       <div class="today-section-hdr">🔄 Re-engage Today <span class="cnt">${reengageDue.length}</span></div>
       ${reengageDue.slice(0,5).map(m=>{const ri=meetings.indexOf(m);return `<div class="today-meet-row" style="border-left:3px solid var(--teal)" onclick="openMeetModal(${ri})">
         <div class="t-meet-dot" style="background:var(--teal)"></div>
-        <div style="flex:1;min-width:0"><div class="t-meet-name">${m.name}</div><div class="t-meet-meta">${m.status||'—'} · Last: ${m.date||'—'}</div></div>
+        <div style="flex:1;min-width:0"><div class="t-meet-name">${m.name}</div><div class="t-meet-meta">${m.status||'--'} · Last: ${m.date||'--'}</div></div>
         <div class="t-meet-right"><span style="font-size:.68rem;color:var(--teal);font-weight:600;font-family:var(--font-mono)">Re-engage</span></div>
       </div>`;}).join('')}
     </div>`;
@@ -1376,7 +1376,7 @@ function renderToday(){
       const color=STATUS_COLORS[m.status]||'#64748b';
       return`<div class="today-meet-row today-event" onclick="openMeetModal(${ri})">
         <div class="t-meet-dot" style="background:${color}"></div>
-        <div style="flex:1;min-width:0"><div class="t-meet-name">${m.name}</div><div class="t-meet-meta">${m.phone||m.source||'—'} ${m.product1?'· '+m.product1:''}</div></div>
+        <div style="flex:1;min-width:0"><div class="t-meet-name">${m.name}</div><div class="t-meet-meta">${m.phone||m.source||'--'} ${m.product1?'· '+m.product1:''}</div></div>
         <div class="t-meet-right">${statusBadge(m.status)}</div>
       </div>`;
     }).join('');
@@ -1392,11 +1392,11 @@ function renderToday(){
       const daysOver=Math.floor((new Date()-new Date(m.followUpDate))/(1000*60*60*24));
       return`<div class="today-meet-row overdue" onclick="openMeetModal(${ri})">
         <div class="t-meet-dot" style="background:var(--amber)"></div>
-        <div style="flex:1;min-width:0"><div class="t-meet-name">${m.name}</div><div class="t-meet-meta">${m.followUpDate} · ${m.status||'—'}</div></div>
+        <div style="flex:1;min-width:0"><div class="t-meet-name">${m.name}</div><div class="t-meet-meta">${m.followUpDate} · ${m.status||'--'}</div></div>
         <div class="t-meet-right" style="font-family:var(--font-mono);font-size:.68rem;color:var(--amber);font-weight:600">${daysOver===0?'Today':daysOver===1?'1d ago':daysOver+'d ago'}</div>
       </div>`;
     }).join('');
-    if(overdueFollowUps.length>5){document.getElementById('today-fu-list').innerHTML+=`<div style="text-align:center;font-size:.75rem;color:#64748b;padding:.5rem">+${overdueFollowUps.length-5} more — go to Meetings</div>`;}
+    if(overdueFollowUps.length>5){document.getElementById('today-fu-list').innerHTML+=`<div style="text-align:center;font-size:.75rem;color:#64748b;padding:.5rem">+${overdueFollowUps.length-5} more -- go to Meetings</div>`;}
   }else{
     document.getElementById('today-fu-list').innerHTML=`<div class="today-empty"><span class="today-empty-icon">✅</span>No overdue follow-ups</div>`;
   }
@@ -1414,7 +1414,7 @@ function renderToday(){
   document.getElementById('today-week-stats').innerHTML=`
     <div class="stat-row"><span class="stat-row-label">Sales this week</span><span class="stat-row-val">${twS.length}</span></div>
     <div class="stat-row"><span class="stat-row-label">My API this week</span><span class="stat-row-val" style="color:var(--gold2)">${fmt(twAPI,0)}</span></div>
-    <div class="stat-row"><span class="stat-row-label">vs last week</span><span class="stat-row-val" style="color:${apiChg===null?'var(--slate)':apiChg>=0?'var(--green)':'var(--red)'}">${apiChg===null?'—':(apiChg>=0?'↑':'↓')+Math.abs(apiChg).toFixed(0)+'%'}</span></div>
+    <div class="stat-row"><span class="stat-row-label">vs last week</span><span class="stat-row-val" style="color:${apiChg===null?'var(--slate)':apiChg>=0?'var(--green)':'var(--red)'}">${apiChg===null?'--':(apiChg>=0?'↑':'↓')+Math.abs(apiChg).toFixed(0)+'%'}</span></div>
     <div class="stat-row"><span class="stat-row-label">Meetings this week</span><span class="stat-row-val">${twM.length}</span></div>
     <div class="stat-row"><span class="stat-row-label">Closed this week</span><span class="stat-row-val" style="color:var(--green)">${twCl}</span></div>
   `;
@@ -1457,9 +1457,9 @@ function renderDashboard(){
   const twComm=twS.reduce((a,s)=>a+(parseFloat(s.commission)||0),0);
   const twCl=twM.filter(m=>['Meeting Close','Closed'].includes(m.status)).length;
   const apiChg=pwAPI>0?(twAPI-pwAPI)/pwAPI*100:null;
-  document.getElementById('weekly-summary').innerHTML=`<div class="weekly-title">📊 This Week — ${ws.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div><div class="weekly-stats"><div class="weekly-stat"><div class="weekly-val">${twS.length}</div><div class="weekly-lbl">Sales</div></div><div class="weekly-stat"><div class="weekly-val">${fmt(twAPI,0)}</div><div class="weekly-lbl">My API</div>${apiChg!==null?`<div class="weekly-change ${apiChg>=0?'up':'down'}">${apiChg>=0?'↑':'↓'}${Math.abs(apiChg).toFixed(0)}% vs last wk</div>`:'<div class="weekly-change flat">—</div>'}</div><div class="weekly-stat"><div class="weekly-val">${fmt(twComm,0)}</div><div class="weekly-lbl">Commission</div></div><div class="weekly-stat"><div class="weekly-val">${twM.length}</div><div class="weekly-lbl">Meetings</div></div><div class="weekly-stat"><div class="weekly-val">${twCl}</div><div class="weekly-lbl">Closed</div></div></div>`;
+  document.getElementById('weekly-summary').innerHTML=`<div class="weekly-title">📊 This Week -- ${ws.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div><div class="weekly-stats"><div class="weekly-stat"><div class="weekly-val">${twS.length}</div><div class="weekly-lbl">Sales</div></div><div class="weekly-stat"><div class="weekly-val">${fmt(twAPI,0)}</div><div class="weekly-lbl">My API</div>${apiChg!==null?`<div class="weekly-change ${apiChg>=0?'up':'down'}">${apiChg>=0?'↑':'↓'}${Math.abs(apiChg).toFixed(0)}% vs last wk</div>`:'<div class="weekly-change flat">--</div>'}</div><div class="weekly-stat"><div class="weekly-val">${fmt(twComm,0)}</div><div class="weekly-lbl">Commission</div></div><div class="weekly-stat"><div class="weekly-val">${twM.length}</div><div class="weekly-lbl">Meetings</div></div><div class="weekly-stat"><div class="weekly-val">${twCl}</div><div class="weekly-lbl">Closed</div></div></div>`;
 
-  document.getElementById('kpi-strip').innerHTML=kpi('gold','My API — YTD',fmt(myTotal,0),`${yrSales.length} policies`)+kpi('purple',`My API — ${MONTHS[nowMo-1]}`,fmt(myThisMo,0),'this month')+kpi('green','Total CCG',fmt(totalCCG,0),'gross')+kpi('teal',`Payout — ${MONTHS[nowMo-1]}`,fmt(payout,0),`from ${MONTHS[prevMo-1]} sales`)+kpi('amber','Meetings',tot,`${closed} closed · ${pct(closed/Math.max(1,tot))}`)+kpi(rem<=0?'green':'red','To Target',fmt(Math.abs(rem),0),rem<=0?'🎯 Achieved!':'remaining');
+  document.getElementById('kpi-strip').innerHTML=kpi('gold','My API -- YTD',fmt(myTotal,0),`${yrSales.length} policies`)+kpi('purple',`My API -- ${MONTHS[nowMo-1]}`,fmt(myThisMo,0),'this month')+kpi('green','Total CCG',fmt(totalCCG,0),'gross')+kpi('teal',`Payout -- ${MONTHS[nowMo-1]}`,fmt(payout,0),`from ${MONTHS[prevMo-1]} sales`)+kpi('amber','Meetings',tot,`${closed} closed · ${pct(closed/Math.max(1,tot))}`)+kpi(rem<=0?'green':'red','To Target',fmt(Math.abs(rem),0),rem<=0?'🎯 Achieved!':'remaining');
 
   const cbm=MONTHS.map((_,i)=>commForSaleMonth(i+1,yr));
   makeChart('chart-commission',{type:'bar',data:{labels:MONTHS,datasets:[{data:cbm,backgroundColor:cbm.map(v=>v>0?'rgba(201,168,76,.65)':'rgba(201,168,76,.1)'),borderColor:cbm.map(v=>v>0?'rgba(201,168,76,.9)':'rgba(201,168,76,.15)'),borderWidth:1,borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>`€${c.parsed.y.toFixed(2)}`}}},scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#64748b',font:{size:10},callback:v=>'€'+v},grid:{color:'rgba(255,255,255,.04)'},border:{display:false},beginAtZero:true}}}});
@@ -1503,7 +1503,7 @@ function renderCoachingInsights(yr, yrMeets, yrSales, nowMo){
   const avgAPIPerClose = closedMeets.length > 0
     ? yrSales.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0) / closedMeets.length
     : (yrSales.length > 0 ? yrSales.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0)/yrSales.length : 1000);
-  const meetsNeeded = closeRate > 0 && avgAPIPerClose > 0 ? Math.ceil(remaining / (closeRate * avgAPIPerClose)) : '—';
+  const meetsNeeded = closeRate > 0 && avgAPIPerClose > 0 ? Math.ceil(remaining / (closeRate * avgAPIPerClose)) : '--';
   const onTrack = moAPI >= moTarget;
   const badge = document.getElementById('coach-target-badge');
   badge.textContent = onTrack ? '✓ On Target' : `${remaining > 0 ? fmt(remaining,0)+' to go' : 'Achieved!'}`;
@@ -1511,7 +1511,7 @@ function renderCoachingInsights(yr, yrMeets, yrSales, nowMo){
   badge.style.color = onTrack ? 'var(--green)' : 'var(--amber)';
   badge.style.border = onTrack ? '1px solid rgba(34,197,94,.25)' : '1px solid rgba(245,158,11,.25)';
   document.getElementById('coach-target-body').innerHTML = onTrack
-    ? `<div class="coach-insight-box">🎉 <strong>You've hit ${MONTHS[nowMo-1]}'s target!</strong> You're €${Math.abs(moAPI-moTarget).toLocaleString()} over. Keep going — every extra sale builds your year.</div>`
+    ? `<div class="coach-insight-box">🎉 <strong>You've hit ${MONTHS[nowMo-1]}'s target!</strong> You're €${Math.abs(moAPI-moTarget).toLocaleString()} over. Keep going -- every extra sale builds your year.</div>`
     : `<div class="coach-need-row"><span class="coach-need-label">My API this month</span><span class="coach-need-val ${moAPI>0?'ok':'warn'}">${fmt(moAPI,0)}</span></div>
        <div class="coach-need-row"><span class="coach-need-label">Monthly target</span><span class="coach-need-val">${fmt(moTarget,0)}</span></div>
        <div class="coach-need-row"><span class="coach-need-label">Remaining to target</span><span class="coach-need-val bad">${fmt(remaining,0)}</span></div>
@@ -1535,10 +1535,10 @@ function renderCoachingInsights(yr, yrMeets, yrSales, nowMo){
   if(validTrend.length >= 2){
     const last = validTrend[validTrend.length-1], prev = validTrend[validTrend.length-2];
     const diff = last - prev;
-    if(diff > 5) trendInsight = `📈 <strong style="color:var(--green)">Improving</strong> — up ${diff.toFixed(0)}pp from last month. Keep doing what you're doing.`;
-    else if(diff < -5) trendInsight = `📉 <strong style="color:var(--red)">Dropping</strong> — down ${Math.abs(diff).toFixed(0)}pp from last month. Review recent no-sales: any patterns?`;
+    if(diff > 5) trendInsight = `📈 <strong style="color:var(--green)">Improving</strong> -- up ${diff.toFixed(0)}pp from last month. Keep doing what you're doing.`;
+    else if(diff < -5) trendInsight = `📉 <strong style="color:var(--red)">Dropping</strong> -- down ${Math.abs(diff).toFixed(0)}pp from last month. Review recent no-sales: any patterns?`;
     else trendInsight = `➡️ <strong style="color:var(--gold)">Stable</strong> at ~${last.toFixed(0)}%. Your overall average is ${(validTrend.reduce((a,v)=>a+v,0)/validTrend.length).toFixed(0)}%.`;
-  } else { trendInsight = 'Not enough data yet — needs 2+ months with at least 2 meetings each.'; }
+  } else { trendInsight = 'Not enough data yet -- needs 2+ months with at least 2 meetings each.'; }
   document.getElementById('coach-close-insight').innerHTML = `<div class="coach-insight-box">${trendInsight}</div>`;
 
   // ── 3. FOLLOW-UP EFFECTIVENESS ──
@@ -1558,7 +1558,7 @@ function renderCoachingInsights(yr, yrMeets, yrSales, nowMo){
     <div class="coach-need-row"><span class="coach-need-label">Converted to close</span><span class="coach-need-val ${fuConverted.length>0?'ok':'warn'}">${fuConverted.length}</span></div>
     <div class="coach-need-row"><span class="coach-need-label">Follow-up → close rate</span><span class="coach-need-val ${fuRate>=.3?'ok':fuRate>=.15?'warn':'bad'}">${(fuRate*100).toFixed(0)}%</span></div>
     <div class="coach-need-row"><span class="coach-need-label">Pending (future dates)</span><span class="coach-need-val ${fuPending.length>0?'warn':''}">${fuPending.length}</span></div>
-    ${fuPending.length>0?`<div style="font-size:.72rem;color:#64748b;margin-top:.4rem">Next follow-up: ${fuPending.sort((a,b)=>new Date(a.followUpDate)-new Date(b.followUpDate))[0]?.followUpDate||'—'}</div>`:''}`;
+    ${fuPending.length>0?`<div style="font-size:.72rem;color:#64748b;margin-top:.4rem">Next follow-up: ${fuPending.sort((a,b)=>new Date(a.followUpDate)-new Date(b.followUpDate))[0]?.followUpDate||'--'}</div>`:''}`;
 
   // ── 4. CLOSE RATE BY PRODUCT & SOURCE ──
   const products = ['PPPWP','PPPUL','ULSP','FP'];
@@ -1609,10 +1609,10 @@ function renderSales(){
   const filtered=yrSales.filter(s=>{const mq=!q||[s.name,s.idCard,s.product,s.source].some(f=>(f||'').toLowerCase().includes(q));return mq&&(!prod||s.product===prod)&&(!month||String(s.paidMonth)===month);});
   const tAPI=filtered.reduce((a,s)=>a+(parseFloat(s.totalAPI)||0),0);const mAPI=filtered.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);const tCCG=filtered.reduce((a,s)=>a+(parseFloat(s.ccg)||0),0);
   const mThisMo=yrSales.filter(s=>getSaleDateMonth(s)===nowMo).reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);const unpaid=yrSales.filter(s=>!s.paid).reduce((a,s)=>a+(parseFloat(s.commission)||0),0);
-  document.getElementById('sales-kpi').innerHTML=kpi('gold','Total API',fmt(tAPI,0),`${filtered.length} records`)+kpi('purple','My API',fmt(mAPI,0),'personal')+kpi('amber',`My API — ${MONTHS[nowMo-1]}`,fmt(mThisMo,0),'this month')+kpi('teal','CCG',fmt(tCCG,0),'gross')+kpi('red','Unpaid Commission',fmt(unpaid,0),'pending');
+  document.getElementById('sales-kpi').innerHTML=kpi('gold','Total API',fmt(tAPI,0),`${filtered.length} records`)+kpi('purple','My API',fmt(mAPI,0),'personal')+kpi('amber',`My API -- ${MONTHS[nowMo-1]}`,fmt(mThisMo,0),'this month')+kpi('teal','CCG',fmt(tCCG,0),'gross')+kpi('red','Unpaid Commission',fmt(unpaid,0),'pending');
   document.getElementById('sales-count').textContent=`${filtered.length}/${yrSales.length}`;
-  document.getElementById('sales-tbody').innerHTML=filtered.map(s=>{const ri=sales.indexOf(s);return`<tr class="${s.paid?'row-paid':''}"><td style="text-align:center"><input type="checkbox" class="paid-chk" ${s.paid?'checked':''} onchange="toggleSalePaid(${ri})"></td><td>${s.date||'—'}</td><td style="font-weight:600;color:#f1f5f9">${s.name}</td><td style="color:#64748b">${s.idCard||'—'}</td><td><span class="prod prod-${s.product}">${s.product||'—'}</span></td><td style="color:#64748b">${s.freq||'—'}</td><td>${s.term||'—'}</td><td style="color:#64748b">${s.source||'—'}</td><td style="color:#64748b">${s.shared||'—'}</td><td style="color:var(--gold)">${fmt(s.totalAPI,0)}</td><td>${fmt(s.myAPI,0)}</td><td style="color:#64748b">${s.policyFee||0}</td><td style="color:#64748b">${s.tii1||'—'}</td><td style="color:#64748b">${s.tii2||'—'}</td><td>${((s.commRate||0)*100).toFixed(0)}%</td><td style="color:#64748b">${((s.tiiRate||0)*100).toFixed(0)}%</td><td style="color:#64748b">${fmt(s.ccg)}</td><td style="color:${s.paid?'var(--slate)':'var(--gold2)'};font-weight:${s.paid?400:600}">${fmt(s.commission)}</td><td style="color:#64748b">${s.paidMonth?monthStr(s.paidMonth):'—'}</td><td><button class="btn-ghost btn-sm" onclick="openSaleModal(${ri})">Edit</button></td></tr>`;}).join('');
-  document.getElementById('sales-mob-list').innerHTML=filtered.map(s=>{const ri=sales.indexOf(s),c=PROD_COLORS[s.product]||'var(--slate)';return`<div class="mob-card" style="opacity:${s.paid?.5:1}"><div class="mob-card-row"><span class="mob-card-name">${s.name}</span><span class="mob-card-date">${s.date||'—'}</span></div><div class="mob-card-row"><div class="mob-card-sub"><span class="mob-pill" style="background:${c}20;color:${c};border:1px solid ${c}40">${s.product||'—'}</span><span class="mob-card-meta">${s.term}yr</span>${s.paid?`<span class="mob-pill" style="background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.2)">Paid ✓</span>`:`<span class="mob-pill" style="background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2)">Unpaid</span>`}</div><button class="mob-edit-btn" onclick="openSaleModal(${ri})">Edit</button></div><div class="mob-card-row" style="gap:.75rem"><span class="mob-card-meta">My API <span class="mob-card-val" style="color:var(--gold2)">${fmt(s.myAPI,0)}</span></span><span class="mob-card-meta">Comm <span class="mob-card-val" style="color:${s.paid?'var(--slate)':'var(--gold2)'}">${fmt(s.commission)}</span></span><span class="mob-card-meta" style="margin-left:auto">Pay: <b style="color:#f1f5f9">${s.paidMonth?monthStr(s.paidMonth):'—'}</b></span></div></div>`;}).join('');
+  document.getElementById('sales-tbody').innerHTML=filtered.map(s=>{const ri=sales.indexOf(s);return`<tr class="${s.paid?'row-paid':''}"><td style="text-align:center"><input type="checkbox" class="paid-chk" ${s.paid?'checked':''} onchange="toggleSalePaid(${ri})"></td><td>${s.date||'--'}</td><td style="font-weight:600;color:#f1f5f9">${s.name}</td><td style="color:#64748b">${s.idCard||'--'}</td><td><span class="prod prod-${s.product}">${s.product||'--'}</span></td><td style="color:#64748b">${s.freq||'--'}</td><td>${s.term||'--'}</td><td style="color:#64748b">${s.source||'--'}</td><td style="color:#64748b">${s.shared||'--'}</td><td style="color:var(--gold)">${fmt(s.totalAPI,0)}</td><td>${fmt(s.myAPI,0)}</td><td style="color:#64748b">${s.policyFee||0}</td><td style="color:#64748b">${s.tii1||'--'}</td><td style="color:#64748b">${s.tii2||'--'}</td><td>${((s.commRate||0)*100).toFixed(0)}%</td><td style="color:#64748b">${((s.tiiRate||0)*100).toFixed(0)}%</td><td style="color:#64748b">${fmt(s.ccg)}</td><td style="color:${s.paid?'var(--slate)':'var(--gold2)'};font-weight:${s.paid?400:600}">${fmt(s.commission)}</td><td style="color:#64748b">${s.paidMonth?monthStr(s.paidMonth):'--'}</td><td><button class="btn-ghost btn-sm" onclick="openSaleModal(${ri})">Edit</button></td></tr>`;}).join('');
+  document.getElementById('sales-mob-list').innerHTML=filtered.map(s=>{const ri=sales.indexOf(s),c=PROD_COLORS[s.product]||'var(--slate)';return`<div class="mob-card" style="opacity:${s.paid?.5:1}"><div class="mob-card-row"><span class="mob-card-name">${s.name}</span><span class="mob-card-date">${s.date||'--'}</span></div><div class="mob-card-row"><div class="mob-card-sub"><span class="mob-pill" style="background:${c}20;color:${c};border:1px solid ${c}40">${s.product||'--'}</span><span class="mob-card-meta">${s.term}yr</span>${s.paid?`<span class="mob-pill" style="background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.2)">Paid ✓</span>`:`<span class="mob-pill" style="background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2)">Unpaid</span>`}</div><button class="mob-edit-btn" onclick="openSaleModal(${ri})">Edit</button></div><div class="mob-card-row" style="gap:.75rem"><span class="mob-card-meta">My API <span class="mob-card-val" style="color:var(--gold2)">${fmt(s.myAPI,0)}</span></span><span class="mob-card-meta">Comm <span class="mob-card-val" style="color:${s.paid?'var(--slate)':'var(--gold2)'}">${fmt(s.commission)}</span></span><span class="mob-card-meta" style="margin-left:auto">Pay: <b style="color:#f1f5f9">${s.paidMonth?monthStr(s.paidMonth):'--'}</b></span></div></div>`;}).join('');
 }
 
 // ── MEETINGS ──
@@ -1628,8 +1628,8 @@ function renderMeetings(){
   const filtered=yrMeets.filter(m=>{const mq=!q||[m.name,m.phone,m.notes,m.source].some(f=>(f||'').toLowerCase().includes(q));return mq&&(!status||m.status===status)&&(!month||(m.date||'').slice(5,7)===month);});
   document.getElementById('meet-count').textContent=`${filtered.length}/${yrMeets.length}`;
   const today=new Date();today.setHours(0,0,0,0);
-  document.getElementById('meetings-tbody').innerHTML=filtered.map(m=>{const ri=meetings.indexOf(m);const np=(m.notes||'').slice(0,50).replace(/\n/g,' ');const fuDue=m.followUpDate&&new Date(m.followUpDate)<=today&&!['Meeting Close','Closed'].includes(m.status);return`<tr class="${fuDue?'row-followup':''}"><td style="text-align:center"><input type="checkbox" class="seen-chk" ${m.seen?'checked':''} onchange="toggleMeetSeen(${ri})"></td><td>${m.date||'—'}</td><td style="font-weight:600;color:#f1f5f9">${m.name}</td><td>${m.phone||'—'}</td><td><span class="prod prod-${m.product1}">${m.product1||'—'}</span></td><td style="color:#64748b">${m.source||'—'}</td><td style="color:#64748b">${m.otherPPP||'—'}</td><td>${statusBadge(m.status)}</td><td style="color:${fuDue?'var(--amber)':'var(--slate)'};font-size:.68rem;font-family:var(--font-mono)">${m.followUpDate||'—'}</td><td><span class="notes-preview" onclick="showNotes(${ri})">${np||'—'}</span></td><td><button class="btn-ghost btn-sm" onclick="openMeetModal(${ri})">Edit</button></td></tr>`;}).join('');
-  document.getElementById('meetings-mob-list').innerHTML=filtered.map(m=>{const ri=meetings.indexOf(m);const np=(m.notes||'').slice(0,80).replace(/\\n/g,' ').replace(/\n/g,' ');const pc=PROD_COLORS[m.product1];const fuDue=m.followUpDate&&new Date(m.followUpDate)<=today;return`<div class="mob-card" style="${fuDue?'border-left:2px solid var(--amber)':''}"><div class="mob-card-row"><span class="mob-card-name">${m.name}</span><span class="mob-card-date">${m.date||'—'}</span></div><div class="mob-card-row"><div class="mob-card-sub">${statusBadge(m.status)}${pc?`<span class="mob-pill" style="background:${pc}20;color:${pc};border:1px solid ${pc}40">${m.product1}</span>`:''}${m.phone?`<span class="mob-card-meta">${m.phone}</span>`:''}<span class="mob-pill" style="background:${m.seen?'rgba(96,165,250,.15)':'rgba(100,116,139,.1)'};color:${m.seen?'var(--blue)':'var(--slate)'};border:1px solid ${m.seen?'rgba(96,165,250,.3)':'rgba(100,116,139,.2)'};cursor:pointer;font-weight:600" onclick="toggleMeetSeen(${ri})">${m.seen?'✓ Seen':'Not Seen'}</span></div><button class="mob-edit-btn" onclick="openMeetModal(${ri})">Edit</button></div>${fuDue?`<div style="font-size:.68rem;color:var(--amber);font-weight:600">⚠️ Follow up: ${m.followUpDate}</div>`:''}${np?`<div style="font-size:.72rem;color:#64748b;line-height:1.45;cursor:pointer;margin-top:.1rem" onclick="showNotes(${ri})">${np}${(m.notes||'').length>80?'…':''}</div>`:''}</div>`;}).join('');
+  document.getElementById('meetings-tbody').innerHTML=filtered.map(m=>{const ri=meetings.indexOf(m);const np=(m.notes||'').slice(0,50).replace(/\n/g,' ');const fuDue=m.followUpDate&&new Date(m.followUpDate)<=today&&!['Meeting Close','Closed'].includes(m.status);return`<tr class="${fuDue?'row-followup':''}"><td style="text-align:center"><input type="checkbox" class="seen-chk" ${m.seen?'checked':''} onchange="toggleMeetSeen(${ri})"></td><td>${m.date||'--'}</td><td style="font-weight:600;color:#f1f5f9">${m.name}</td><td>${m.phone||'--'}</td><td><span class="prod prod-${m.product1}">${m.product1||'--'}</span></td><td style="color:#64748b">${m.source||'--'}</td><td style="color:#64748b">${m.otherPPP||'--'}</td><td>${statusBadge(m.status)}</td><td style="color:${fuDue?'var(--amber)':'var(--slate)'};font-size:.68rem;font-family:var(--font-mono)">${m.followUpDate||'--'}</td><td><span class="notes-preview" onclick="showNotes(${ri})">${np||'--'}</span></td><td><button class="btn-ghost btn-sm" onclick="openMeetModal(${ri})">Edit</button></td></tr>`;}).join('');
+  document.getElementById('meetings-mob-list').innerHTML=filtered.map(m=>{const ri=meetings.indexOf(m);const np=(m.notes||'').slice(0,80).replace(/\\n/g,' ').replace(/\n/g,' ');const pc=PROD_COLORS[m.product1];const fuDue=m.followUpDate&&new Date(m.followUpDate)<=today;return`<div class="mob-card" style="${fuDue?'border-left:2px solid var(--amber)':''}"><div class="mob-card-row"><span class="mob-card-name">${m.name}</span><span class="mob-card-date">${m.date||'--'}</span></div><div class="mob-card-row"><div class="mob-card-sub">${statusBadge(m.status)}${pc?`<span class="mob-pill" style="background:${pc}20;color:${pc};border:1px solid ${pc}40">${m.product1}</span>`:''}${m.phone?`<span class="mob-card-meta">${m.phone}</span>`:''}<span class="mob-pill" style="background:${m.seen?'rgba(96,165,250,.15)':'rgba(100,116,139,.1)'};color:${m.seen?'var(--blue)':'var(--slate)'};border:1px solid ${m.seen?'rgba(96,165,250,.3)':'rgba(100,116,139,.2)'};cursor:pointer;font-weight:600" onclick="toggleMeetSeen(${ri})">${m.seen?'✓ Seen':'Not Seen'}</span></div><button class="mob-edit-btn" onclick="openMeetModal(${ri})">Edit</button></div>${fuDue?`<div style="font-size:.68rem;color:var(--amber);font-weight:600">⚠️ Follow up: ${m.followUpDate}</div>`:''}${np?`<div style="font-size:.72rem;color:#64748b;line-height:1.45;cursor:pointer;margin-top:.1rem" onclick="showNotes(${ri})">${np}${(m.notes||'').length>80?'…':''}</div>`:''}</div>`;}).join('');
 }
 
 function renderRatioTable(){
@@ -1639,7 +1639,7 @@ function renderRatioTable(){
   const statuses=['Meeting Close','Meeting No Sale','Meeting Reschedule','Client No Show','Client Cancel','Follow Up','Second Meeting'];
   const cMap={'Meeting Close':'#22c55e','Meeting No Sale':'#ef4444','Meeting Reschedule':'#a78bfa','Client No Show':'#ef4444','Client Cancel':'#94a3b8','Follow Up':'#f59e0b','Second Meeting':'#14b8a6'};
   document.getElementById('ratio-header').innerHTML=`<th>Status</th><th>Full Year</th>${MONTHS.map(m=>`<th class="ratio-mo-col">${m}</th>`).join('')}`;
-  document.getElementById('ratio-tbody').innerHTML=statuses.map(s=>{const color=cMap[s]||'#64748b',cnt=yrMeets.filter(m=>m.status===s).length,fy=tot>0?cnt/tot:0;const mCells=MONTHS.map((_,i)=>{const mc=yrMeets.filter(m=>m.status===s&&getMeetMonth(m)===i+1).length;const r=mT[i]>0?mc/mT[i]:0;const al=r>0?Math.round((.1+r*.5)*255).toString(16).padStart(2,'0'):'0f';return`<td class="ratio-cell ratio-mo-col"><span class="ratio-pill" style="background:${color}${al};color:${r>0?color:'rgba(255,255,255,.12)'}">${mc>0?(r*100).toFixed(0)+'%':'—'}</span></td>`;}).join('');const fa=fy>0?Math.round((.1+fy*.5)*255).toString(16).padStart(2,'0'):'0f';return`<tr><td style="background:${color}18;border-left:2px solid ${color};color:${color};font-weight:700;padding:.6rem .85rem;font-size:.75rem;white-space:nowrap">${s}</td><td class="ratio-cell"><span class="ratio-pill" style="background:${color}${fa};color:${color};font-weight:700">${(fy*100).toFixed(0)}%</span></td>${mCells}</tr>`;}).join('');
+  document.getElementById('ratio-tbody').innerHTML=statuses.map(s=>{const color=cMap[s]||'#64748b',cnt=yrMeets.filter(m=>m.status===s).length,fy=tot>0?cnt/tot:0;const mCells=MONTHS.map((_,i)=>{const mc=yrMeets.filter(m=>m.status===s&&getMeetMonth(m)===i+1).length;const r=mT[i]>0?mc/mT[i]:0;const al=r>0?Math.round((.1+r*.5)*255).toString(16).padStart(2,'0'):'0f';return`<td class="ratio-cell ratio-mo-col"><span class="ratio-pill" style="background:${color}${al};color:${r>0?color:'rgba(255,255,255,.12)'}">${mc>0?(r*100).toFixed(0)+'%':'--'}</span></td>`;}).join('');const fa=fy>0?Math.round((.1+fy*.5)*255).toString(16).padStart(2,'0'):'0f';return`<tr><td style="background:${color}18;border-left:2px solid ${color};color:${color};font-weight:700;padding:.6rem .85rem;font-size:.75rem;white-space:nowrap">${s}</td><td class="ratio-cell"><span class="ratio-pill" style="background:${color}${fa};color:${color};font-weight:700">${(fy*100).toFixed(0)}%</span></td>${mCells}</tr>`;}).join('');
 }
 
 // ── PIPELINE ──
@@ -1650,7 +1650,7 @@ function renderPipeline(){
   const sc={'Follow Up':'rgba(245,158,11,.18)','Second Meeting':'rgba(20,184,166,.18)','Meeting Close':'rgba(34,197,94,.18)','Meeting No Sale':'rgba(239,68,68,.18)','Meeting Reschedule':'rgba(167,139,250,.18)','Client No Show':'rgba(239,68,68,.12)','Client Cancel':'rgba(100,116,139,.12)'};
   const tc={'Follow Up':'var(--amber)','Second Meeting':'var(--teal)','Meeting Close':'var(--green)','Meeting No Sale':'var(--red)','Meeting Reschedule':'var(--purple)','Client No Show':'var(--red)','Client Cancel':'var(--grey)'};
   let h='';
-  PIPELINE_STAGES.forEach(stage=>{const stMs=yrMeets.filter(m=>m.status===stage);h+=`<div class="pipeline-col"><div class="pipeline-col-header" style="background:${sc[stage]||'rgba(100,116,139,.1)'};color:${tc[stage]||'var(--slate)'}">${stage}<span class="pipeline-count">${stMs.length}</span></div>`;if(!stMs.length)h+=`<div style="font-size:.72rem;color:#64748b;text-align:center;padding:.75rem;background:#111d33;border-radius:0 0 8px 8px">Empty</div>`;stMs.forEach(m=>{const ri=meetings.indexOf(m);h+=`<div class="pipeline-card" onclick="openMeetModal(${ri})"><div class="pipeline-card-name">${m.name}</div><div class="pipeline-card-meta">${m.phone||m.source||'—'}</div><div class="pipeline-card-date">${m.date||'—'}${m.followUpDate?` · FU: ${m.followUpDate}`:''}</div></div>`;});h+='</div>';});
+  PIPELINE_STAGES.forEach(stage=>{const stMs=yrMeets.filter(m=>m.status===stage);h+=`<div class="pipeline-col"><div class="pipeline-col-header" style="background:${sc[stage]||'rgba(100,116,139,.1)'};color:${tc[stage]||'var(--slate)'}">${stage}<span class="pipeline-count">${stMs.length}</span></div>`;if(!stMs.length)h+=`<div style="font-size:.72rem;color:#64748b;text-align:center;padding:.75rem;background:#111d33;border-radius:0 0 8px 8px">Empty</div>`;stMs.forEach(m=>{const ri=meetings.indexOf(m);h+=`<div class="pipeline-card" onclick="openMeetModal(${ri})"><div class="pipeline-card-name">${m.name}</div><div class="pipeline-card-meta">${m.phone||m.source||'--'}</div><div class="pipeline-card-date">${m.date||'--'}${m.followUpDate?` · FU: ${m.followUpDate}`:''}</div></div>`;});h+='</div>';});
   document.getElementById('pipeline-board').innerHTML=h;
 }
 
@@ -1679,7 +1679,7 @@ function renderTargets(){
     kpi(aa>=annualT?'green':'amber','YTD Actual',fmt(aa,0),`${pct(aa/Math.max(1,annualT))} achieved`)+
     kpi(ou>=0?'green':'red','Over / Under',(ou>=0?'+':'')+fmt(ou,0))+
     kpi('teal','Months Remaining',MONTHS.filter(m=>!(targets[m]?.actual>0)).length,'without actuals');
-  document.getElementById('target-bars').innerHTML=MONTHS.map(m=>{const t=targets[m]?.target||10000,a=targets[m]?.actual||0;const pw=Math.min(100,(a/t)*100),ov=a>=t,diff=a-t;const bc=a===0?'empty':ov?'over':'under';const dl=a>0?(ov?`<span class="target-diff over-val">+${fmt(diff,0)}</span>`:`<span class="target-diff under-val">${fmt(diff,0)}</span>`):'';return`<div class="target-row"><div class="target-row-top"><span class="target-month">${m}</span><span class="target-amount">${a>0?fmt(a,0):'—'}</span>${dl}</div><div class="bar-track"><div class="bar-fill ${bc}" style="width:${Math.max(a>0?2:0,pw)}%"></div></div><div class="target-goal-label">Target: ${fmt(t,0)}</div></div>`;}).join('');
+  document.getElementById('target-bars').innerHTML=MONTHS.map(m=>{const t=targets[m]?.target||10000,a=targets[m]?.actual||0;const pw=Math.min(100,(a/t)*100),ov=a>=t,diff=a-t;const bc=a===0?'empty':ov?'over':'under';const dl=a>0?(ov?`<span class="target-diff over-val">+${fmt(diff,0)}</span>`:`<span class="target-diff under-val">${fmt(diff,0)}</span>`):'';return`<div class="target-row"><div class="target-row-top"><span class="target-month">${m}</span><span class="target-amount">${a>0?fmt(a,0):'--'}</span>${dl}</div><div class="bar-track"><div class="bar-fill ${bc}" style="width:${Math.max(a>0?2:0,pw)}%"></div></div><div class="target-goal-label">Target: ${fmt(t,0)}</div></div>`;}).join('');
   document.getElementById('target-editor').innerHTML=`<div style="display:grid;grid-template-columns:56px 1fr 1fr;gap:.45rem;align-items:center;margin-bottom:.5rem"><span style="font-size:.6rem;color:#64748b;text-transform:uppercase;letter-spacing:.1em">Mo.</span><span style="font-size:.6rem;color:#64748b;text-transform:uppercase;letter-spacing:.1em">Target</span><span style="font-size:.6rem;color:#64748b;text-transform:uppercase;letter-spacing:.1em">Actual</span></div>`+MONTHS.map(m=>`<div style="display:grid;grid-template-columns:56px 1fr 1fr;gap:.45rem;align-items:center;margin-bottom:.4rem"><span style="font-size:.75rem;color:var(--gold);font-weight:700;font-family:var(--font-mono)">${m}</span><input class="search-box" style="width:100%;padding:.4rem .55rem;font-size:.75rem" type="number" value="${targets[m]?.target||10000}" oninput="updateTargetLive('${m}','target',this.value)"><input class="search-box" style="width:100%;padding:.4rem .55rem;font-size:.75rem" type="number" value="${targets[m]?.actual||''}" oninput="updateTargetLive('${m}','actual',this.value)" placeholder="Actual"></div>`).join('')+`<div style="font-size:.68rem;color:#64748b;text-align:center;margin-top:.6rem;font-family:var(--font-mono)">✓ Changes save automatically as you type</div>`;
   const yr=activeYear;
   document.getElementById('prod-targets').innerHTML=['PPPWP','PPPUL','ULSP','FP'].map(p=>{const actual=getSalesForYear(yr).filter(s=>s.product===p).reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);const target=productTargets[p]||10000;const pw=Math.min(100,(actual/target)*100);const color=PROD_COLORS[p];return`<div class="prod-target-row"><span class="prod-target-lbl" style="color:${color}">${p}</span><div class="prod-target-bar-wrap"><div class="prod-target-bar" id="prod-bar-${p}" style="width:${pw}%;background:${color}"></div></div><span class="prod-target-pct" id="prod-pct-${p}">${pw.toFixed(0)}%</span><input class="search-box" style="width:88px;padding:.35rem .5rem;font-size:.72rem;flex-shrink:0" type="number" value="${target}" oninput="updateProductTargetLive('${p}',this.value,${actual})"></div><div style="display:flex;justify-content:space-between;font-size:.63rem;color:#64748b;margin-top:-.4rem;margin-bottom:.65rem;padding-left:66px"><span>Actual: ${fmt(actual,0)}</span><span id="prod-tgt-lbl-${p}">Target: ${fmt(target,0)}</span></div>`;}).join('');
@@ -1706,7 +1706,7 @@ function refreshTargetBarsOnly(){
     kpi(aa>=annualT?'green':'amber','YTD Actual',fmt(aa,0),`${pct(aa/Math.max(1,annualT))} achieved`)+
     kpi(ou>=0?'green':'red','Over / Under',(ou>=0?'+':'')+fmt(ou,0))+
     kpi('teal','Months Remaining',MONTHS.filter(m=>!(targets[m]?.actual>0)).length,'without actuals');
-  document.getElementById('target-bars').innerHTML=MONTHS.map(m=>{const t=targets[m]?.target||10000,a=targets[m]?.actual||0;const pw=Math.min(100,(a/t)*100),ov=a>=t,diff=a-t;const bc=a===0?'empty':ov?'over':'under';const dl=a>0?(ov?`<span class="target-diff over-val">+${fmt(diff,0)}</span>`:`<span class="target-diff under-val">${fmt(diff,0)}</span>`):'';return`<div class="target-row"><div class="target-row-top"><span class="target-month">${m}</span><span class="target-amount">${a>0?fmt(a,0):'—'}</span>${dl}</div><div class="bar-track"><div class="bar-fill ${bc}" style="width:${Math.max(a>0?2:0,pw)}%"></div></div><div class="target-goal-label">Target: ${fmt(t,0)}</div></div>`;}).join('');
+  document.getElementById('target-bars').innerHTML=MONTHS.map(m=>{const t=targets[m]?.target||10000,a=targets[m]?.actual||0;const pw=Math.min(100,(a/t)*100),ov=a>=t,diff=a-t;const bc=a===0?'empty':ov?'over':'under';const dl=a>0?(ov?`<span class="target-diff over-val">+${fmt(diff,0)}</span>`:`<span class="target-diff under-val">${fmt(diff,0)}</span>`):'';return`<div class="target-row"><div class="target-row-top"><span class="target-month">${m}</span><span class="target-amount">${a>0?fmt(a,0):'--'}</span>${dl}</div><div class="bar-track"><div class="bar-fill ${bc}" style="width:${Math.max(a>0?2:0,pw)}%"></div></div><div class="target-goal-label">Target: ${fmt(t,0)}</div></div>`;}).join('');
 }
 function updateProductTargetLive(p,v,actual){
   productTargets[p]=parseFloat(v)||0;
@@ -1732,7 +1732,7 @@ function renderMonthly(){
   document.getElementById('monthly-kpi').innerHTML=kpi('gold','YTD My API',fmt(ytdAPI,0),`Jan--${MONTHS[nowMo-1]}`)+kpi('green','YTD Commission',fmt(ytdComm,0),'earned')+kpi('amber','YTD Meetings',ytdMeet,`${ytdClose} closed`)+kpi('teal','YTD Close Rate',pct(ytdClose/Math.max(1,ytdMeet)),'meetings → close');
   const container=document.getElementById('monthly-report-cards');container.innerHTML='';
   const active=MONTHS.filter((_,i)=>{const mo=i+1;return yrS.some(s=>getSaleDateMonth(s)===mo)||yrM.some(m=>getMeetMonth(m)===mo);}).reverse();
-  active.forEach(m=>{const mo=MONTHS.indexOf(m)+1;const ms=yrS.filter(s=>getSaleDateMonth(s)===mo);const mm=yrM.filter(x=>getMeetMonth(x)===mo);const myAPI=ms.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);const tAPI=ms.reduce((a,s)=>a+(parseFloat(s.totalAPI)||0),0);const ccg=ms.reduce((a,s)=>a+(parseFloat(s.ccg)||0),0);const comm=ms.reduce((a,s)=>a+(parseFloat(s.commission)||0),0);const mTot=mm.length,mClose=mm.filter(x=>['Meeting Close','Closed'].includes(x.status)).length;const mNoSale=mm.filter(x=>x.status==='Meeting No Sale').length;const mNoShow=mm.filter(x=>['Client No Show','No Show'].includes(x.status)).length;const mCancel=mm.filter(x=>['Client Cancel','Cancelled'].includes(x.status)).length;const mRes=mm.filter(x=>x.status==='Meeting Reschedule').length;const mFU=mm.filter(x=>x.status==='Follow Up').length;const cr=mTot>0?mClose/mTot:0,nsr=mTot>0?mNoShow/mTot:0,caR=mTot>0?mCancel/mTot:0;const nxt=mo===12?MONTHS[0]:MONTHS[mo];const crc=cr>=.25?'var(--green)':cr>0?'var(--amber)':'var(--slate)';const card=document.createElement('div');card.className='monthly-card';card.innerHTML=`<div class="monthly-header" onclick="toggleMonthly(this)"><div class="monthly-month-label">${m} ${yr}</div><div class="monthly-summary"><div class="monthly-summary-item"><div class="val">${fmt(myAPI,0)}</div><div class="lbl">My API</div></div><div class="monthly-summary-item"><div class="val">${fmt(comm,0)}</div><div class="lbl">Commission</div></div><div class="monthly-summary-item"><div class="val">${mClose}/${mTot}</div><div class="lbl">Closed</div></div><div class="monthly-summary-item"><div class="val" style="color:${crc}">${pct(cr)}</div><div class="lbl">Close Rate</div></div></div><div class="monthly-toggle">▾</div></div><div class="monthly-body"><div class="inner-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem"><div><div class="section-heading">Sales</div><div class="monthly-grid"><div class="mini-kpi"><div class="lbl">Policies</div><div class="val">${ms.length}</div></div><div class="mini-kpi"><div class="lbl">Total API</div><div class="val" style="color:var(--gold)">${fmt(tAPI,0)}</div></div><div class="mini-kpi"><div class="lbl">My API</div><div class="val">${fmt(myAPI,0)}</div></div><div class="mini-kpi"><div class="lbl">CCG</div><div class="val">${fmt(ccg,0)}</div></div><div class="mini-kpi"><div class="lbl">Commission</div><div class="val" style="color:var(--gold2)">${fmt(comm)}</div><div class="sub">Paid in ${nxt}</div></div></div>${ms.length?`<div class="tbl-wrap" style="margin-top:.65rem"><table><thead><tr><th>Name</th><th>Product</th><th>My API</th><th>Comm</th></tr></thead><tbody>${ms.map(s=>`<tr><td style="font-size:.75rem">${s.name}</td><td><span class="prod prod-${s.product}">${s.product||'—'}</span></td><td>${fmt(s.myAPI,0)}</td><td style="color:var(--gold2)">${fmt(s.commission)}</td></tr>`).join('')}</tbody></table></div>`:''}</div><div><div class="section-heading">Meetings</div><div class="monthly-grid"><div class="mini-kpi"><div class="lbl">Set</div><div class="val">${mTot}</div></div><div class="mini-kpi"><div class="lbl">Closed</div><div class="val" style="color:var(--green)">${mClose}</div><div class="sub">${pct(cr)}</div></div><div class="mini-kpi"><div class="lbl">No Show</div><div class="val" style="color:var(--red)">${mNoShow}</div><div class="sub">${pct(nsr)}</div></div><div class="mini-kpi"><div class="lbl">Cancelled</div><div class="val" style="color:#94a3b8">${mCancel}</div><div class="sub">${pct(caR)}</div></div><div class="mini-kpi"><div class="lbl">No Sale</div><div class="val" style="color:var(--red)">${mNoSale}</div></div><div class="mini-kpi"><div class="lbl">Reschedule</div><div class="val" style="color:var(--purple)">${mRes}</div></div><div class="mini-kpi"><div class="lbl">Follow Up</div><div class="val" style="color:var(--amber)">${mFU}</div></div></div></div></div></div>`;container.appendChild(card);});
+  active.forEach(m=>{const mo=MONTHS.indexOf(m)+1;const ms=yrS.filter(s=>getSaleDateMonth(s)===mo);const mm=yrM.filter(x=>getMeetMonth(x)===mo);const myAPI=ms.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);const tAPI=ms.reduce((a,s)=>a+(parseFloat(s.totalAPI)||0),0);const ccg=ms.reduce((a,s)=>a+(parseFloat(s.ccg)||0),0);const comm=ms.reduce((a,s)=>a+(parseFloat(s.commission)||0),0);const mTot=mm.length,mClose=mm.filter(x=>['Meeting Close','Closed'].includes(x.status)).length;const mNoSale=mm.filter(x=>x.status==='Meeting No Sale').length;const mNoShow=mm.filter(x=>['Client No Show','No Show'].includes(x.status)).length;const mCancel=mm.filter(x=>['Client Cancel','Cancelled'].includes(x.status)).length;const mRes=mm.filter(x=>x.status==='Meeting Reschedule').length;const mFU=mm.filter(x=>x.status==='Follow Up').length;const cr=mTot>0?mClose/mTot:0,nsr=mTot>0?mNoShow/mTot:0,caR=mTot>0?mCancel/mTot:0;const nxt=mo===12?MONTHS[0]:MONTHS[mo];const crc=cr>=.25?'var(--green)':cr>0?'var(--amber)':'var(--slate)';const card=document.createElement('div');card.className='monthly-card';card.innerHTML=`<div class="monthly-header" onclick="toggleMonthly(this)"><div class="monthly-month-label">${m} ${yr}</div><div class="monthly-summary"><div class="monthly-summary-item"><div class="val">${fmt(myAPI,0)}</div><div class="lbl">My API</div></div><div class="monthly-summary-item"><div class="val">${fmt(comm,0)}</div><div class="lbl">Commission</div></div><div class="monthly-summary-item"><div class="val">${mClose}/${mTot}</div><div class="lbl">Closed</div></div><div class="monthly-summary-item"><div class="val" style="color:${crc}">${pct(cr)}</div><div class="lbl">Close Rate</div></div></div><div class="monthly-toggle">▾</div></div><div class="monthly-body"><div class="inner-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem"><div><div class="section-heading">Sales</div><div class="monthly-grid"><div class="mini-kpi"><div class="lbl">Policies</div><div class="val">${ms.length}</div></div><div class="mini-kpi"><div class="lbl">Total API</div><div class="val" style="color:var(--gold)">${fmt(tAPI,0)}</div></div><div class="mini-kpi"><div class="lbl">My API</div><div class="val">${fmt(myAPI,0)}</div></div><div class="mini-kpi"><div class="lbl">CCG</div><div class="val">${fmt(ccg,0)}</div></div><div class="mini-kpi"><div class="lbl">Commission</div><div class="val" style="color:var(--gold2)">${fmt(comm)}</div><div class="sub">Paid in ${nxt}</div></div></div>${ms.length?`<div class="tbl-wrap" style="margin-top:.65rem"><table><thead><tr><th>Name</th><th>Product</th><th>My API</th><th>Comm</th></tr></thead><tbody>${ms.map(s=>`<tr><td style="font-size:.75rem">${s.name}</td><td><span class="prod prod-${s.product}">${s.product||'--'}</span></td><td>${fmt(s.myAPI,0)}</td><td style="color:var(--gold2)">${fmt(s.commission)}</td></tr>`).join('')}</tbody></table></div>`:''}</div><div><div class="section-heading">Meetings</div><div class="monthly-grid"><div class="mini-kpi"><div class="lbl">Set</div><div class="val">${mTot}</div></div><div class="mini-kpi"><div class="lbl">Closed</div><div class="val" style="color:var(--green)">${mClose}</div><div class="sub">${pct(cr)}</div></div><div class="mini-kpi"><div class="lbl">No Show</div><div class="val" style="color:var(--red)">${mNoShow}</div><div class="sub">${pct(nsr)}</div></div><div class="mini-kpi"><div class="lbl">Cancelled</div><div class="val" style="color:#94a3b8">${mCancel}</div><div class="sub">${pct(caR)}</div></div><div class="mini-kpi"><div class="lbl">No Sale</div><div class="val" style="color:var(--red)">${mNoSale}</div></div><div class="mini-kpi"><div class="lbl">Reschedule</div><div class="val" style="color:var(--purple)">${mRes}</div></div><div class="mini-kpi"><div class="lbl">Follow Up</div><div class="val" style="color:var(--amber)">${mFU}</div></div></div></div></div></div>`;container.appendChild(card);});
 }
 function toggleMonthly(h){const b=h.nextElementSibling,t=h.querySelector('.monthly-toggle');b.classList.toggle('open');t.classList.toggle('open');}
 
@@ -1757,7 +1757,7 @@ function renderDailyBreakdown(){
   const[py,mo]=val.split('-').map(Number);const dim=new Date(py,mo,0).getDate();
   let h='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.75rem"><thead><tr><th style="padding:.5rem .75rem;background:#111d33;color:#64748b;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;text-align:left">Day</th><th style="padding:.5rem .75rem;background:#111d33;color:#64748b;font-size:.58rem;text-align:center;text-transform:uppercase;letter-spacing:.08em">Sales</th><th style="padding:.5rem .75rem;background:#111d33;color:#64748b;font-size:.58rem;text-align:center;text-transform:uppercase;letter-spacing:.08em">My API</th><th style="padding:.5rem .75rem;background:#111d33;color:#64748b;font-size:.58rem;text-align:center;text-transform:uppercase;letter-spacing:.08em">Commission</th><th style="padding:.5rem .75rem;background:#111d33;color:#64748b;font-size:.58rem;text-align:center;text-transform:uppercase;letter-spacing:.08em">Meetings</th><th style="padding:.5rem .75rem;background:#111d33;color:#64748b;font-size:.58rem;text-align:center;text-transform:uppercase;letter-spacing:.08em">Closed</th></tr></thead><tbody>';
   let hasData=false;
-  for(let d=1;d<=dim;d++){const ds=`${py}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const dS=sales.filter(s=>s.date===ds);const dM=meetings.filter(m=>m.date===ds);if(!dS.length&&!dM.length)continue;hasData=true;const dAPI=dS.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);const dComm=dS.reduce((a,s)=>a+(parseFloat(s.commission)||0),0);const dCl=dM.filter(m=>['Meeting Close','Closed'].includes(m.status)).length;const dow=new Date(py,mo-1,d).toLocaleDateString('en-GB',{weekday:'short'});h+=`<tr style="border-bottom:1px solid rgba(255,255,255,0.09)"><td style="padding:.5rem .75rem;font-family:var(--font-mono);color:#94a3b8;font-size:.72rem">${dow} ${d}</td><td style="padding:.5rem .75rem;text-align:center;color:${dS.length?'var(--white)':'var(--slate)'}">${dS.length||'—'}</td><td style="padding:.5rem .75rem;text-align:center;color:${dAPI?'var(--gold2)':'var(--slate)'};font-family:var(--font-mono)">${dAPI?fmt(dAPI,0):'—'}</td><td style="padding:.5rem .75rem;text-align:center;color:${dComm?'var(--gold)':'var(--slate)'};font-family:var(--font-mono)">${dComm?fmt(dComm):'—'}</td><td style="padding:.5rem .75rem;text-align:center;color:${dM.length?'var(--white)':'var(--slate)'}">${dM.length||'—'}</td><td style="padding:.5rem .75rem;text-align:center;color:${dCl?'var(--green)':'var(--slate)'}">${dCl||'—'}</td></tr>`;}
+  for(let d=1;d<=dim;d++){const ds=`${py}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const dS=sales.filter(s=>s.date===ds);const dM=meetings.filter(m=>m.date===ds);if(!dS.length&&!dM.length)continue;hasData=true;const dAPI=dS.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);const dComm=dS.reduce((a,s)=>a+(parseFloat(s.commission)||0),0);const dCl=dM.filter(m=>['Meeting Close','Closed'].includes(m.status)).length;const dow=new Date(py,mo-1,d).toLocaleDateString('en-GB',{weekday:'short'});h+=`<tr style="border-bottom:1px solid rgba(255,255,255,0.09)"><td style="padding:.5rem .75rem;font-family:var(--font-mono);color:#94a3b8;font-size:.72rem">${dow} ${d}</td><td style="padding:.5rem .75rem;text-align:center;color:${dS.length?'var(--white)':'var(--slate)'}">${dS.length||'--'}</td><td style="padding:.5rem .75rem;text-align:center;color:${dAPI?'var(--gold2)':'var(--slate)'};font-family:var(--font-mono)">${dAPI?fmt(dAPI,0):'--'}</td><td style="padding:.5rem .75rem;text-align:center;color:${dComm?'var(--gold)':'var(--slate)'};font-family:var(--font-mono)">${dComm?fmt(dComm):'--'}</td><td style="padding:.5rem .75rem;text-align:center;color:${dM.length?'var(--white)':'var(--slate)'}">${dM.length||'--'}</td><td style="padding:.5rem .75rem;text-align:center;color:${dCl?'var(--green)':'var(--slate)'}">${dCl||'--'}</td></tr>`;}
   if(!hasData)h+='<tr><td colspan="6" style="padding:1.5rem;text-align:center;color:#64748b">No activity this month</td></tr>';
   h+='</tbody></table></div>';const el=document.getElementById('daily-breakdown');if(el)el.innerHTML=h;
 }
@@ -1771,7 +1771,7 @@ function renderWeeklyBreakdown(){
   while(cur<=ld){const we=new Date(cur);we.setDate(cur.getDate()+6);const ws2=new Date(cur);const wS=sales.filter(s=>{const d=new Date(s.date);return d>=ws2&&d<=we;});const wM=meetings.filter(m=>{const d=new Date(m.date);return d>=ws2&&d<=we;});if(wS.length||wM.length)weeks.push({label:`${ws2.toLocaleDateString('en-GB',{day:'numeric',month:'short'})} -- ${we.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}`,sales:wS.length,api:wS.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0),comm:wS.reduce((a,s)=>a+(parseFloat(s.commission)||0),0),meets:wM.length,closed:wM.filter(m=>['Meeting Close','Closed'].includes(m.status)).length});cur.setDate(cur.getDate()+7);}
   weeks.reverse();
   let h='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.75rem"><thead><tr><th style="padding:.5rem .75rem;background:#111d33;color:#64748b;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;text-align:left">Week</th><th style="padding:.5rem .75rem;background:#111d33;color:#64748b;font-size:.58rem;text-align:center;text-transform:uppercase;letter-spacing:.08em">Sales</th><th style="padding:.5rem .75rem;background:#111d33;color:#64748b;font-size:.58rem;text-align:center;text-transform:uppercase;letter-spacing:.08em">My API</th><th style="padding:.5rem .75rem;background:#111d33;color:#64748b;font-size:.58rem;text-align:center;text-transform:uppercase;letter-spacing:.08em">Commission</th><th style="padding:.5rem .75rem;background:#111d33;color:#64748b;font-size:.58rem;text-align:center;text-transform:uppercase;letter-spacing:.08em">Meetings</th><th style="padding:.5rem .75rem;background:#111d33;color:#64748b;font-size:.58rem;text-align:center;text-transform:uppercase;letter-spacing:.08em">Closed</th></tr></thead><tbody>';
-  weeks.forEach(w=>{h+=`<tr style="border-bottom:1px solid rgba(255,255,255,0.09)"><td style="padding:.5rem .75rem;font-size:.72rem;color:#94a3b8">${w.label}</td><td style="padding:.5rem .75rem;text-align:center;color:#f1f5f9">${w.sales||'—'}</td><td style="padding:.5rem .75rem;text-align:center;color:var(--gold2);font-family:var(--font-mono)">${w.api?fmt(w.api,0):'—'}</td><td style="padding:.5rem .75rem;text-align:center;color:var(--gold);font-family:var(--font-mono)">${w.comm?fmt(w.comm):'—'}</td><td style="padding:.5rem .75rem;text-align:center;color:#f1f5f9">${w.meets||'—'}</td><td style="padding:.5rem .75rem;text-align:center;color:${w.closed?'var(--green)':'var(--slate)'}">${w.closed||'—'}</td></tr>`;});
+  weeks.forEach(w=>{h+=`<tr style="border-bottom:1px solid rgba(255,255,255,0.09)"><td style="padding:.5rem .75rem;font-size:.72rem;color:#94a3b8">${w.label}</td><td style="padding:.5rem .75rem;text-align:center;color:#f1f5f9">${w.sales||'--'}</td><td style="padding:.5rem .75rem;text-align:center;color:var(--gold2);font-family:var(--font-mono)">${w.api?fmt(w.api,0):'--'}</td><td style="padding:.5rem .75rem;text-align:center;color:var(--gold);font-family:var(--font-mono)">${w.comm?fmt(w.comm):'--'}</td><td style="padding:.5rem .75rem;text-align:center;color:#f1f5f9">${w.meets||'--'}</td><td style="padding:.5rem .75rem;text-align:center;color:${w.closed?'var(--green)':'var(--slate)'}">${w.closed||'--'}</td></tr>`;});
   h+='</tbody></table></div>';const el=document.getElementById('weekly-breakdown');if(el)el.innerHTML=h;
 }
 
@@ -1812,7 +1812,7 @@ function saveMeeting(){
   toast(editMeetIdx>=0?'Meeting updated ✓':'Meeting added ✓','success');
 }
 function deleteMeeting(){if(editMeetIdx<0)return;if(!confirm('Delete this meeting?'))return;meetings.splice(editMeetIdx,1);closeMeetModal();renderMeetings();saveData();toast('Meeting deleted','info');}
-function showNotes(idx){const m=meetings[idx];document.getElementById('notes-modal-name').textContent=m.name;document.getElementById('notes-modal-body').textContent=(m.notes||'—').replace(/\\n/g,'\n');document.getElementById('notes-modal-overlay').classList.add('open');}
+function showNotes(idx){const m=meetings[idx];document.getElementById('notes-modal-name').textContent=m.name;document.getElementById('notes-modal-body').textContent=(m.notes||'--').replace(/\\n/g,'\n');document.getElementById('notes-modal-overlay').classList.add('open');}
 
 function openSaleModal(idx=-1){
   editSaleIdx=idx;const s=idx>=0?sales[idx]:{};
@@ -1892,7 +1892,7 @@ function saveQuickAdd(){
     const cr = 0.5; const ccg = myAPI * cr; const commission = Math.round(ccg * 0.35 * 100)/100;
     sales.push({ date, name, product, freq:'Monthly', term:'20', source:'', shared:'Yes', totalAPI:myAPI, myAPI, policyFee:0, tii1:'', tii2:'', leadAgent:'', commRate:cr, tiiRate:0.35, ccg, commission, paidMonth:null, paid:false });
     saveData();
-    toast(`Sale added for ${name} ✓ — fill in details later`, 'success');
+    toast(`Sale added for ${name} ✓ -- fill in details later`, 'success');
     closeQuickAdd();
     if(document.getElementById('page-today').classList.contains('active')) renderToday();
     if(document.getElementById('page-sales').classList.contains('active')) renderSales();
@@ -1938,7 +1938,7 @@ function renderPrediction(yr, nowMo){
   if(!hasData){
     return `<div class="prediction-bar">
       <div class="prediction-label"><strong>📈 Monthly Prediction</strong><br>Add more meetings to enable forecasting</div>
-      <div><div class="prediction-num no-data">—</div></div>
+      <div><div class="prediction-num no-data">--</div></div>
     </div>`;
   }
 
@@ -1988,7 +1988,7 @@ function openClientTimeline(name){
         <div class="timeline-dot-wrap"><div class="timeline-dot" style="background:${dotColor}"></div>${!isLast?'<div class="timeline-line"></div>':''}</div>
         <div class="timeline-content">
           <div class="timeline-date">${m.date||'No date'}</div>
-          <div class="timeline-title">📅 Meeting ${m.product1?'— '+m.product1:''}</div>
+          <div class="timeline-title">📅 Meeting ${m.product1?'-- '+m.product1:''}</div>
           ${statusBadge(m.status)}
           ${notes?`<div class="timeline-notes">${notes}${(m.notes||'').length>120?'…':''}</div>`:''}
           <button class="btn-ghost btn-sm" style="margin-top:.5rem" onclick="document.getElementById('client-timeline-overlay').classList.remove('open');openMeetModal(${ri})">Edit</button>
@@ -2000,7 +2000,7 @@ function openClientTimeline(name){
         <div class="timeline-dot-wrap"><div class="timeline-dot" style="background:var(--gold)"></div>${!isLast?'<div class="timeline-line"></div>':''}</div>
         <div class="timeline-content">
           <div class="timeline-date">${s.date||'No date'}</div>
-          <div class="timeline-title">💼 Sale — <span class="prod prod-${s.product}">${s.product||'—'}</span></div>
+          <div class="timeline-title">💼 Sale -- <span class="prod prod-${s.product}">${s.product||'--'}</span></div>
           <div class="timeline-api">${fmt(s.myAPI,0)} My API · ${fmt(s.commission,0)} Commission</div>
           <button class="btn-ghost btn-sm" style="margin-top:.5rem" onclick="document.getElementById('client-timeline-overlay').classList.remove('open');openSaleModal(${ri})">Edit</button>
         </div>
@@ -2119,7 +2119,7 @@ async function adminLoadUsers(){
       return {
         uid,
         name: f.name?.stringValue || 'Unknown',
-        email: f.email?.stringValue || '—',
+        email: f.email?.stringValue || '--',
         createdAt: f.createdAt?.stringValue || '',
         disabled: f.disabled?.booleanValue || false
       };
@@ -2142,7 +2142,7 @@ async function adminLoadUsers(){
           <span class="user-status-badge ${u.disabled?'disabled':'active'}">${u.disabled?'Disabled':'Active'}</span>
         </div>
         <div class="user-card-meta">
-          <span>Created: ${u.createdAt?new Date(u.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—'}</span>
+          <span>Created: ${u.createdAt?new Date(u.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'--'}</span>
         </div>
         <div style="display:flex;gap:.5rem;margin-top:.85rem">
           <button class="btn-ghost btn-sm" style="flex:1" onclick="adminResetPassword('${u.email}')">Reset Password</button>
@@ -2215,20 +2215,20 @@ window.showPage = function(id, btn){
     <div id="qa-meeting-fields" class="qa-fields">
       <div class="qa-field"><label>Name</label><input type="text" id="qa-m-name" placeholder="Client name"></div>
       <div class="qa-field"><label>Date</label><input type="date" id="qa-m-date"></div>
-      <div class="qa-field"><label>Status</label><select id="qa-m-status"><option value="">— Status —</option><option>Meeting Close</option><option>Meeting No Sale</option><option>Meeting Reschedule</option><option>Client No Show</option><option>Client Cancel</option><option>Follow Up</option><option>Second Meeting</option></select></div>
+      <div class="qa-field"><label>Status</label><select id="qa-m-status"><option value="">-- Status --</option><option>Meeting Close</option><option>Meeting No Sale</option><option>Meeting Reschedule</option><option>Client No Show</option><option>Client Cancel</option><option>Follow Up</option><option>Second Meeting</option></select></div>
       <div class="qa-field"><label>Phone (optional)</label><input type="tel" id="qa-m-phone" placeholder="Optional"></div>
     </div>
     <div id="qa-sale-fields" class="qa-fields" style="display:none">
       <div class="qa-field"><label>Name</label><input type="text" id="qa-s-name" placeholder="Client name"></div>
       <div class="qa-field"><label>Date</label><input type="date" id="qa-s-date"></div>
-      <div class="qa-field"><label>Product</label><select id="qa-s-product"><option value="">— Product —</option><option>PPPWP</option><option>PPPUL</option><option>ULSP</option><option>FP</option></select></div>
+      <div class="qa-field"><label>Product</label><select id="qa-s-product"><option value="">-- Product --</option><option>PPPWP</option><option>PPPUL</option><option>ULSP</option><option>FP</option></select></div>
       <div class="qa-field"><label>My API (€)</label><input type="number" id="qa-s-api" placeholder="0"></div>
     </div>
     <div class="qa-actions">
       <button class="btn-ghost" style="flex:1" onclick="closeQuickAdd()">Cancel</button>
       <button class="btn-primary" style="flex:2" onclick="saveQuickAdd()">Save & Continue</button>
     </div>
-    <div class="qa-hint">Just the essentials — you can fill in the rest later from the full form</div>
+    <div class="qa-hint">Just the essentials -- you can fill in the rest later from the full form</div>
   </div>
 </div>
 
@@ -2257,7 +2257,7 @@ window.showPage = function(id, btn){
       <div style="display:flex;flex-direction:column;gap:.65rem">
         <div class="field"><label>Full Name</label><input type="text" id="new-user-name" placeholder="e.g. John Smith" style="background:#111d33;border:1px solid rgba(255,255,255,0.09);color:#f1f5f9;border-radius:10px;padding:.62rem .8rem;font-family:var(--font-body);font-size:.85rem;outline:none;width:100%;transition:all .2s;-webkit-appearance:none"></div>
         <div class="field"><label>Email Address</label><input type="email" id="new-user-email" placeholder="e.g. john@karus.mt" style="background:#111d33;border:1px solid rgba(255,255,255,0.09);color:#f1f5f9;border-radius:10px;padding:.62rem .8rem;font-family:var(--font-body);font-size:.85rem;outline:none;width:100%;transition:all .2s;-webkit-appearance:none"></div>
-        <div class="field"><label>Temporary Password</label><input type="text" id="new-user-pass" placeholder="Min 6 characters — user can change later" style="background:#111d33;border:1px solid rgba(255,255,255,0.09);color:#f1f5f9;border-radius:10px;padding:.62rem .8rem;font-family:var(--font-body);font-size:.85rem;outline:none;width:100%;transition:all .2s;-webkit-appearance:none"></div>
+        <div class="field"><label>Temporary Password</label><input type="text" id="new-user-pass" placeholder="Min 6 characters -- user can change later" style="background:#111d33;border:1px solid rgba(255,255,255,0.09);color:#f1f5f9;border-radius:10px;padding:.62rem .8rem;font-family:var(--font-body);font-size:.85rem;outline:none;width:100%;transition:all .2s;-webkit-appearance:none"></div>
         <button class="btn-primary" onclick="adminCreateUser()" style="margin-top:.25rem">Create Account</button>
         <div id="create-user-result" style="font-size:.78rem;margin-top:.25rem"></div>
       </div>
@@ -2268,7 +2268,7 @@ window.showPage = function(id, btn){
         <div style="margin-bottom:.65rem">1. Enter the user's name, email and a temporary password above</div>
         <div style="margin-bottom:.65rem">2. Click <strong style="color:var(--gold)">Create Account</strong></div>
         <div style="margin-bottom:.65rem">3. Send them the app link and their login details</div>
-        <div style="margin-bottom:.65rem">4. They sign in — their data is completely separate from yours</div>
+        <div style="margin-bottom:.65rem">4. They sign in -- their data is completely separate from yours</div>
         <div style="color:#64748b;font-size:.75rem;margin-top:.85rem;padding-top:.75rem;border-top:1px solid rgba(255,255,255,0.09)">💡 Tip: Use a strong temporary password and ask them to change it on first login. Each user only sees their own data.</div>
       </div>
     </div>
