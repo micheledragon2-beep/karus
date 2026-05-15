@@ -794,6 +794,10 @@ select.filter-sel{background:#111d33;border:1px solid rgba(255,255,255,0.09);col
 
 <div id="page-sales" class="page" style="display:none">
   <div class="kpi-strip" id="sales-kpi"></div>
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-header"><div class="card-title">💰 Commission by Pay Month</div></div>
+    <div id="comm-by-paymonth" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.55rem;padding:.25rem 0"></div>
+  </div>
   <div class="card">
     <div class="controls">
       <input class="search-box" type="text" id="sales-search" placeholder="Search name, product…" oninput="renderSales()">
@@ -872,6 +876,17 @@ select.filter-sel{background:#111d33;border:1px solid rgba(255,255,255,0.09);col
 
 <div id="page-monthly" class="page" style="display:none">
   <div class="kpi-strip" id="monthly-kpi"></div>
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-header">
+      <div class="card-title">💰 Commission by Month</div>
+      <div style="display:flex;gap:.4rem;align-items:center">
+        <button class="btn-ghost btn-sm" id="comm-view-sale" onclick="setCommView('sale',this)" style="border-color:var(--gold-border2);color:var(--gold)">By Sale Date</button>
+        <button class="btn-ghost btn-sm" id="comm-view-pay" onclick="setCommView('pay',this)">By Pay Month</button>
+      </div>
+    </div>
+    <div id="comm-monthly-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.6rem;padding:.25rem 0"></div>
+    <div id="comm-monthly-total" style="margin-top:.85rem;padding-top:.75rem;border-top:1px solid rgba(255,255,255,0.09);display:flex;gap:2rem;flex-wrap:wrap"></div>
+  </div>
   <div id="monthly-report-cards"></div>
 </div>
 
@@ -1613,6 +1628,35 @@ function renderSales(){
   document.getElementById('sales-count').textContent=`${filtered.length}/${yrSales.length}`;
   document.getElementById('sales-tbody').innerHTML=filtered.map(s=>{const ri=sales.indexOf(s);return`<tr class="${s.paid?'row-paid':''}"><td style="text-align:center"><input type="checkbox" class="paid-chk" ${s.paid?'checked':''} onchange="toggleSalePaid(${ri})"></td><td>${s.date||'--'}</td><td style="font-weight:600;color:#f1f5f9">${s.name}</td><td style="color:#64748b">${s.idCard||'--'}</td><td><span class="prod prod-${s.product}">${s.product||'--'}</span></td><td style="color:#64748b">${s.freq||'--'}</td><td>${s.term||'--'}</td><td style="color:#64748b">${s.source||'--'}</td><td style="color:#64748b">${s.shared||'--'}</td><td style="color:var(--gold)">${fmt(s.totalAPI,0)}</td><td>${fmt(s.myAPI,0)}</td><td style="color:#64748b">${s.policyFee||0}</td><td style="color:#64748b">${s.tii1||'--'}</td><td style="color:#64748b">${s.tii2||'--'}</td><td>${((s.commRate||0)*100).toFixed(0)}%</td><td style="color:#64748b">${((s.tiiRate||0)*100).toFixed(0)}%</td><td style="color:#64748b">${fmt(s.ccg)}</td><td style="color:${s.paid?'var(--slate)':'var(--gold2)'};font-weight:${s.paid?400:600}">${fmt(s.commission)}</td><td style="color:#64748b">${s.paidMonth?monthStr(s.paidMonth):'--'}</td><td><button class="btn-ghost btn-sm" onclick="openSaleModal(${ri})">Edit</button></td></tr>`;}).join('');
   document.getElementById('sales-mob-list').innerHTML=filtered.map(s=>{const ri=sales.indexOf(s),c=PROD_COLORS[s.product]||'var(--slate)';return`<div class="mob-card" style="opacity:${s.paid?.5:1}"><div class="mob-card-row"><span class="mob-card-name">${s.name}</span><span class="mob-card-date">${s.date||'--'}</span></div><div class="mob-card-row"><div class="mob-card-sub"><span class="mob-pill" style="background:${c}20;color:${c};border:1px solid ${c}40">${s.product||'--'}</span><span class="mob-card-meta">${s.term}yr</span>${s.paid?`<span class="mob-pill" style="background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.2)">Paid ✓</span>`:`<span class="mob-pill" style="background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2)">Unpaid</span>`}</div><button class="mob-edit-btn" onclick="openSaleModal(${ri})">Edit</button></div><div class="mob-card-row" style="gap:.75rem"><span class="mob-card-meta">My API <span class="mob-card-val" style="color:var(--gold2)">${fmt(s.myAPI,0)}</span></span><span class="mob-card-meta">Comm <span class="mob-card-val" style="color:${s.paid?'var(--slate)':'var(--gold2)'}">${fmt(s.commission)}</span></span><span class="mob-card-meta" style="margin-left:auto">Pay: <b style="color:#f1f5f9">${s.paidMonth?monthStr(s.paidMonth):'--'}</b></span></div></div>`;}).join('');
+  renderCommByPayMonth();
+}
+
+// ── COMMISSION BY PAY MONTH ──
+function renderCommByPayMonth(){
+  const yr=activeYear;const yrSales=getSalesForYear(yr);
+  const MONTH_NAMES=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  // Build map: paidMonth -> {total, count, paid, unpaid}
+  const map={};
+  yrSales.forEach(s=>{
+    const pm=parseInt(s.paidMonth);
+    if(!pm)return;
+    if(!map[pm])map[pm]={total:0,count:0,paidTotal:0,unpaidTotal:0};
+    const c=parseFloat(s.commission)||0;
+    map[pm].total+=c;map[pm].count++;
+    if(s.paid)map[pm].paidTotal+=c;else map[pm].unpaidTotal+=c;
+  });
+  const el=document.getElementById('comm-by-paymonth');
+  if(!el)return;
+  const months=Object.keys(map).map(Number).sort((a,b)=>a-b);
+  if(!months.length){el.innerHTML='<div style="color:#64748b;font-size:.82rem;padding:.75rem;grid-column:1/-1">No pay months set yet. Edit a sale and choose a Pay Month to see your commission breakdown here.</div>';return;}
+  el.innerHTML=months.map(mo=>{
+    const d=map[mo];const isUnpaid=d.unpaidTotal>0;
+    return`<div class="mini-kpi" style="border-top:2px solid ${isUnpaid?'var(--amber)':'var(--green)'}">
+      <div class="lbl">${MONTH_NAMES[mo-1]}</div>
+      <div class="val" style="color:${isUnpaid?'var(--gold2)':'var(--green)'}">${fmt(d.total)}</div>
+      <div class="sub">${d.count} sale${d.count!==1?'s':''} · ${isUnpaid?`<span style="color:var(--amber)">${fmt(d.unpaidTotal)} unpaid</span>`:'<span style="color:var(--green)">All paid ✓</span>'}</div>
+    </div>`;
+  }).join('');
 }
 
 // ── MEETINGS ──
@@ -1723,6 +1767,59 @@ function updateProductTargetLive(p,v,actual){
 }
 
 // ── MONTHLY ──
+let _commView='sale';
+function setCommView(v,btn){
+  _commView=v;
+  document.querySelectorAll('#comm-view-sale,#comm-view-pay').forEach(b=>{b.style.borderColor='';b.style.color='';});
+  btn.style.borderColor='var(--gold-border2)';btn.style.color='var(--gold)';
+  renderCommMonthlyGrid();
+}
+function renderCommMonthlyGrid(){
+  const yr=activeYear;const yrS=getSalesForYear(yr);
+  const MONTH_NAMES=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const grid=document.getElementById('comm-monthly-grid');
+  const totEl=document.getElementById('comm-monthly-total');
+  if(!grid||!totEl)return;
+  // Build 12-month data
+  const months=MONTH_NAMES.map((name,i)=>{
+    const mo=i+1;
+    let sales_=[];
+    if(_commView==='sale'){
+      sales_=yrS.filter(s=>getSaleDateMonth(s)===mo);
+    } else {
+      sales_=yrS.filter(s=>parseInt(s.paidMonth)===mo);
+    }
+    const total=sales_.reduce((a,s)=>a+(parseFloat(s.commission)||0),0);
+    const paid=sales_.filter(s=>s.paid).reduce((a,s)=>a+(parseFloat(s.commission)||0),0);
+    const unpaid=total-paid;
+    return{name,mo,total,paid,unpaid,count:sales_.length};
+  });
+  const activeMonths=months.filter(m=>m.total>0);
+  if(!activeMonths.length){
+    grid.innerHTML=`<div style="color:#64748b;font-size:.82rem;padding:.75rem;grid-column:1/-1">No commission data for ${yr}${_commView==='pay'?' — make sure Pay Month is set on your sales':''}</div>`;
+    totEl.innerHTML='';return;
+  }
+  const maxComm=Math.max(...activeMonths.map(m=>m.total));
+  grid.innerHTML=months.map(m=>{
+    if(m.total===0)return`<div class="mini-kpi" style="opacity:.35;border-top:2px solid rgba(255,255,255,0.09)"><div class="lbl">${m.name}</div><div class="val" style="color:#64748b;font-size:.9rem">--</div><div class="sub">No data</div></div>`;
+    const barW=Math.round(m.total/maxComm*100);
+    const allPaid=m.unpaid===0;
+    return`<div class="mini-kpi" style="border-top:2px solid ${allPaid?'var(--green)':'var(--amber)'}">
+      <div class="lbl">${m.name}</div>
+      <div class="val" style="color:${allPaid?'var(--green)':'var(--gold2)'};font-size:.95rem">${fmt(m.total)}</div>
+      <div style="height:4px;background:#111d33;border-radius:2px;margin:.35rem 0;overflow:hidden"><div style="height:100%;border-radius:2px;background:${allPaid?'var(--green)':'var(--gold)'};width:${barW}%;transition:width .5s"></div></div>
+      <div class="sub">${m.count} sale${m.count!==1?'s':''}${m.unpaid>0?` · <span style="color:var(--amber)">${fmt(m.unpaid)} unpaid</span>`:' · <span style="color:var(--green)">All paid ✓</span>'}</div>
+    </div>`;
+  }).join('');
+  const grandTotal=activeMonths.reduce((a,m)=>a+m.total,0);
+  const grandPaid=activeMonths.reduce((a,m)=>a+m.paid,0);
+  const grandUnpaid=activeMonths.reduce((a,m)=>a+m.unpaid,0);
+  totEl.innerHTML=`
+    <div><div style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:.2rem">Total Commission</div><div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700;color:var(--gold2)">${fmt(grandTotal)}</div></div>
+    <div><div style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:.2rem">Paid</div><div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700;color:var(--green)">${fmt(grandPaid)}</div></div>
+    <div><div style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:.2rem">Unpaid</div><div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700;color:${grandUnpaid>0?'var(--amber)':'var(--slate)'}">${fmt(grandUnpaid)}</div></div>
+  `;
+}
 function renderMonthly(){
   const yr=activeYear;const nowMo=new Date().getMonth()+1;const yrS=getSalesForYear(yr);const yrM=getMeetingsForYear(yr);
   const ytdS=yrS.filter(s=>getSaleDateMonth(s)<=nowMo);
