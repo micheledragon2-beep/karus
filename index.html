@@ -92,6 +92,9 @@ html[data-theme="light"] .app-header,html[data-theme="light"] .card,html[data-th
 html[data-theme="light"] .weekly-summary{background:#ffffff !important;}
 
 *,*::before,*::after{box-sizing:border-box;}
+/* Fix iOS autofill yellow background */
+input:-webkit-autofill,input:-webkit-autofill:hover,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 1000px #111d33 inset !important;-webkit-text-fill-color:#f1f5f9 !important;caret-color:#f1f5f9;border-color:rgba(255,255,255,0.14) !important;}
+[data-theme=“light”] input:-webkit-autofill,[data-theme=“light”] input:-webkit-autofill:hover,[data-theme=“light”] input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 1000px #f1f5f9 inset !important;-webkit-text-fill-color:#334155 !important;}
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:#162240;border-radius:4px;}
@@ -121,7 +124,7 @@ html[data-theme="light"] .weekly-summary{background:#ffffff !important;}
 .auth-field label{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;}
 .auth-field input{background:#111d33;border:1px solid rgba(255,255,255,0.14);color:#f1f5f9;border-radius:10px;padding:.7rem .9rem;font-family:var(–font-body);font-size:.9rem;outline:none;-webkit-appearance:none;transition:all .2s var(–ease);}
 .auth-field input:focus{border-color:var(–gold);box-shadow:0 0 0 3px rgba(201,168,76,.1);}
-.auth-btn{width:100%;background:linear-gradient(135deg,var(–gold) 0%,var(–gold2) 100%);color:#080d1a;border:none;border-radius:10px;padding:.8rem;font-family:var(–font-head);font-size:.92rem;font-weight:700;cursor:pointer;margin-top:.5rem;transition:all .2s var(–ease);letter-spacing:.01em;}
+.auth-btn{width:100%;background:linear-gradient(135deg,#c9a84c 0%,#e8c56a 100%);color:#080d1a;border:none;border-radius:10px;padding:.8rem;font-family:var(–font-head);font-size:.92rem;font-weight:700;cursor:pointer;margin-top:.5rem;transition:all .2s var(–ease);letter-spacing:.01em;-webkit-appearance:none;}
 .auth-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,.3);}
 .auth-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(–red);border-radius:10px;padding:.7rem .9rem;font-size:.8rem;margin-bottom:.9rem;display:none;}
 .auth-error.show{display:block;}
