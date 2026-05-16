@@ -511,8 +511,11 @@ select.filter-sel{background:#111d33;border:1px solid rgba(255,255,255,0.09);col
 .app-header{height:50px;padding:0 .9rem;}
 .logo-year,.header-email{display:none;}
 .logo-name{font-size:.92rem;}
-.gs-input{width:120px;}
-.gs-input:focus{width:160px;}
+.gs-input{width:110px;}
+.gs-input:focus{width:150px;}
+/* hide desktop-only header actions on mobile – they live in the drawer */
+#outlook-btn,#theme-btn-hdr{display:none !important;}
+.signout-btn{display:none !important;}
 .bot-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:calc(var(–bot-h) + var(–safe-b));background:#0d1526;border-top:1px solid rgba(255,255,255,0.09);z-index:200;padding-bottom:var(–safe-b);}
 .bot-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;color:#64748b;cursor:pointer;font-family:var(–font-body);font-size:.53rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase;padding:.38rem 0;transition:all .2s var(–ease);}
 .bot-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
@@ -553,6 +556,9 @@ select.filter-sel{background:#111d33;border:1px solid rgba(255,255,255,0.09);col
 .toast-wrap{top:calc(50px + .5rem);right:.75rem;}
 /* Coaching on mobile */
 .coach-bar-label{width:62px;font-size:.72rem;}
+/* Drawer full-height on mobile */
+.side-drawer{width:80vw;max-width:300px;}
+.burger-btn{display:flex !important;}
 }
 @media(max-width:380px){.kpi-value{font-size:1.1rem;}.bot-btn{font-size:.48rem;}}
 
@@ -761,23 +767,20 @@ function toggleDrawer(){document.getElementById('side-drawer').classList.contain
 function drawerNav(page,btn){
   document.querySelectorAll('.drawer-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  // mirror to the hidden original tab-btns so showPage works
-  const orig=document.querySelector(`.tab-btn[onclick*="'${page}'"]`);
-  if(orig){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));orig.classList.add('active');}
-  showPage(page,orig||btn);
+  showPage(page,btn);
   closeDrawer();
 }
-// Sync drawer active state when showPage is called from elsewhere
-const _origShowPage=window.showPage;
-if(typeof _origShowPage==='function'){
-  window.showPage=function(page,btn){
-    _origShowPage(page,btn);
-    document.querySelectorAll('.drawer-tab').forEach(b=>b.classList.remove('active'));
-    const dt=document.getElementById('dt-'+page);if(dt)dt.classList.add('active');
-  };
+function syncDrawerActive(page){
+  document.querySelectorAll('.drawer-tab').forEach(b=>b.classList.remove('active'));
+  const dt=document.getElementById('dt-'+page);if(dt)dt.classList.add('active');
 }
-// Sync notif badge to header duplicate
-const _origAddNotif=window.addNotif;
+// Patch showPage after DOM ready so it exists
+window.addEventListener('DOMContentLoaded',()=>{
+  const _orig=window.showPage;
+  if(typeof _orig==='function'){
+    window.showPage=function(page,btn){_orig(page,btn);syncDrawerActive(page);};
+  }
+});
 </script>
 
 <!-- TODAY PAGE -->
