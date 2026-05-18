@@ -333,8 +333,6 @@ const FIREBASE_CONFIG={apiKey:"AIzaSyCoaAEMSJDBI22iy5IovGWkx4QBrG09hQc",authDoma
 const FIREBASE_API_KEY='AIzaSyCoaAEMSJDBI22iy5IovGWkx4QBrG09hQc';
 const FIREBASE_PROJECT_ID='year-planner-bbc5a';
 const ADMIN_EMAIL='micheledimech@karus.mt';
-// Manager emails — add more here as needed
-const MANAGER_EMAILS=[ADMIN_EMAIL,'manager@karus.mt'];
 
 const app=initializeApp(FIREBASE_CONFIG);
 const auth=getAuth(app);
@@ -342,6 +340,19 @@ const db=getFirestore(app);
 
 window._auth=auth;
 window._db=db;
+
+// ── CHECK IF USER HAS MANAGER ROLE IN FIRESTORE ──
+async function isManagerAccount(uid, idToken){
+  // Admin always has access
+  if(auth.currentUser?.email?.toLowerCase()===ADMIN_EMAIL.toLowerCase())return true;
+  // Check admin_users record for role: manager
+  try{
+    const res=await fetch(`https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents/admin_users/${uid}?key=${FIREBASE_API_KEY}`,{headers:{'Authorization':`Bearer ${idToken}`}});
+    const data=await res.json();
+    const role=data.fields?.role?.stringValue||'agent';
+    return role==='manager';
+  }catch(e){return false;}
+}
 
 // ── LOGIN ──
 window.doLogin=async()=>{
@@ -353,12 +364,12 @@ window.doLogin=async()=>{
   btn.textContent='Signing in…';btn.disabled=true;
   try{
     const cred=await signInWithEmailAndPassword(auth,e,p);
-    const em=cred.user.email.toLowerCase();
-    if(!MANAGER_EMAILS.map(x=>x.toLowerCase()).includes(em)){
+    const idToken=await cred.user.getIdToken();
+    const ok=await isManagerAccount(cred.user.uid,idToken);
+    if(!ok){
       await signOut(auth);
       showAuthError('This account does not have manager access.');
       btn.textContent='Sign In as Manager';btn.disabled=false;
-      return;
     }
   }catch(err){
     const msgs={'auth/user-not-found':'No account found.','auth/wrong-password':'Incorrect password.','auth/invalid-email':'Invalid email.','auth/invalid-credential':'Incorrect email or password.','auth/too-many-requests':'Too many attempts. Try again later.'};
@@ -372,8 +383,9 @@ window.doSignOut=async()=>{await signOut(auth);};
 // ── AUTH STATE ──
 onAuthStateChanged(auth,async(user)=>{
   if(user){
-    const em=user.email.toLowerCase();
-    if(!MANAGER_EMAILS.map(x=>x.toLowerCase()).includes(em)){await signOut(auth);return;}
+    const idToken=await user.getIdToken();
+    const ok=await isManagerAccount(user.uid,idToken);
+    if(!ok){await signOut(auth);return;}
     document.getElementById('auth-screen').style.display='none';
     document.getElementById('app-header').style.display='flex';
     document.getElementById('filter-bar').style.display='block';
@@ -410,7 +422,9 @@ window.loadAllData=async()=>{
       const name=f.name?.stringValue||'Unknown';
       const email=f.email?.stringValue||'--';
       const disabled=f.disabled?.booleanValue||false;
+      const role=f.role?.stringValue||'agent';
       if(disabled)continue; // skip disabled users
+      if(role==='manager')continue; // skip manager accounts — they're not agents
 
       try{
         const snap=await getDoc(doc(db,'users',uid));
