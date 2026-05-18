@@ -1183,6 +1183,21 @@ window.saveData=async()=>{
 };
 onAuthStateChanged(auth,async(user)=>{
   if(user){
+    // ── MANAGER REDIRECT CHECK ──
+    // If this user has role:manager in admin_users, send them to the manager dashboard
+    try{
+      const idToken=await user.getIdToken();
+      const PROJ='year-planner-bbc5a';
+      const APIKEY='AIzaSyCoaAEMSJDBI22iy5IovGWkx4QBrG09hQc';
+      const r=await fetch(`https://firestore.googleapis.com/v1/projects/${PROJ}/databases/(default)/documents/admin_users/${user.uid}?key=${APIKEY}`,{headers:{'Authorization':`Bearer ${idToken}`}});
+      const d=await r.json();
+      const role=d.fields?.role?.stringValue||'agent';
+      if(role==='manager'){
+        window.location.href='manager.html';
+        return;
+      }
+    }catch(e){/* if check fails, continue as agent */}
+    // ── END MANAGER REDIRECT ──
     window._currentUser=user;
     document.getElementById('header-email').textContent=user.displayName||user.email;
     document.getElementById('today-name').textContent=(user.displayName||user.email).split(' ')[0];
