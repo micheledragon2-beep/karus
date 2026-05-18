@@ -1300,7 +1300,7 @@ const TT={backgroundColor:'rgba(8,13,26,.95)',borderColor:'rgba(255,255,255,.1)'
 const rOpts=()=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>`${c.parsed.y.toFixed(1)}%`}}},scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#64748b',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.04)'},border:{display:false},beginAtZero:true,max:100}}});
 
 // ── OUTLOOK ──
-const MSAL_CLIENT_ID='cbbcd98d-a42e-4613-aeab-e664d81962b3';
+const MSAL_CLIENT_ID='630b5b7a-7228-4193-a7a0-e205a0171353';
 const MSAL_REDIRECT=window.location.origin+window.location.pathname;
 let outlookToken=null,calWeekOffset=0;
 function connectOutlook(){const p=new URLSearchParams({client_id:MSAL_CLIENT_ID,response_type:'token',redirect_uri:MSAL_REDIRECT,scope:'Calendars.Read User.Read',response_mode:'fragment',nonce:Math.random().toString(36)});window.location.href=`https://login.microsoftonline.com/common/oauth2/v2.0/authorize?${p}`;}
