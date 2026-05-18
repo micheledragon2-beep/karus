@@ -1236,6 +1236,7 @@ onAuthStateChanged(auth,async(user)=>{
     document.getElementById('quick-add-btn').style.display='flex';
     setTimeout(()=>runNotifChecks(),2500);
     toast('Welcome back, '+(user.displayName||'').split(' ')[0]+'! 👋','success');
+    checkOutlookToken();
   }else{
     window._currentUser=null;
     document.getElementById('auth-screen').style.display='flex';
