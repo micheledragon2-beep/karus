@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Karus Manager — 2026</title>
+<script>
+(function(){
+  var t=localStorage.getItem('karus_theme');
+  if(t==='light'){document.documentElement.setAttribute('data-theme','light');document.documentElement.style.background='#f8fafc';}
+  else{document.documentElement.setAttribute('data-theme','dark');document.documentElement.style.background='#080d1a';document.documentElement.style.colorScheme='dark';}
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{
+  --font-body:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-head:'Plus Jakarta Sans',-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono','SF Mono',monospace;
+  --gold:#c9a84c;--gold2:#e8c56a;--gold3:rgba(201,168,76,0.08);
+  --green:#22c55e;--red:#ef4444;--amber:#f59e0b;
+  --teal:#14b8a6;--purple:#a78bfa;--blue:#60a5fa;--grey:#64748b;
+  --r:10px;--rl:16px;--nav-h:58px;--ease:cubic-bezier(0.4,0,0.2,1);
+  --bg:#080d1a;--s1:#0d1526;--s2:#111d33;--s3:#162240;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --gold-border:rgba(201,168,76,0.2);--gold-border2:rgba(201,168,76,0.35);
+  --slate:#64748b;--slate2:#94a3b8;--text:#cbd5e1;--white:#f1f5f9;
+  --shadow:0 4px 24px rgba(0,0,0,0.5);
+}
+[data-theme="light"]{
+  --bg:#f8fafc;--s1:#ffffff;--s2:#f1f5f9;--s3:#e2e8f0;
+  --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.12);
+  --gold-border:rgba(201,168,76,0.25);--gold-border2:rgba(201,168,76,0.4);
+  --slate:#64748b;--slate2:#475569;--text:#334155;--white:#0f172a;
+  --shadow:0 2px 12px rgba(0,0,0,0.08);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{background:#080d1a;color:#cbd5e1;color-scheme:dark;-webkit-text-size-adjust:100%;}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+[data-theme="light"] html,[data-theme="light"] body{background:#f8fafc !important;color:#334155 !important;color-scheme:light;}
+
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#162240;border-radius:4px;}
+
+/* AUTH */
+.auth-screen{position:fixed;inset:0;background:#080d1a;display:flex;align-items:center;justify-content:center;z-index:9999;padding:1.5rem;}
+.auth-box{background:#0d1526;border:1px solid var(--gold-border);border-radius:20px;padding:2.5rem 2rem;width:100%;max-width:420px;box-shadow:0 32px 80px rgba(0,0,0,.5);animation:authIn .4s var(--ease);}
+@keyframes authIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
+.auth-logo-name{font-family:var(--font-head);font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,var(--gold) 0%,var(--gold2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.03em;text-align:center;}
+.auth-logo-sub{font-family:var(--font-mono);font-size:.68rem;color:#64748b;letter-spacing:.18em;margin-top:.3rem;text-transform:uppercase;text-align:center;margin-bottom:2rem;}
+.auth-badge{background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.2);color:#a78bfa;border-radius:20px;padding:.3rem .9rem;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;display:inline-block;margin:0 auto .5rem;display:block;text-align:center;}
+.auth-field{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.9rem;}
+.auth-field label{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;}
+.auth-field input{background:#111d33;border:1px solid rgba(255,255,255,0.14);color:#f1f5f9;border-radius:10px;padding:.7rem .9rem;font-family:var(--font-body);font-size:.9rem;outline:none;-webkit-appearance:none;transition:all .2s var(--ease);}
+.auth-field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.1);}
+.auth-btn{width:100%;background:linear-gradient(135deg,var(--gold) 0%,var(--gold2) 100%);color:#080d1a;border:none;border-radius:10px;padding:.8rem;font-family:var(--font-head);font-size:.92rem;font-weight:700;cursor:pointer;margin-top:.5rem;transition:all .2s var(--ease);}
+.auth-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,.3);}
+.auth-btn:disabled{opacity:.65;cursor:not-allowed;transform:none;}
+.auth-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--red);border-radius:10px;padding:.7rem .9rem;font-size:.8rem;margin-bottom:.9rem;display:none;}
+.auth-error.show{display:block;}
+.auth-note{text-align:center;margin-top:1rem;font-size:.72rem;color:#64748b;}
+
+/* HEADER */
+.app-header{background:#0d1526;border-bottom:1px solid var(--border);padding:0 1.5rem;display:none;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;height:var(--nav-h);backdrop-filter:blur(12px);}
+.header-left{display:flex;align-items:center;gap:1rem;}
+.logo-name{font-family:var(--font-head);font-size:1.05rem;font-weight:800;background:linear-gradient(135deg,var(--gold) 0%,var(--gold2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.mgr-badge{background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.2);color:#a78bfa;border-radius:20px;padding:.2rem .75rem;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.header-tabs{display:flex;gap:.25rem;background:#111d33;border-radius:10px;padding:.25rem;}
+.h-tab{background:none;border:none;color:#64748b;font-family:var(--font-body);font-size:.8rem;font-weight:600;padding:.45rem .85rem;border-radius:7px;cursor:pointer;transition:all .2s;}
+.h-tab.active{background:#0d1526;color:var(--gold);border:1px solid var(--gold-border);}
+.header-right{display:flex;align-items:center;gap:.6rem;}
+.icon-btn{background:#111d33;border:1px solid rgba(255,255,255,0.09);color:#cbd5e1;border-radius:8px;padding:.35rem .6rem;font-size:.78rem;cursor:pointer;transition:all .2s;}
+.icon-btn:hover{border-color:rgba(255,255,255,0.14);background:#162240;}
+.header-email{font-size:.68rem;color:#64748b;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.signout-btn{background:transparent;border:1px solid rgba(239,68,68,.2);color:var(--red);border-radius:8px;padding:.35rem .65rem;font-size:.7rem;font-weight:600;cursor:pointer;font-family:var(--font-body);}
+
+/* TOAST */
+.toast-wrap{position:fixed;top:calc(var(--nav-h) + .75rem);right:1rem;z-index:9000;display:flex;flex-direction:column;gap:.5rem;pointer-events:none;}
+.toast{background:#0d1526;border:1px solid rgba(255,255,255,0.14);border-radius:10px;padding:.75rem 1rem;font-size:.8rem;font-weight:500;color:#f1f5f9;box-shadow:0 4px 24px rgba(0,0,0,0.5);pointer-events:all;display:flex;align-items:center;gap:.6rem;max-width:300px;animation:toastIn .3s var(--ease);}
+.toast.success{border-left:3px solid var(--green);}
+.toast.error{border-left:3px solid var(--red);}
+.toast.warning{border-left:3px solid var(--amber);}
+.toast.info{border-left:3px solid var(--blue);}
+.toast.exit{animation:toastOut .25s forwards;}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateX(20px)}}
+
+/* PAGE */
+.page{display:none;padding:1.5rem;}
+.page.active{display:block;}
+
+/* KPI STRIP */
+.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.75rem;margin-bottom:1.5rem;}
+.kpi{background:#0d1526;border:1px solid var(--border);border-radius:var(--rl);padding:1.1rem 1.25rem;position:relative;overflow:hidden;transition:all .2s;}
+.kpi-accent{position:absolute;top:0;left:0;right:0;height:2px;}
+.kpi.gold .kpi-accent{background:var(--gold);}
+.kpi.green .kpi-accent{background:var(--green);}
+.kpi.purple .kpi-accent{background:var(--purple);}
+.kpi.teal .kpi-accent{background:var(--teal);}
+.kpi.amber .kpi-accent{background:var(--amber);}
+.kpi.blue .kpi-accent{background:var(--blue);}
+.kpi.red .kpi-accent{background:var(--red);}
+.kpi-label{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:.45rem;}
+.kpi-value{font-family:var(--font-mono);font-size:1.4rem;font-weight:600;color:#f1f5f9;letter-spacing:-.02em;}
+.kpi-sub{font-size:.7rem;color:#64748b;margin-top:.25rem;}
+
+/* CARD */
+.card{background:#0d1526;border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem 1.4rem;margin-bottom:1.25rem;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.card-title{font-family:var(--font-head);font-size:.92rem;font-weight:700;color:var(--white);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-bottom:1.25rem;}
+.chart-wrap{height:200px;}
+
+/* MONTH FILTER */
+.month-filter{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.25rem;}
+.mf-btn{background:#111d33;border:1px solid var(--border);color:#64748b;border-radius:8px;padding:.35rem .7rem;font-size:.73rem;font-weight:600;cursor:pointer;font-family:var(--font-body);transition:all .15s;}
+.mf-btn.active{background:var(--gold3);border-color:var(--gold-border2);color:var(--gold);}
+
+/* LEADERBOARD */
+.lb-row{display:flex;align-items:center;gap:.85rem;padding:.7rem 0;border-bottom:1px solid var(--border);}
+.lb-row:last-child{border-bottom:none;}
+.lb-rank{font-family:var(--font-mono);font-size:.8rem;width:28px;flex-shrink:0;text-align:center;}
+.lb-name{font-size:.88rem;font-weight:600;color:var(--white);flex:1;font-family:var(--font-head);}
+.lb-bar-wrap{width:90px;height:5px;background:#111d33;border-radius:3px;overflow:hidden;flex-shrink:0;}
+.lb-bar-fill{height:100%;border-radius:3px;}
+.lb-val{font-family:var(--font-mono);font-size:.82rem;font-weight:600;width:80px;text-align:right;flex-shrink:0;}
+.lb-sub{font-size:.65rem;color:#64748b;width:48px;text-align:right;flex-shrink:0;}
+
+/* AGENT CARDS */
+.agent-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.85rem;}
+.agent-card{background:#0d1526;border:1px solid var(--border);border-radius:var(--rl);padding:1.1rem 1.25rem;cursor:pointer;transition:all .2s;}
+.agent-card:hover{border-color:var(--gold-border2);transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,.4);}
+.agent-card-name{font-family:var(--font-head);font-size:.98rem;font-weight:700;color:var(--white);margin-bottom:.25rem;}
+.agent-card-email{font-size:.7rem;color:#64748b;margin-bottom:.85rem;}
+.agent-stats{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
+.agent-stat{background:#111d33;border-radius:8px;padding:.6rem .75rem;}
+.agent-stat-val{font-family:var(--font-mono);font-size:.95rem;font-weight:600;}
+.agent-stat-lbl{font-size:.58rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#64748b;margin-top:.15rem;}
+
+/* DRAWER */
+.drawer-overlay{position:fixed;inset:0;background:rgba(4,7,18,.7);z-index:800;opacity:0;pointer-events:none;display:none;transition:opacity .3s;backdrop-filter:blur(4px);}
+.drawer-overlay.open{opacity:1;pointer-events:all;display:block;}
+.agent-drawer{position:fixed;top:0;right:0;bottom:0;width:min(520px,100vw);background:#0d1526;border-left:1px solid var(--border);z-index:900;transform:translateX(100%);transition:transform .32s var(--ease);overflow-y:auto;}
+.agent-drawer.open{transform:translateX(0);}
+.drawer-inner{padding:1.5rem;}
+.drawer-close-btn{background:#111d33;border:1px solid var(--border);color:#94a3b8;border-radius:9px;padding:.4rem .75rem;cursor:pointer;font-size:.8rem;font-family:var(--font-body);margin-bottom:1.25rem;}
+.drawer-agent-name{font-family:var(--font-head);font-size:1.4rem;font-weight:800;color:var(--white);margin-bottom:.2rem;}
+.drawer-agent-email{font-size:.75rem;color:#64748b;margin-bottom:1.25rem;}
+.drawer-section-title{font-family:var(--font-head);font-size:.7rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.1em;margin:.9rem 0 .55rem;}
+.sale-row{display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--border);}
+.sale-row:last-child{border-bottom:none;}
+.sale-name{font-size:.83rem;color:var(--white);flex:1;font-weight:500;}
+.sale-meta{font-size:.68rem;color:#64748b;}
+.sale-val{font-family:var(--font-mono);font-size:.82rem;color:var(--gold2);font-weight:600;flex-shrink:0;}
+.prod{font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:5px;}
+.prod-PPPWP{background:rgba(96,165,250,.12);color:#60a5fa;}
+.prod-PPPUL{background:rgba(167,139,250,.12);color:#a78bfa;}
+.prod-ULSP{background:rgba(20,184,166,.12);color:#14b8a6;}
+.prod-FP{background:rgba(245,158,11,.12);color:#f59e0b;}
+
+/* LOADING OVERLAY */
+.loading-overlay{position:fixed;inset:0;background:rgba(8,13,26,.9);display:flex;align-items:center;justify-content:center;z-index:800;display:none;}
+.loading-overlay.show{display:flex;}
+.loading-spinner{width:40px;height:40px;border:3px solid rgba(201,168,76,.2);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* BUTTON */
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text);border-radius:10px;padding:.5rem 1rem;font-family:var(--font-body);font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-ghost:hover{background:rgba(255,255,255,.04);}
+.btn-sm{padding:.3rem .7rem;font-size:.75rem;}
+
+/* BADGE */
+.badge{display:inline-block;font-size:.62rem;font-weight:700;padding:.18rem .55rem;border-radius:20px;letter-spacing:.04em;}
+.badge-meetclose{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.2);}
+.badge-followup{background:rgba(245,158,11,.12);color:var(--amber);border:1px solid rgba(245,158,11,.2);}
+.badge-clientnoshow,.badge-meetnosale{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.badge-meetreschedule,.badge-second{background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.2);}
+.badge-clientcancel{background:rgba(100,116,139,.12);color:#94a3b8;border:1px solid rgba(100,116,139,.2);}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:.8rem;}
+.tbl th{padding:.5rem .85rem;background:#111d33;color:#64748b;font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-align:left;}
+.tbl td{padding:.55rem .85rem;border-bottom:1px solid rgba(255,255,255,0.05);color:var(--text);}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:rgba(255,255,255,.02);}
+
+@media(max-width:768px){
+  .grid-2,.grid-3{grid-template-columns:1fr;}
+  .header-tabs{display:none;}
+  .h-tab-mobile{display:flex !important;}
+  .lb-bar-wrap{display:none;}
+  .agent-cards{grid-template-columns:1fr;}
+  .kpi-strip{grid-template-columns:1fr 1fr;}
+  .kpi-value{font-size:1.1rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<!-- AUTH -->
+<div class="auth-screen" id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo-name">Karus</div>
+    <div class="auth-logo-sub">Manager Dashboard · 2026</div>
+    <div class="auth-badge">👔 Manager Access</div>
+    <div class="auth-error" id="auth-error"></div>
+    <div class="auth-field"><label>Email</label><input type="email" id="login-email" placeholder="your@email.com" autocomplete="email"></div>
+    <div class="auth-field"><label>Password</label><input type="password" id="login-password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="auth-btn" id="login-btn" onclick="doLogin()">Sign In as Manager</button>
+    <div class="auth-note">Access restricted to authorised managers only</div>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-spinner"></div>
+</div>
+
+<!-- HEADER -->
+<header class="app-header" id="app-header">
+  <div class="header-left">
+    <div class="logo-name">Karus</div>
+    <span class="mgr-badge">Manager View</span>
+    <div class="header-tabs" id="header-tabs">
+      <button class="h-tab active" onclick="switchTab('overview',this)">📊 Overview</button>
+      <button class="h-tab" onclick="switchTab('leaderboard',this)">🏆 Leaderboards</button>
+      <button class="h-tab" onclick="switchTab('agents',this)">👥 Agents</button>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="header-email" id="header-email"></span>
+    <button class="icon-btn" onclick="refreshAll()" title="Refresh data">↻</button>
+    <button class="icon-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
+    <button class="signout-btn" onclick="doSignOut()">Sign out</button>
+  </div>
+</header>
+
+<!-- MOBILE TAB BAR (hidden on desktop) -->
+<div id="mobile-tabs" style="display:none;position:sticky;top:var(--nav-h);z-index:100;background:#0d1526;border-bottom:1px solid var(--border);padding:.5rem 1rem;gap:.4rem;overflow-x:auto;">
+  <button class="h-tab active" onclick="switchTab('overview',this)" style="white-space:nowrap">📊 Overview</button>
+  <button class="h-tab" onclick="switchTab('leaderboard',this)" style="white-space:nowrap">🏆 Leaderboards</button>
+  <button class="h-tab" onclick="switchTab('agents',this)" style="white-space:nowrap">👥 Agents</button>
+</div>
+
+<!-- MONTH FILTER BAR -->
+<div id="filter-bar" style="display:none;padding:.75rem 1.5rem;background:#0d1526;border-bottom:1px solid var(--border);position:sticky;top:calc(var(--nav-h));z-index:99;">
+  <div class="month-filter" id="month-filter"></div>
+</div>
+
+<!-- ═══════════════ OVERVIEW PAGE ═══════════════ -->
+<div id="page-overview" class="page active">
+  <div class="kpi-strip" id="overview-kpi"></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><div class="card-title">📈 Total API by Month</div></div><div class="chart-wrap"><canvas id="chart-api-month"></canvas></div></div>
+    <div class="card"><div class="card-header"><div class="card-title">💰 Total Commission by Month</div></div><div class="chart-wrap"><canvas id="chart-comm-month"></canvas></div></div>
+  </div>
+  <div class="grid-3">
+    <div class="card"><div class="card-header"><div class="card-title">🤝 Meetings by Agent</div></div><div class="chart-wrap"><canvas id="chart-meets-agent"></canvas></div></div>
+    <div class="card"><div class="card-header"><div class="card-title">🎯 Close Rate by Agent</div></div><div class="chart-wrap"><canvas id="chart-close-agent"></canvas></div></div>
+    <div class="card"><div class="card-header"><div class="card-title">💼 API by Agent</div></div><div class="chart-wrap"><canvas id="chart-api-agent"></canvas></div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">📋 Agent Summary Table</div></div>
+    <div style="overflow-x:auto"><table class="tbl" id="summary-table">
+      <thead><tr>
+        <th>Agent</th><th>My API</th><th>Commission</th><th>Meetings</th><th>Closed</th><th>Close Rate</th><th>Sales</th>
+      </tr></thead>
+      <tbody id="summary-tbody"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ═══════════════ LEADERBOARD PAGE ═══════════════ -->
+<div id="page-leaderboard" class="page">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title">🥇 My API Ranking</div></div>
+      <div id="lb-api"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">💰 Commission Ranking</div></div>
+      <div id="lb-comm"></div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title">🎯 Close Rate Ranking</div></div>
+      <div id="lb-close"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">📅 Meetings Set Ranking</div></div>
+      <div id="lb-meets"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ AGENTS PAGE ═══════════════ -->
+<div id="page-agents" class="page">
+  <div class="agent-cards" id="agent-cards"></div>
+</div>
+
+<!-- AGENT DRAWER OVERLAY -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+
+<!-- AGENT DRAWER -->
+<div class="agent-drawer" id="agent-drawer">
+  <div class="drawer-inner">
+    <button class="drawer-close-btn" onclick="closeDrawer()">← Back</button>
+    <div class="drawer-agent-name" id="dr-name"></div>
+    <div class="drawer-agent-email" id="dr-email"></div>
+    <div class="kpi-strip" id="dr-kpi" style="grid-template-columns:repeat(2,1fr)"></div>
+    <div class="card" style="margin-bottom:1rem"><div class="card-header"><div class="card-title">📈 Monthly API</div></div><div class="chart-wrap"><canvas id="dr-chart"></canvas></div></div>
+    <div class="drawer-section-title">💼 Recent Sales</div>
+    <div id="dr-sales"></div>
+    <div class="drawer-section-title">📅 Recent Meetings</div>
+    <div id="dr-meetings"></div>
+  </div>
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import{getFirestore,doc,getDoc,collection,getDocs}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const FIREBASE_CONFIG={apiKey:"AIzaSyCoaAEMSJDBI22iy5IovGWkx4QBrG09hQc",authDomain:"year-planner-bbc5a.firebaseapp.com",projectId:"year-planner-bbc5a",storageBucket:"year-planner-bbc5a.firebasestorage.app",messagingSenderId:"182620827791",appId:"1:182620827791:web:a43b5d7e0e9c53178b40fa"};
+const FIREBASE_API_KEY='AIzaSyCoaAEMSJDBI22iy5IovGWkx4QBrG09hQc';
+const FIREBASE_PROJECT_ID='year-planner-bbc5a';
+const ADMIN_EMAIL='micheledimech@karus.mt';
+// Manager emails — add more here as needed
+const MANAGER_EMAILS=[ADMIN_EMAIL,'manager@karus.mt'];
+
+const app=initializeApp(FIREBASE_CONFIG);
+const auth=getAuth(app);
+const db=getFirestore(app);
+
+window._auth=auth;
+window._db=db;
+
+// ── LOGIN ──
+window.doLogin=async()=>{
+  const e=document.getElementById('login-email').value.trim();
+  const p=document.getElementById('login-password').value;
+  const btn=document.getElementById('login-btn');
+  showAuthError('');
+  if(!e||!p){showAuthError('Please enter your email and password.');return;}
+  btn.textContent='Signing in…';btn.disabled=true;
+  try{
+    const cred=await signInWithEmailAndPassword(auth,e,p);
+    const em=cred.user.email.toLowerCase();
+    if(!MANAGER_EMAILS.map(x=>x.toLowerCase()).includes(em)){
+      await signOut(auth);
+      showAuthError('This account does not have manager access.');
+      btn.textContent='Sign In as Manager';btn.disabled=false;
+      return;
+    }
+  }catch(err){
+    const msgs={'auth/user-not-found':'No account found.','auth/wrong-password':'Incorrect password.','auth/invalid-email':'Invalid email.','auth/invalid-credential':'Incorrect email or password.','auth/too-many-requests':'Too many attempts. Try again later.'};
+    showAuthError(msgs[err.code]||'Something went wrong.');
+    btn.textContent='Sign In as Manager';btn.disabled=false;
+  }
+};
+
+window.doSignOut=async()=>{await signOut(auth);};
+
+// ── AUTH STATE ──
+onAuthStateChanged(auth,async(user)=>{
+  if(user){
+    const em=user.email.toLowerCase();
+    if(!MANAGER_EMAILS.map(x=>x.toLowerCase()).includes(em)){await signOut(auth);return;}
+    document.getElementById('auth-screen').style.display='none';
+    document.getElementById('app-header').style.display='flex';
+    document.getElementById('filter-bar').style.display='block';
+    if(window.innerWidth<768)document.getElementById('mobile-tabs').style.display='flex';
+    document.getElementById('header-email').textContent=user.displayName||user.email;
+    document.getElementById('page-overview').style.display='block';
+    await loadAllData();
+  }else{
+    document.getElementById('auth-screen').style.display='flex';
+    document.getElementById('app-header').style.display='none';
+    document.getElementById('filter-bar').style.display='none';
+    document.getElementById('mobile-tabs').style.display='none';
+    window._agentData=[];
+  }
+});
+
+// ── LOAD ALL AGENT DATA ──
+window.loadAllData=async()=>{
+  showLoading(true);
+  try{
+    // 1. Get list of users from admin_users collection
+    const idToken=await auth.currentUser.getIdToken();
+    const res=await fetch(`https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents/admin_users?key=${FIREBASE_API_KEY}`,{headers:{'Authorization':`Bearer ${idToken}`}});
+    const adminData=await res.json();
+    const adminDocs=adminData.documents||[];
+
+    if(!adminDocs.length){showLoading(false);toast('No agents found in the system','warning');return;}
+
+    // 2. For each user, fetch their Firestore document
+    const agents=[];
+    for(const ad of adminDocs){
+      const uid=ad.name.split('/').pop();
+      const f=ad.fields||{};
+      const name=f.name?.stringValue||'Unknown';
+      const email=f.email?.stringValue||'--';
+      const disabled=f.disabled?.booleanValue||false;
+      if(disabled)continue; // skip disabled users
+
+      try{
+        const snap=await getDoc(doc(db,'users',uid));
+        if(snap.exists()){
+          const d=snap.data();
+          agents.push({uid,name,email,meetings:d.meetings||[],sales:d.sales||[],targets:d.targets||{}});
+        }
+      }catch(e){console.warn('Could not load data for',name,e);}
+    }
+
+    window._agentData=agents;
+    buildMonthFilter();
+    renderAll();
+    toast(`Loaded data for ${agents.length} agent${agents.length===1?'':'s'} ✓`,'success');
+  }catch(e){
+    console.error(e);
+    toast('Error loading data: '+e.message,'error');
+  }
+  showLoading(false);
+};
+
+window.refreshAll=async()=>{await loadAllData();};
+
+</script>
+
+<script>
+// ── GLOBALS ──
+window._agentData=[];
+window._activeMonth='all';
+window._activeTab='overview';
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const charts={};
+const TT={backgroundColor:'rgba(8,13,26,.95)',borderColor:'rgba(255,255,255,.1)',borderWidth:1,padding:10,cornerRadius:8};
+Chart.defaults.color='#64748b';
+Chart.defaults.font.family="'Inter',-apple-system,BlinkMacSystemFont,sans-serif";
+Chart.defaults.font.size=11;
+
+// ── HELPERS ──
+const fmt=(n,d=2)=>'€'+(parseFloat(n)||0).toFixed(d).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+const pct=n=>((parseFloat(n)||0)*100).toFixed(1)+'%';
+function getMeetMonth(m){const d=m.date||'';if(/^\d{4}-\d{2}-\d{2}$/.test(d))return parseInt(d.slice(5,7));const p=d.split('/');return p.length===3?parseInt(p[1]):null;}
+function getSaleDateMonth(s){const d=s.date||'';if(/^\d{4}-\d{2}-\d{2}$/.test(d))return parseInt(d.slice(5,7));const p=d.split('/');return p.length===3?parseInt(p[1]):null;}
+function getSaleYear(s){const d=s.date||'';if(/^\d{4}-\d{2}-\d{2}$/.test(d))return parseInt(d.slice(0,4));return null;}
+function getMeetYear(m){const d=m.date||'';if(/^\d{4}-\d{2}-\d{2}$/.test(d))return parseInt(d.slice(0,4));return null;}
+const ACTIVE_YEAR=2026;
+
+function filterByMonth(arr,type){
+  if(window._activeMonth==='all')return arr.filter(x=>type==='sale'?getSaleYear(x)===ACTIVE_YEAR:getMeetYear(x)===ACTIVE_YEAR);
+  const mo=parseInt(window._activeMonth);
+  return arr.filter(x=>{
+    const yr=type==='sale'?getSaleYear(x):getMeetYear(x);
+    const m=type==='sale'?getSaleDateMonth(x):getMeetMonth(x);
+    return yr===ACTIVE_YEAR&&m===mo;
+  });
+}
+
+function agentStats(agent){
+  const sales=filterByMonth(agent.sales,'sale');
+  const meetings=filterByMonth(agent.meetings,'meet');
+  const totalAPI=sales.reduce((a,s)=>a+(parseFloat(s.myAPI)||0),0);
+  const totalComm=sales.reduce((a,s)=>a+(parseFloat(s.commission)||0),0);
+  const closed=meetings.filter(m=>['Meeting Close','Closed'].includes(m.status)).length;
+  const closeRate=meetings.length>0?closed/meetings.length:0;
+  return{totalAPI,totalComm,meetings:meetings.length,closed,closeRate,sales:sales.length};
+}
+
+// ── MONTH FILTER ──
+function buildMonthFilter(){
+  const el=document.getElementById('month-filter');
+  let h=`<button class="mf-btn ${window._activeMonth==='all'?'active':''}" onclick="setMonth('all',this)">All 2026</button>`;
+  MONTHS.forEach((m,i)=>{ h+=`<button class="mf-btn ${window._activeMonth===String(i+1)?'active':''}" onclick="setMonth('${i+1}',this)">${m}</button>`; });
+  el.innerHTML=h;
+}
+function setMonth(mo,btn){
+  window._activeMonth=mo;
+  document.querySelectorAll('.mf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAll();
+}
+
+// ── TAB SWITCHING ──
+function switchTab(tab,btn){
+  window._activeTab=tab;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  // Sync all tab buttons
+  document.querySelectorAll('.h-tab').forEach(b=>{
+    if(b.onclick&&b.onclick.toString().includes("'"+tab+"'"))b.classList.add('active');
+    else b.classList.remove('active');
+  });
+  renderAll();
+}
+window.switchTab=switchTab;
+
+// ── RENDER ALL ──
+function renderAll(){
+  if(window._activeTab==='overview')renderOverview();
+  else if(window._activeTab==='leaderboard')renderLeaderboards();
+  else if(window._activeTab==='agents')renderAgents();
+}
+
+// ── OVERVIEW ──
+function renderOverview(){
+  const agents=window._agentData;
+  if(!agents.length){document.getElementById('overview-kpi').innerHTML='<div style="color:#64748b;font-size:.82rem;grid-column:1/-1;padding:1rem">No data loaded yet</div>';return;}
+
+  // Totals
+  let totalAPI=0,totalComm=0,totalMeets=0,totalClosed=0,totalSales=0;
+  agents.forEach(a=>{const s=agentStats(a);totalAPI+=s.totalAPI;totalComm+=s.totalComm;totalMeets+=s.meetings;totalClosed+=s.closed;totalSales+=s.sales;});
+  const teamClose=totalMeets>0?totalClosed/totalMeets:0;
+
+  document.getElementById('overview-kpi').innerHTML=`
+    ${kpi('gold','Team My API',fmt(totalAPI,0),`${agents.length} agents`)}
+    ${kpi('green','Team Commission',fmt(totalComm,0),'earned')}
+    ${kpi('teal','Total Meetings',totalMeets,`${totalClosed} closed`)}
+    ${kpi('purple','Team Close Rate',pct(teamClose),`${totalClosed}/${totalMeets}`)}
+    ${kpi('blue','Total Policies',totalSales,'written')}
+    ${kpi('amber','Active Agents',agents.length,'in team')}
+  `;
+
+  // Monthly charts
+  const months=MONTHS;
+  const apiByMonth=months.map((_,i)=>agents.reduce((a,ag)=>{
+    const s=ag.sales.filter(x=>getSaleYear(x)===ACTIVE_YEAR&&getSaleDateMonth(x)===i+1);
+    return a+s.reduce((b,x)=>b+(parseFloat(x.myAPI)||0),0);
+  },0));
+  const commByMonth=months.map((_,i)=>agents.reduce((a,ag)=>{
+    const s=ag.sales.filter(x=>getSaleYear(x)===ACTIVE_YEAR&&getSaleDateMonth(x)===i+1);
+    return a+s.reduce((b,x)=>b+(parseFloat(x.commission)||0),0);
+  },0));
+
+  makeChart('chart-api-month',{type:'bar',data:{labels:months,datasets:[{data:apiByMonth,backgroundColor:'rgba(201,168,76,.55)',borderColor:'rgba(201,168,76,.9)',borderWidth:1,borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>`€${c.parsed.y.toFixed(0)}`}}},scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#64748b',font:{size:10},callback:v=>'€'+v},grid:{color:'rgba(255,255,255,.04)'},border:{display:false},beginAtZero:true}}}});
+  makeChart('chart-comm-month',{type:'bar',data:{labels:months,datasets:[{data:commByMonth,backgroundColor:'rgba(34,197,94,.45)',borderColor:'rgba(34,197,94,.8)',borderWidth:1,borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>`€${c.parsed.y.toFixed(0)}`}}},scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#64748b',font:{size:10},callback:v=>'€'+v},grid:{color:'rgba(255,255,255,.04)'},border:{display:false},beginAtZero:true}}}});
+
+  // Agent-level charts
+  const AGENT_COLORS=['#c9a84c','#a78bfa','#22c55e','#60a5fa','#f59e0b','#14b8a6','#ef4444','#e8c56a'];
+  const labels=agents.map(a=>a.name.split(' ')[0]);
+  const apiVals=agents.map(a=>agentStats(a).totalAPI);
+  const closeVals=agents.map(a=>agentStats(a).closeRate*100);
+  const meetVals=agents.map(a=>agentStats(a).meetings);
+  const colors=agents.map((_,i)=>AGENT_COLORS[i%AGENT_COLORS.length]);
+
+  makeChart('chart-meets-agent',{type:'doughnut',data:{labels,datasets:[{data:meetVals,backgroundColor:colors.map(c=>c+'aa'),borderColor:colors,borderWidth:1,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'right',labels:{color:'#94a3b8',font:{size:10},boxWidth:8,usePointStyle:true,padding:6}},tooltip:{...TT}}}});
+  makeChart('chart-close-agent',{type:'bar',data:{labels,datasets:[{data:closeVals,backgroundColor:colors.map(c=>c+'aa'),borderColor:colors,borderWidth:1,borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>`${c.parsed.y.toFixed(1)}%`}}},scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#64748b',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.04)'},border:{display:false},beginAtZero:true,max:100}}}});
+  makeChart('chart-api-agent',{type:'bar',data:{labels,datasets:[{data:apiVals,backgroundColor:colors.map(c=>c+'aa'),borderColor:colors,borderWidth:1,borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>`€${c.parsed.y.toFixed(0)}`}}},scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#64748b',font:{size:10},callback:v=>'€'+v},grid:{color:'rgba(255,255,255,.04)'},border:{display:false},beginAtZero:true}}}});
+
+  // Summary table
+  const rows=agents.map(a=>{const s=agentStats(a);return{name:a.name,...s};}).sort((a,b)=>b.totalAPI-a.totalAPI);
+  document.getElementById('summary-tbody').innerHTML=rows.map((r,i)=>`
+    <tr>
+      <td style="font-weight:600;color:var(--white)">${i===0?'🥇 ':''}${r.name}</td>
+      <td style="font-family:var(--font-mono);color:var(--gold2)">${fmt(r.totalAPI,0)}</td>
+      <td style="font-family:var(--font-mono);color:var(--green)">${fmt(r.totalComm,0)}</td>
+      <td>${r.meetings}</td>
+      <td style="color:var(--green)">${r.closed}</td>
+      <td style="font-family:var(--font-mono);color:${r.closeRate>=0.5?'var(--green)':r.closeRate>=0.3?'var(--amber)':'var(--red)'}">${(r.closeRate*100).toFixed(1)}%</td>
+      <td>${r.sales}</td>
+    </tr>`).join('');
+}
+
+// ── LEADERBOARDS ──
+function renderLeaderboards(){
+  const agents=window._agentData;
+  if(!agents.length){['lb-api','lb-comm','lb-close','lb-meets'].forEach(id=>{document.getElementById(id).innerHTML='<div style="color:#64748b;font-size:.82rem;padding:1rem">No data</div>';});return;}
+
+  const stats=agents.map(a=>({name:a.name,...agentStats(a)}));
+
+  renderLB('lb-api',stats.sort((a,b)=>b.totalAPI-a.totalAPI).map(s=>({name:s.name,val:fmt(s.totalAPI,0),sub:`${s.sales} sales`,raw:s.totalAPI})),'gold');
+  const byComm=[...stats].sort((a,b)=>b.totalComm-a.totalComm);
+  renderLB('lb-comm',byComm.map(s=>({name:s.name,val:fmt(s.totalComm,0),sub:`${pct(s.closeRate)} CR`,raw:s.totalComm})),'green');
+  const byClose=[...stats].filter(s=>s.meetings>=3).sort((a,b)=>b.closeRate-a.closeRate);
+  renderLB('lb-close',byClose.map(s=>({name:s.name,val:`${(s.closeRate*100).toFixed(1)}%`,sub:`${s.closed}/${s.meetings}`,raw:s.closeRate*100})),'teal');
+  const byMeets=[...stats].sort((a,b)=>b.meetings-a.meetings);
+  renderLB('lb-meets',byMeets.map(s=>({name:s.name,val:s.meetings,sub:`${s.closed} closed`,raw:s.meetings})),'purple');
+}
+
+function renderLB(id,items,colorClass){
+  const COLORS={gold:'var(--gold)',green:'var(--green)',teal:'var(--teal)',purple:'var(--purple)'};
+  const max=items[0]?.raw||1;
+  const MEDALS=['🥇','🥈','🥉'];
+  document.getElementById(id).innerHTML=items.length?items.map((item,i)=>`
+    <div class="lb-row">
+      <span class="lb-rank" style="color:${i<3?COLORS[colorClass]:'#64748b'}">${MEDALS[i]||i+1}</span>
+      <span class="lb-name">${item.name}</span>
+      <div class="lb-bar-wrap"><div class="lb-bar-fill" style="width:${(item.raw/max*100).toFixed(0)}%;background:${COLORS[colorClass]}"></div></div>
+      <span class="lb-val" style="color:${COLORS[colorClass]}">${item.val}</span>
+      <span class="lb-sub">${item.sub}</span>
+    </div>`).join(''):'<div style="color:#64748b;font-size:.82rem;padding:1rem">No data (need ≥3 meetings for close rate)</div>';
+}
+
+// ── AGENTS PAGE ──
+function renderAgents(){
+  const agents=window._agentData;
+  if(!agents.length){document.getElementById('agent-cards').innerHTML='<div style="color:#64748b;font-size:.82rem;padding:1rem">No agents loaded</div>';return;}
+  const AGENT_COLORS=['#c9a84c','#a78bfa','#22c55e','#60a5fa','#f59e0b','#14b8a6'];
+  document.getElementById('agent-cards').innerHTML=agents.map((a,i)=>{
+    const s=agentStats(a);
+    const col=AGENT_COLORS[i%AGENT_COLORS.length];
+    return`<div class="agent-card" style="border-top:2px solid ${col}" onclick="openAgentDrawer('${a.uid}')">
+      <div class="agent-card-name">${a.name}</div>
+      <div class="agent-card-email">${a.email}</div>
+      <div class="agent-stats">
+        <div class="agent-stat"><div class="agent-stat-val" style="color:var(--gold2)">${fmt(s.totalAPI,0)}</div><div class="agent-stat-lbl">My API</div></div>
+        <div class="agent-stat"><div class="agent-stat-val" style="color:var(--green)">${fmt(s.totalComm,0)}</div><div class="agent-stat-lbl">Commission</div></div>
+        <div class="agent-stat"><div class="agent-stat-val">${s.meetings}</div><div class="agent-stat-lbl">Meetings</div></div>
+        <div class="agent-stat"><div class="agent-stat-val" style="color:${s.closeRate>=0.5?'var(--green)':s.closeRate>=0.3?'var(--amber)':'var(--red)'}">${(s.closeRate*100).toFixed(1)}%</div><div class="agent-stat-lbl">Close Rate</div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── AGENT DRAWER ──
+function openAgentDrawer(uid){
+  const agent=window._agentData.find(a=>a.uid===uid);
+  if(!agent)return;
+  const s=agentStats(agent);
+
+  document.getElementById('dr-name').textContent=agent.name;
+  document.getElementById('dr-email').textContent=agent.email;
+  document.getElementById('dr-kpi').innerHTML=`
+    ${kpi('gold','My API',fmt(s.totalAPI,0),`${s.sales} policies`)}
+    ${kpi('green','Commission',fmt(s.totalComm,0),'earned')}
+    ${kpi('teal','Meetings',s.meetings,`${s.closed} closed`)}
+    ${kpi('purple','Close Rate',pct(s.closeRate),'ratio')}
+  `;
+
+  // Monthly API chart
+  const monthAPI=MONTHS.map((_,i)=>{
+    const ms=agent.sales.filter(x=>getSaleYear(x)===ACTIVE_YEAR&&getSaleDateMonth(x)===i+1);
+    return ms.reduce((a,x)=>a+(parseFloat(x.myAPI)||0),0);
+  });
+  if(charts['dr-chart'])charts['dr-chart'].destroy();
+  const el=document.getElementById('dr-chart');
+  if(el)charts['dr-chart']=new Chart(el.getContext('2d'),{type:'bar',data:{labels:MONTHS,datasets:[{data:monthAPI,backgroundColor:'rgba(201,168,76,.55)',borderColor:'rgba(201,168,76,.9)',borderWidth:1,borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>`€${c.parsed.y.toFixed(0)}`}}},scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#64748b',font:{size:10},callback:v=>'€'+v},grid:{color:'rgba(255,255,255,.04)'},border:{display:false},beginAtZero:true}}}});
+
+  // Recent sales
+  const recentSales=filterByMonth(agent.sales,'sale').sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,15);
+  document.getElementById('dr-sales').innerHTML=recentSales.length?recentSales.map(s=>`
+    <div class="sale-row">
+      <div style="flex:1"><div class="sale-name">${s.name||'--'}</div><div class="sale-meta">${s.date||''} <span class="prod prod-${s.product}">${s.product||''}</span></div></div>
+      <div class="sale-val">${fmt(s.myAPI,0)}</div>
+    </div>`).join(''):'<div style="color:#64748b;font-size:.82rem;padding:.5rem 0">No sales in this period</div>';
+
+  // Recent meetings
+  const BADGE_MAP={'Closed':'meetclose','Meeting Close':'meetclose','Meeting No Sale':'meetnosale','Meeting Reschedule':'meetreschedule','Client No Show':'clientnoshow','Client Cancel':'clientcancel','Follow Up':'followup','Second Meeting':'second'};
+  const recentMeets=filterByMonth(agent.meetings,'meet').sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,15);
+  document.getElementById('dr-meetings').innerHTML=recentMeets.length?recentMeets.map(m=>`
+    <div class="sale-row">
+      <div style="flex:1"><div class="sale-name">${m.name||'--'}</div><div class="sale-meta">${m.date||''} ${m.source?'· '+m.source:''}</div></div>
+      <span class="badge badge-${BADGE_MAP[m.status]||'nothing'}">${m.status||'--'}</span>
+    </div>`).join(''):'<div style="color:#64748b;font-size:.82rem;padding:.5rem 0">No meetings in this period</div>';
+
+  document.getElementById('drawer-overlay').classList.add('open');
+  document.getElementById('agent-drawer').classList.add('open');
+}
+function closeDrawer(){
+  document.getElementById('drawer-overlay').classList.remove('open');
+  document.getElementById('agent-drawer').classList.remove('open');
+}
+window.openAgentDrawer=openAgentDrawer;
+window.closeDrawer=closeDrawer;
+window.setMonth=setMonth;
+window.switchTab=switchTab;
+window.refreshAll=window.refreshAll||function(){};
+
+// ── KPI BUILDER ──
+function kpi(cls,label,value,sub=''){return`<div class="kpi ${cls}"><div class="kpi-accent"></div><div class="kpi-label">${label}</div><div class="kpi-value">${value}</div>${sub?`<div class="kpi-sub">${sub}</div>`:''}</div>`;}
+
+// ── CHART MAKER ──
+function makeChart(id,cfg){if(charts[id])charts[id].destroy();const el=document.getElementById(id);if(!el)return;charts[id]=new Chart(el.getContext('2d'),cfg);}
+
+// ── UI HELPERS ──
+function showAuthError(msg){const el=document.getElementById('auth-error');el.textContent=msg;el.classList.toggle('show',!!msg);}
+function showLoading(show){document.getElementById('loading-overlay').classList.toggle('show',show);}
+function toast(msg,type='info',dur=3500){
+  const wrap=document.getElementById('toast-wrap');
+  const icons={success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'};
+  const el=document.createElement('div');
+  el.className=`toast ${type}`;
+  el.innerHTML=`<span>${icons[type]||''}</span><span>${msg}</span>`;
+  wrap.appendChild(el);
+  setTimeout(()=>{el.classList.add('exit');setTimeout(()=>el.remove(),280);},dur);
+}
+function toggleTheme(){
+  const html=document.documentElement,dark=html.getAttribute('data-theme')==='dark';
+  const next=dark?'light':'dark';
+  html.setAttribute('data-theme',next);
+  html.style.colorScheme=next;
+  html.style.background=next==='dark'?'#080d1a':'#f8fafc';
+  document.getElementById('theme-btn').textContent=dark?'☀️':'🌙';
+  localStorage.setItem('karus_theme',next);
+  Object.values(charts).forEach(c=>{if(c)c.update();});
+}
+window.toggleTheme=toggleTheme;
+window.doSignOut=window.doSignOut||function(){};
+window.doLogin=window.doLogin||function(){};
+
+// Theme init
+(function(){const t=localStorage.getItem('karus_theme')||'dark';const b=document.getElementById('theme-btn');if(b)b.textContent=t==='dark'?'🌙':'☀️';})();
+</script>
+
+</body>
+</html>
