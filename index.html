@@ -2279,7 +2279,9 @@ async function adminCreateUser(){
       body: JSON.stringify({ fields: { meetings:{arrayValue:{values:[]}}, sales:{arrayValue:{values:[]}}, annualTarget:{integerValue:120000} } })
     });
     // Store in admin users list in Firestore
-    await saveAdminUserRecord(data.localId, name, email);
+    const isManager = document.getElementById('new-user-manager').checked;
+    await saveAdminUserRecord(data.localId, name, email, isManager);
+    document.getElementById('new-user-manager').checked = false;
     resultEl.innerHTML = `<span style="color:var(--green)">✅ Account created for ${name}! Send them: <strong style="color:#f1f5f9">${email}</strong> / <strong style="color:#f1f5f9">${pass}</strong></span>`;
     document.getElementById('new-user-name').value='';
     document.getElementById('new-user-email').value='';
@@ -2291,7 +2293,7 @@ async function adminCreateUser(){
   }
 }
 
-async function saveAdminUserRecord(uid, name, email){
+async function saveAdminUserRecord(uid, name, email, isManager=false){
   try {
     const idToken = await window._auth.currentUser.getIdToken();
     const now = new Date().toISOString();
@@ -2302,7 +2304,8 @@ async function saveAdminUserRecord(uid, name, email){
         name:{stringValue:name},
         email:{stringValue:email},
         createdAt:{stringValue:now},
-        disabled:{booleanValue:false}
+        disabled:{booleanValue:false},
+        role:{stringValue:isManager?'manager':'agent'}
       }})
     });
   } catch(e){ console.error('Could not save admin record',e); }
@@ -2470,6 +2473,7 @@ window.showPage = function(id, btn){
         <div class="field"><label>Full Name</label><input type="text" id="new-user-name" placeholder="e.g. John Smith" style="background:#111d33;border:1px solid rgba(255,255,255,0.09);color:#f1f5f9;border-radius:10px;padding:.62rem .8rem;font-family:var(--font-body);font-size:.85rem;outline:none;width:100%;transition:all .2s;-webkit-appearance:none"></div>
         <div class="field"><label>Email Address</label><input type="email" id="new-user-email" placeholder="e.g. john@karus.mt" style="background:#111d33;border:1px solid rgba(255,255,255,0.09);color:#f1f5f9;border-radius:10px;padding:.62rem .8rem;font-family:var(--font-body);font-size:.85rem;outline:none;width:100%;transition:all .2s;-webkit-appearance:none"></div>
         <div class="field"><label>Temporary Password</label><input type="text" id="new-user-pass" placeholder="Min 6 characters -- user can change later" style="background:#111d33;border:1px solid rgba(255,255,255,0.09);color:#f1f5f9;border-radius:10px;padding:.62rem .8rem;font-family:var(--font-body);font-size:.85rem;outline:none;width:100%;transition:all .2s;-webkit-appearance:none"></div>
+        <div class="field"><label style="display:flex;align-items:center;gap:.6rem;cursor:pointer"><input type="checkbox" id="new-user-manager" style="width:16px;height:16px;accent-color:var(--purple);cursor:pointer"><span>Grant Manager Access <span style="font-size:.65rem;color:#64748b;font-weight:400">(can view all agents in manager dashboard)</span></span></label></div>
         <button class="btn-primary" onclick="adminCreateUser()" style="margin-top:.25rem">Create Account</button>
         <div id="create-user-result" style="font-size:.78rem;margin-top:.25rem"></div>
       </div>
