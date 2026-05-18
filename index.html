@@ -1150,11 +1150,10 @@ function syncDrawerActive(page){
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 // Admin user management uses Firebase Auth REST API (no server needed)
-import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile,browserInMemoryPersistence,browserLocalPersistence,setPersistence}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import{getFirestore,doc,getDoc,setDoc}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyCoaAEMSJDBI22iy5IovGWkx4QBrG09hQc",authDomain:"year-planner-bbc5a.firebaseapp.com",projectId:"year-planner-bbc5a",storageBucket:"year-planner-bbc5a.firebasestorage.app",messagingSenderId:"182620827791",appId:"1:182620827791:web:a43b5d7e0e9c53178b40fa"});
 const auth=getAuth(app);const db=getFirestore(app);
-// Safari/file:// persistence set inside doLogin (async context) not here
 const DEF={meetings:[],sales:[],targets:{Jan:{target:10000,actual:0},Feb:{target:10000,actual:0},Mar:{target:10000,actual:0},Apr:{target:10000,actual:0},May:{target:10000,actual:0},Jun:{target:10000,actual:0},Jul:{target:10000,actual:0},Aug:{target:10000,actual:0},Sep:{target:10000,actual:0},Oct:{target:10000,actual:0},Nov:{target:10000,actual:0},Dec:{target:10000,actual:0}},annualTarget:120000,productTargets:{PPPWP:50000,PPPUL:50000,ULSP:10000,FP:10000}};
 let saveTimeout=null;
 window._auth=auth;window._db=db;window._currentUser=null;
@@ -1164,16 +1163,12 @@ window.doLogin=async()=>{
   showAuthError('');
   if(!e||!p){showAuthError('Please enter your email and password.');return;}
   const btn=document.querySelector('.auth-btn');
-  if(btn){btn.textContent='Signing in…';btn.disabled=true;}
+  if(btn){btn.textContent='Signing in...';btn.disabled=true;}
   try{
-    // Set persistence here (inside async fn so await is valid)
-    const isSafariOrFile=/Safari/.test(navigator.userAgent)&&!/Chrome/.test(navigator.userAgent)||/^file:/.test(window.location.protocol);
-    try{await setPersistence(auth,isSafariOrFile?browserInMemoryPersistence:browserLocalPersistence);}catch(pe){console.warn('Persistence:',pe);}
     await signInWithEmailAndPassword(auth,e,p);
   }catch(err){
     console.error('Login error:',err.code,err.message);
     showAuthError(fe(err.code||'auth/unknown'));
-  }finally{
     if(btn){btn.textContent='Sign In';btn.disabled=false;}
   }
 };
@@ -1195,7 +1190,8 @@ onAuthStateChanged(auth,async(user)=>{
     // Show admin tab only for admin email
     const ADMIN_EMAIL = 'micheledimech@karus.mt';
     if(user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()){
-      document.getElementById('admin-nav-tab').style.display='';
+      const ant=document.getElementById('admin-nav-tab');if(ant)ant.style.display='';
+      const dtadmin=document.getElementById('dt-admin');if(dtadmin)dtadmin.style.display='flex';
       window._isAdmin = true;
     } else {
       window._isAdmin = false;
@@ -1203,7 +1199,7 @@ onAuthStateChanged(auth,async(user)=>{
     document.getElementById('auth-screen').style.display='none';
     document.getElementById('app-header').style.display='flex';
     const sd=document.getElementById('side-drawer');if(sd)sd.style.visibility='visible';
-    document.getElementById('bot-nav').style.display='flex';
+    const bn=document.getElementById('bot-nav');if(bn)bn.style.display='flex';
     document.querySelectorAll('.page').forEach(p=>p.style.display='');
     const snap=await getDoc(doc(db,'users',user.uid));
     if(snap.exists()){
