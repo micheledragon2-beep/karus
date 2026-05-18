@@ -6,6 +6,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Karus 2026</title>
 <script>
+// ── CAPTURE OUTLOOK TOKEN IMMEDIATELY before anything else clears the hash ──
+(function(){
+  var h = window.location.hash;
+  if(h && h.includes('access_token')){
+    var p = new URLSearchParams(h.substring(1));
+    var t = p.get('access_token');
+    if(t){ sessionStorage.setItem('ot', t); }
+    history.replaceState(null, null, window.location.pathname);
+  }
+})();
+</script>
+<script>
 // Dark is the CSS default. Only override if user explicitly chose light.
 (function(){
   var t = localStorage.getItem('karus_theme');
