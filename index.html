@@ -6,6 +6,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Karus 2026</title>
 <script>
+// ── CAPTURE OUTLOOK TOKEN IMMEDIATELY before anything else clears the hash ──
+(function(){
+  var h = window.location.hash;
+  console.log('[KARUS DEBUG] Hash on load:', h ? h.substring(0,80)+'...' : '(empty)');
+  console.log('[KARUS DEBUG] sessionStorage ot exists:', !!sessionStorage.getItem('ot'));
+  if(h && h.includes('access_token')){
+    var p = new URLSearchParams(h.substring(1));
+    var t = p.get('access_token');
+    console.log('[KARUS DEBUG] access_token found in hash, length:', t ? t.length : 0);
+    if(t){ sessionStorage.setItem('ot', t); }
+    history.replaceState(null, null, window.location.pathname);
+  } else {
+    console.log('[KARUS DEBUG] No access_token in hash');
+  }
+})();
+</script>
+<script>
 // Dark is the CSS default. Only override if user explicitly chose light.
 (function(){
   var t = localStorage.getItem('karus_theme');
@@ -1083,7 +1100,8 @@ function syncDrawerActive(page){
       <div class="field"><label>Product 1</label><select id="m-product1"><option value="">--</option><option>PPPWP</option><option>PPPUL</option><option>ULSP</option><option>FP</option></select></div>
       <div class="field"><label>Product 2</label><select id="m-product2"><option value="">--</option><option>PPPWP</option><option>PPPUL</option><option>ULSP</option><option>FP</option></select></div>
       <div class="field"><label>Other PPP</label><select id="m-otherppp"><option value="">--</option><option>IVALIFE</option><option>LIFESTAR</option><option>HSBC</option><option>APS</option><option>No</option></select></div>
-      <div class="field"><label>Status</label><select id="m-status"><option value="">--</option><option>Meeting Close</option><option>Meeting No Sale</option><option>Meeting Reschedule</option><option>Client No Show</option><option>Client Cancel</option><option>Follow Up</option><option>Second Meeting</option></select></div>
+      <div class="field"><label>Status</label><select id="m-status" onchange="toggleNextMeetDate()"><option value="">--</option><option>Meeting Close</option><option>Meeting No Sale</option><option>Meeting Reschedule</option><option>Client No Show</option><option>Client Cancel</option><option>Follow Up</option><option>Second Meeting</option></select></div>
+      <div class="field" id="m-next-meet-wrap" style="display:none"><label id="m-next-meet-label">Next Meeting Date</label><input type="date" id="m-nextmeetdate"></div>
       <div class="field"><label>Seen</label><select id="m-seen"><option value="false">No</option><option value="true">Yes</option></select></div>
       <div class="field"><label>Follow Up Date</label><input type="date" id="m-followup"></div>
       <div class="field"><label>Re-engage Date</label><input type="date" id="m-reengage"></div>
@@ -1183,6 +1201,21 @@ window.saveData=async()=>{
 };
 onAuthStateChanged(auth,async(user)=>{
   if(user){
+    // ── MANAGER REDIRECT CHECK ──
+    // If this user has role:manager in admin_users, send them to the manager dashboard
+    try{
+      const idToken=await user.getIdToken();
+      const PROJ='year-planner-bbc5a';
+      const APIKEY='AIzaSyCoaAEMSJDBI22iy5IovGWkx4QBrG09hQc';
+      const r=await fetch(`https://firestore.googleapis.com/v1/projects/${PROJ}/databases/(default)/documents/admin_users/${user.uid}?key=${APIKEY}`,{headers:{'Authorization':`Bearer ${idToken}`}});
+      const d=await r.json();
+      const role=d.fields?.role?.stringValue||'agent';
+      if(role==='manager'){
+        window.location.href='manager.html';
+        return;
+      }
+    }catch(e){/* if check fails, continue as agent */}
+    // ── END MANAGER REDIRECT ──
     window._currentUser=user;
     document.getElementById('header-email').textContent=user.displayName||user.email;
     document.getElementById('today-name').textContent=(user.displayName||user.email).split(' ')[0];
@@ -1221,6 +1254,7 @@ onAuthStateChanged(auth,async(user)=>{
     document.getElementById('quick-add-btn').style.display='flex';
     setTimeout(()=>runNotifChecks(),2500);
     toast('Welcome back, '+(user.displayName||'').split(' ')[0]+'! 👋','success');
+    checkOutlookToken();
   }else{
     window._currentUser=null;
     document.getElementById('auth-screen').style.display='flex';
@@ -1285,46 +1319,19 @@ const TT={backgroundColor:'rgba(8,13,26,.95)',borderColor:'rgba(255,255,255,.1)'
 const rOpts=()=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>`${c.parsed.y.toFixed(1)}%`}}},scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#64748b',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.04)'},border:{display:false},beginAtZero:true,max:100}}});
 
 // ── OUTLOOK ──
-const MSAL_CLIENT_ID='cbbcd98d-a42e-4613-aeab-e664d81962b3';
+const MSAL_CLIENT_ID='630b5b7a-7228-4193-a7a0-e205a0171353';
 const MSAL_REDIRECT=window.location.origin+window.location.pathname;
 let outlookToken=null,calWeekOffset=0;
-async function connectOutlook(){
-  const array=new Uint8Array(32);crypto.getRandomValues(array);
-  const verifier=btoa(String.fromCharCode(...array)).replace(/[+]/g,'-').replace(/[/]/g,'_').replace(/=/g,'');
-  sessionStorage.setItem('pkce_verifier',verifier);
-  const enc=new TextEncoder();const digest=await crypto.subtle.digest('SHA-256',enc.encode(verifier));
-  const challenge=btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/[+]/g,'-').replace(/[/]/g,'_').replace(/=/g,'');
-  const state=Math.random().toString(36).substring(2);
-  sessionStorage.setItem('pkce_state',state);
-  const p=new URLSearchParams({client_id:MSAL_CLIENT_ID,response_type:'code',redirect_uri:MSAL_REDIRECT,scope:'Calendars.Read User.Read openid profile',response_mode:'query',state:state,code_challenge:challenge,code_challenge_method:'S256'});
-  window.location.href=`https://login.microsoftonline.com/75dd6a22-c244-4176-b72e-d193a63f4407/oauth2/v2.0/authorize?${p}`;
-}
-async function checkOutlookToken(){
-  // PKCE: check for auth code in URL (may be stored from early capture or live in URL)
-  const urlP=new URLSearchParams(window.location.search);
-  let code=urlP.get('code')||sessionStorage.getItem('pkce_pending_code');
-  let state=urlP.get('state')||sessionStorage.getItem('pkce_pending_state');
-  const savedState=sessionStorage.getItem('pkce_state');
-  const verifier=sessionStorage.getItem('pkce_verifier');
-  if(code&&state&&state===savedState&&verifier){
-    history.replaceState(null,null,window.location.pathname);
-    sessionStorage.removeItem('pkce_state');sessionStorage.removeItem('pkce_verifier');
-    sessionStorage.removeItem('pkce_pending_code');sessionStorage.removeItem('pkce_pending_state');
-    try{
-      const resp=await fetch('https://login.microsoftonline.com/75dd6a22-c244-4176-b72e-d193a63f4407/oauth2/v2.0/token',{
-        method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
-        body:new URLSearchParams({client_id:MSAL_CLIENT_ID,grant_type:'authorization_code',code:code,redirect_uri:MSAL_REDIRECT,code_verifier:verifier,scope:'Calendars.Read User.Read openid profile'})
-      });
-      const data=await resp.json();
-      if(data.access_token){outlookToken=data.access_token;sessionStorage.setItem('ot',outlookToken);if(data.refresh_token)sessionStorage.setItem('ot_refresh',data.refresh_token);setOutlookConnected(true);toast('Outlook connected! ✓','success');if(document.getElementById('page-meetings').classList.contains('active'))renderCalendar();return;}
-      else{console.error('Token exchange failed:',data);toast('Outlook auth failed: '+(data.error_description||data.error||'Unknown'),'error');}
-    }catch(e){console.error('Token exchange error:',e);toast('Outlook connection error','error');}
-    return;
-  }
-  const errP=urlP.get('error');
-  if(errP){history.replaceState(null,null,window.location.pathname);toast('Outlook auth failed: '+(urlP.get('error_description')||errP),'error');return;}
-  const stored=sessionStorage.getItem('ot');
-  if(stored){outlookToken=stored;setOutlookConnected(true);}
+function connectOutlook(){const p=new URLSearchParams({client_id:MSAL_CLIENT_ID,response_type:'token',redirect_uri:MSAL_REDIRECT,scope:'Calendars.Read User.Read',response_mode:'fragment',nonce:Math.random().toString(36)});window.location.href=`https://login.microsoftonline.com/75dd6a22-c244-4176-b72e-d193a63f4407/oauth2/v2.0/authorize?${p}`;}
+function checkOutlookToken(){
+  console.log('[KARUS DEBUG] checkOutlookToken called');
+  const h=window.location.hash;
+  console.log('[KARUS DEBUG] hash at checkOutlookToken:', h ? h.substring(0,60) : '(empty)');
+  console.log('[KARUS DEBUG] sessionStorage ot:', sessionStorage.getItem('ot') ? 'EXISTS (len='+sessionStorage.getItem('ot').length+')' : 'MISSING');
+  if(h.includes('access_token')){const p=new URLSearchParams(h.substring(1));outlookToken=p.get('access_token');history.replaceState(null,null,window.location.pathname);sessionStorage.setItem('ot',outlookToken);setOutlookConnected(true);console.log('[KARUS DEBUG] token set from hash');return;}
+  const s=sessionStorage.getItem('ot');
+  if(s){outlookToken=s;setOutlookConnected(true);console.log('[KARUS DEBUG] token set from sessionStorage');}
+  else{console.log('[KARUS DEBUG] NO TOKEN FOUND anywhere');}
 }
 function setOutlookConnected(c){const btn=document.getElementById('outlook-btn'),txt=document.getElementById('outlook-txt');if(c){btn.classList.add('connected');txt.textContent='📅 Outlook ✓';}else{btn.classList.remove('connected');txt.textContent='📅 Outlook';}}
 async function fetchCalendarEvents(){if(!outlookToken)return null;const now=new Date(),ws=new Date(now);ws.setDate(now.getDate()-now.getDay()+calWeekOffset*7);ws.setHours(0,0,0,0);const we=new Date(ws);we.setDate(ws.getDate()+7);try{const r=await fetch(`https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${ws.toISOString()}&endDateTime=${we.toISOString()}&$orderby=start/dateTime&$top=50`,{headers:{Authorization:`Bearer ${outlookToken}`}});if(r.status===401){outlookToken=null;sessionStorage.removeItem('ot');setOutlookConnected(false);return null;}return(await r.json()).value||[];}catch(e){return null;}}
@@ -2046,14 +2053,16 @@ function openMeetModal(idx=-1){
   document.getElementById('m-product1').value=m.product1||'';document.getElementById('m-product2').value=m.product2||'';
   document.getElementById('m-otherppp').value=m.otherPPP||'';document.getElementById('m-status').value=m.status||'';
   document.getElementById('m-seen').value=m.seen?'true':'false';document.getElementById('m-followup').value=m.followUpDate||'';
+  document.getElementById('m-nextmeetdate').value=m.nextMeetingDate||'';
   document.getElementById('m-notes').value=(m.notes||'').replace(/\\n/g,'\n');
   document.getElementById('meet-delete-btn').style.display=idx>=0?'flex':'none';
+  toggleNextMeetDate();
   document.getElementById('meet-modal-overlay').classList.add('open');
 }
 function closeMeetModal(){document.getElementById('meet-modal-overlay').classList.remove('open');}
 function saveMeeting(){
   const g=id=>document.getElementById(id).value;
-  const m={date:g('m-date'),name:g('m-name'),phone:g('m-phone'),source:g('m-source'),product1:g('m-product1'),product2:g('m-product2'),otherPPP:g('m-otherppp'),status:g('m-status'),seen:g('m-seen')==='true',followUpDate:g('m-followup')||null,reengageDate:g('m-reengage')||null,notes:g('m-notes').replace(/\n/g,'\\n')};
+  const m={date:g('m-date'),name:g('m-name'),phone:g('m-phone'),source:g('m-source'),product1:g('m-product1'),product2:g('m-product2'),otherPPP:g('m-otherppp'),status:g('m-status'),seen:g('m-seen')==='true',followUpDate:g('m-followup')||null,reengageDate:g('m-reengage')||null,nextMeetingDate:g('m-nextmeetdate')||null,notes:g('m-notes').replace(/\n/g,'\\n')};
   if(!m.name){toast('Name is required','error');return;}
   if(editMeetIdx>=0)meetings[editMeetIdx]=m;else meetings.push(m);
   closeMeetModal();renderMeetings();if(document.getElementById('page-today').classList.contains('active'))renderToday();saveData();
@@ -2088,6 +2097,25 @@ function saveSale(){
 }
 function deleteSale(){if(editSaleIdx<0)return;if(!confirm('Delete this sale?'))return;sales.splice(editSaleIdx,1);closeSaleModal();renderSales();saveData();toast('Sale deleted','info');}
 
+function toggleNextMeetDate(){
+  const status=document.getElementById('m-status').value;
+  const wrap=document.getElementById('m-next-meet-wrap');
+  const lbl=document.getElementById('m-next-meet-label');
+  const show=['Meeting Reschedule','Second Meeting'].includes(status);
+  wrap.style.display=show?'':'none';
+  if(show) lbl.textContent=status==='Meeting Reschedule'?'Reschedule Date':'Second Meeting Date';
+  if(!show) document.getElementById('m-nextmeetdate').value='';
+}
+function toggleQANextMeetDate(){
+  const status=document.getElementById('qa-m-status').value;
+  const wrap=document.getElementById('qa-m-next-meet-wrap');
+  const lbl=document.getElementById('qa-m-next-meet-label');
+  const show=['Meeting Reschedule','Second Meeting'].includes(status);
+  wrap.style.display=show?'flex':'none';
+  if(show) lbl.textContent=status==='Meeting Reschedule'?'Reschedule Date':'Second Meeting Date';
+  if(!show) document.getElementById('qa-m-nextmeetdate').value='';
+}
+
 window.addEventListener('DOMContentLoaded',()=>{loadTheme();checkOutlookToken();});
 window.addEventListener('resize',()=>{if(document.getElementById('page-meetings').classList.contains('active'))renderCalendar();});
 
@@ -2104,6 +2132,8 @@ function openQuickAdd(){
   document.getElementById('qa-m-name').value = '';
   document.getElementById('qa-m-phone').value = '';
   document.getElementById('qa-m-status').value = '';
+  document.getElementById('qa-m-nextmeetdate').value = '';
+  document.getElementById('qa-m-next-meet-wrap').style.display = 'none';
   document.getElementById('qa-s-name').value = '';
   document.getElementById('qa-s-api').value = '';
   document.getElementById('qa-s-product').value = '';
@@ -2124,8 +2154,9 @@ function saveQuickAdd(){
     const date = document.getElementById('qa-m-date').value;
     const status = document.getElementById('qa-m-status').value;
     const phone = document.getElementById('qa-m-phone').value.trim();
+    const nextMeetingDate = document.getElementById('qa-m-nextmeetdate').value || null;
     if(!name){ toast('Name is required','error'); return; }
-    meetings.push({ date, name, phone, source:'', product1:'', product2:'', otherPPP:'', status, seen:false, followUpDate:null, notes:'' });
+    meetings.push({ date, name, phone, source:'', product1:'', product2:'', otherPPP:'', status, seen:false, followUpDate:null, nextMeetingDate, notes:'' });
     saveData();
     toast(`Meeting added for ${name} ✓`, 'success');
     closeQuickAdd();
@@ -2315,9 +2346,9 @@ async function adminCreateUser(){
       body: JSON.stringify({ fields: { meetings:{arrayValue:{values:[]}}, sales:{arrayValue:{values:[]}}, annualTarget:{integerValue:120000} } })
     });
     // Store in admin users list in Firestore
-    const isManager=document.getElementById('new-user-manager').checked;
-await saveAdminUserRecord(data.localId, name, email, isManager);
-document.getElementById('new-user-manager').checked=false;
+    const isManager = document.getElementById('new-user-manager').checked;
+    await saveAdminUserRecord(data.localId, name, email, isManager);
+    document.getElementById('new-user-manager').checked = false;
     resultEl.innerHTML = `<span style="color:var(--green)">✅ Account created for ${name}! Send them: <strong style="color:#f1f5f9">${email}</strong> / <strong style="color:#f1f5f9">${pass}</strong></span>`;
     document.getElementById('new-user-name').value='';
     document.getElementById('new-user-email').value='';
@@ -2340,7 +2371,8 @@ async function saveAdminUserRecord(uid, name, email, isManager=false){
         name:{stringValue:name},
         email:{stringValue:email},
         createdAt:{stringValue:now},
-        disabled:{booleanValue:false}
+        disabled:{booleanValue:false},
+        role:{stringValue:isManager?'manager':'agent'}
       }})
     });
   } catch(e){ console.error('Could not save admin record',e); }
@@ -2371,8 +2403,7 @@ async function adminLoadUsers(){
         name: f.name?.stringValue || 'Unknown',
         email: f.email?.stringValue || '--',
         createdAt: f.createdAt?.stringValue || '',
-        disabled: f.disabled?.booleanValue || false,
-        role: f.role?.stringValue || 'agent'
+        disabled: f.disabled?.booleanValue || false
       };
     }).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -2395,10 +2426,9 @@ async function adminLoadUsers(){
         <div class="user-card-meta">
           <span>Created: ${u.createdAt?new Date(u.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'--'}</span>
         </div>
-        <div style="display:flex;gap:.5rem;margin-top:.85rem;flex-wrap:wrap">
+        <div style="display:flex;gap:.5rem;margin-top:.85rem">
           <button class="btn-ghost btn-sm" style="flex:1" onclick="adminResetPassword('${u.email}')">Reset Password</button>
-          <button class="btn-ghost btn-sm" style="flex:1;${u.role==='manager'?'background:rgba(167,139,250,.12);color:var(--purple);border-color:rgba(167,139,250,.3)':''}" onclick="adminToggleManager('${u.uid}','${u.role}')">${u.role==='manager'?'&#128202; Manager':'Make Manager'}</button>
-          <button style="flex:1;${u.disabled?'background:linear-gradient(135deg,var(--gold),var(--gold2));color:#080d1a;border:none':'background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2)'};border-radius:10px;padding:.3rem .65rem;font-family:var(--font-body);font-size:.7rem;font-weight:600;cursor:pointer;" onclick="adminToggleUser('${u.uid}',${u.disabled})">${u.disabled?'Enable Access':'Disable Access'}</button>
+          <button class="btn-${u.disabled?'primary':'danger'} btn-sm" style="flex:1;${u.disabled?'':'background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);border-radius:10px;font-family:var(--font-body);font-weight:600;cursor:pointer;'}" onclick="adminToggleUser('${u.uid}',${u.disabled})">${u.disabled?'Enable Access':'Disable Access'}</button>
         </div>
       </div>`).join('')}</div>`;
   } catch(e) {
@@ -2440,23 +2470,6 @@ async function adminResetPassword(email){
   } catch(e){ toast('Error sending reset email','error'); }
 }
 
-async function adminToggleManager(uid, currentRole){
-  if(!window._isAdmin) return;
-  const isManager = currentRole !== 'manager';
-  const action = isManager ? 'promote to Manager' : 'demote to Agent';
-  if(!confirm(`Are you sure you want to ${action}?`)) return;
-  try {
-    const idToken = await window._auth.currentUser.getIdToken();
-    await fetch(`https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents/admin_users/${uid}?updateMask.fieldPaths=role&key=${FIREBASE_API_KEY}`, {
-      method:'PATCH',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${idToken}`},
-      body: JSON.stringify({ fields:{ role:{stringValue:isManager?'manager':'agent'} }})
-    });
-    toast(`User ${isManager?'promoted to Manager':'demoted to Agent'} ✓`,'success');
-    adminLoadUsers();
-  } catch(e){ toast('Could not update role','error'); }
-}
-
 // Show admin page
 const _origShowPage = window.showPage;
 window.showPage = function(id, btn){
@@ -2484,7 +2497,8 @@ window.showPage = function(id, btn){
     <div id="qa-meeting-fields" class="qa-fields">
       <div class="qa-field"><label>Name</label><input type="text" id="qa-m-name" placeholder="Client name"></div>
       <div class="qa-field"><label>Date</label><input type="date" id="qa-m-date"></div>
-      <div class="qa-field"><label>Status</label><select id="qa-m-status"><option value="">-- Status --</option><option>Meeting Close</option><option>Meeting No Sale</option><option>Meeting Reschedule</option><option>Client No Show</option><option>Client Cancel</option><option>Follow Up</option><option>Second Meeting</option></select></div>
+      <div class="qa-field"><label>Status</label><select id="qa-m-status" onchange="toggleQANextMeetDate()"><option value="">-- Status --</option><option>Meeting Close</option><option>Meeting No Sale</option><option>Meeting Reschedule</option><option>Client No Show</option><option>Client Cancel</option><option>Follow Up</option><option>Second Meeting</option></select></div>
+      <div class="qa-field" id="qa-m-next-meet-wrap" style="display:none"><label id="qa-m-next-meet-label">Next Meeting Date</label><input type="date" id="qa-m-nextmeetdate"></div>
       <div class="qa-field"><label>Phone (optional)</label><input type="tel" id="qa-m-phone" placeholder="Optional"></div>
     </div>
     <div id="qa-sale-fields" class="qa-fields" style="display:none">
@@ -2527,7 +2541,7 @@ window.showPage = function(id, btn){
         <div class="field"><label>Full Name</label><input type="text" id="new-user-name" placeholder="e.g. John Smith" style="background:#111d33;border:1px solid rgba(255,255,255,0.09);color:#f1f5f9;border-radius:10px;padding:.62rem .8rem;font-family:var(--font-body);font-size:.85rem;outline:none;width:100%;transition:all .2s;-webkit-appearance:none"></div>
         <div class="field"><label>Email Address</label><input type="email" id="new-user-email" placeholder="e.g. john@karus.mt" style="background:#111d33;border:1px solid rgba(255,255,255,0.09);color:#f1f5f9;border-radius:10px;padding:.62rem .8rem;font-family:var(--font-body);font-size:.85rem;outline:none;width:100%;transition:all .2s;-webkit-appearance:none"></div>
         <div class="field"><label>Temporary Password</label><input type="text" id="new-user-pass" placeholder="Min 6 characters -- user can change later" style="background:#111d33;border:1px solid rgba(255,255,255,0.09);color:#f1f5f9;border-radius:10px;padding:.62rem .8rem;font-family:var(--font-body);font-size:.85rem;outline:none;width:100%;transition:all .2s;-webkit-appearance:none"></div>
-        <div class="field"><label style="display:flex;align-items:center;gap:.6rem;cursor:pointer;text-transform:none;font-size:.82rem;color:#cbd5e1;font-weight:500"><input type="checkbox" id="new-user-manager" style="width:16px;height:16px;accent-color:var(--purple);cursor:pointer"> <span>&#128202; Manager account <span style="font-size:.7rem;color:#64748b">(can view all agents' data)</span></span></label></div>
+        <div style="display:flex;align-items:center;gap:.6rem;padding:.35rem 0"><input type="checkbox" id="new-user-manager" style="width:16px;height:16px;accent-color:#a78bfa;cursor:pointer;flex-shrink:0"><span onclick="document.getElementById('new-user-manager').click()" style="font-size:.78rem;font-weight:600;color:#a78bfa;cursor:pointer;user-select:none">Grant Manager Access <span style="font-size:.65rem;color:#64748b;font-weight:400">(can view all agents in manager dashboard)</span></span></div>
         <button class="btn-primary" onclick="adminCreateUser()" style="margin-top:.25rem">Create Account</button>
         <div id="create-user-result" style="font-size:.78rem;margin-top:.25rem"></div>
       </div>
