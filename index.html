@@ -1094,7 +1094,6 @@ function syncDrawerActive(page){
     <div class="modal-subtitle" id="meet-modal-subtitle"></div>
     <div class="field-grid">
       <div class="field"><label>Date</label><input type="date" id="m-date"></div>
-      <div class="field"><label>Time (optional)</label><input type="time" id="m-time"></div>
       <div class="field"><label>Full Name</label><input type="text" id="m-name"></div>
       <div class="field"><label>Phone</label><input type="tel" id="m-phone"></div>
       <div class="field"><label>Source</label><input type="text" id="m-source"></div>
@@ -1322,6 +1321,49 @@ const rOpts=()=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{dis
 const MSAL_CLIENT_ID='630b5b7a-7228-4193-a7a0-e205a0171353';
 const MSAL_REDIRECT=window.location.origin+window.location.pathname;
 let outlookToken=null,calWeekOffset=0;
+window._outlookTodayEvs=null; // cached today events for renderToday
+
+// Fetch just today's Outlook events (lightweight, used by renderToday)
+async function fetchTodayOutlookEvents(){
+  if(!outlookToken)return null;
+  const tz=Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const now=new Date();
+  const start=new Date(now);start.setHours(0,0,0,0);
+  const end=new Date(now);end.setHours(23,59,59,999);
+  try{
+    const r=await fetch(`https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${start.toISOString()}&endDateTime=${end.toISOString()}&$orderby=start/dateTime&$top=100&$select=subject,start,end,isAllDay`,{
+      headers:{Authorization:`Bearer ${outlookToken}`,'Prefer':`outlook.timezone="${tz}"`}
+    });
+    if(r.status===401){outlookToken=null;sessionStorage.removeItem('ot');setOutlookConnected(false);return null;}
+    const data=await r.json();
+    window._outlookTodayEvs=data.value||[];
+    return window._outlookTodayEvs;
+  }catch(e){return null;}
+}
+
+// Given a meeting record, find the best-matching Outlook event for today and return its time string
+function getOutlookTimeForMeeting(m,evs){
+  if(!evs||!evs.length)return null;
+  const phone=(m.phone||'').replace(/\D/g,'');
+  const nameLower=(m.name||'').toLowerCase();
+  // Try phone match first (strip non-digits from subject)
+  let match=null;
+  if(phone.length>=6){
+    match=evs.find(ev=>(ev.subject||'').replace(/\D/g,'').includes(phone));
+  }
+  // Fallback: name match — check if any word of the name appears in the subject
+  if(!match&&nameLower){
+    const parts=nameLower.split(/\s+/).filter(p=>p.length>2);
+    match=evs.find(ev=>{
+      const sub=(ev.subject||'').toLowerCase();
+      return parts.some(p=>sub.includes(p));
+    });
+  }
+  if(!match||!match.start.dateTime)return null;
+  // Parse the dateTime (already in local tz from Prefer header)
+  const dt=new Date(match.start.dateTime.replace(/\.\d+$/,'').replace(/Z$/,''));
+  return dt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+}
 function connectOutlook(){const p=new URLSearchParams({client_id:MSAL_CLIENT_ID,response_type:'token',redirect_uri:MSAL_REDIRECT,scope:'Calendars.Read User.Read',response_mode:'fragment',nonce:Math.random().toString(36)});window.location.href=`https://login.microsoftonline.com/75dd6a22-c244-4176-b72e-d193a63f4407/oauth2/v2.0/authorize?${p}`;}
 function checkOutlookToken(){
   console.log('[KARUS DEBUG] checkOutlookToken called');
@@ -1375,10 +1417,6 @@ function importOutlookEvent(ev){
   if(!name)name=ev.subject||'';
   openMeetModal();
   document.getElementById('m-date').value=dateStr;
-  if(ev.start.dateTime&&!ev.isAllDay){
-    const timeStr=s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-    document.getElementById('m-time').value=timeStr;
-  }
   document.getElementById('m-name').value=name;
   document.getElementById('meet-modal-title').textContent='Import from Outlook';
   document.getElementById('meet-modal-subtitle').textContent=`📅 "${ev.subject}" · ${s.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}`;
@@ -1548,23 +1586,38 @@ function renderToday(){
   // ── TODAY'S MEETINGS ──
   document.getElementById('today-meets-cnt').textContent=todayMeets.length;
   if(todayMeets.length){
-    const sorted=[...todayMeets].sort((a,b)=>{
-      if(!a.time&&!b.time)return 0;
-      if(!a.time)return 1;
-      if(!b.time)return -1;
-      return a.time.localeCompare(b.time);
-    });
-    document.getElementById('today-meets-list').innerHTML=sorted.map(m=>{
-      const ri=meetings.indexOf(m);
-      const color=STATUS_COLORS[m.status]||'#64748b';
-      const timeTag=m.time?`<span style="font-family:var(--font-mono);font-size:.68rem;color:var(--gold);font-weight:600;flex-shrink:0">${m.time}</span>`:'';
-      return`<div class="today-meet-row today-event" onclick="openMeetModal(${ri})">
-        <div class="t-meet-dot" style="background:${color}"></div>
-        ${timeTag}
-        <div style="flex:1;min-width:0"><div class="t-meet-name">${m.name}</div><div class="t-meet-meta">${m.phone||m.source||'--'} ${m.product1?'· '+m.product1:''}</div></div>
-        <div class="t-meet-right">${statusBadge(m.status)}</div>
-      </div>`;
-    }).join('');
+    // Render immediately without times, then enrich with Outlook times if available
+    const renderMeetRows=(evs)=>{
+      const withTime=todayMeets.map(m=>({
+        m,
+        ri:meetings.indexOf(m),
+        time:m.time||getOutlookTimeForMeeting(m,evs)||null
+      }));
+      withTime.sort((a,b)=>{
+        if(!a.time&&!b.time)return 0;
+        if(!a.time)return 1;
+        if(!b.time)return -1;
+        return a.time.localeCompare(b.time);
+      });
+      document.getElementById('today-meets-list').innerHTML=withTime.map(({m,ri,time})=>{
+        const color=STATUS_COLORS[m.status]||'#64748b';
+        const timeTag=time?`<span style="font-family:var(--font-mono);font-size:.68rem;color:var(--gold);font-weight:600;flex-shrink:0">${time}</span>`:'';
+        return`<div class="today-meet-row today-event" onclick="openMeetModal(${ri})">
+          <div class="t-meet-dot" style="background:${color}"></div>
+          ${timeTag}
+          <div style="flex:1;min-width:0"><div class="t-meet-name">${m.name}</div><div class="t-meet-meta">${m.phone||m.source||'--'} ${m.product1?'· '+m.product1:''}</div></div>
+          <div class="t-meet-right">${statusBadge(m.status)}</div>
+        </div>`;
+      }).join('');
+    };
+    // First render with whatever is cached
+    renderMeetRows(window._outlookTodayEvs);
+    // Then fetch fresh and re-render if Outlook connected
+    if(outlookToken){
+      fetchTodayOutlookEvents().then(evs=>{
+        if(evs)renderMeetRows(evs);
+      });
+    }
   }else{
     document.getElementById('today-meets-list').innerHTML=`<div class="today-empty"><span class="today-empty-icon">📭</span>No meetings scheduled today</div>`;
   }
@@ -2062,7 +2115,6 @@ function openMeetModal(idx=-1){
   document.getElementById('meet-modal-title').textContent=idx>=0?'Edit Meeting':'Add Meeting';
   document.getElementById('meet-modal-subtitle').textContent='';
   ['date','name','phone','source'].forEach(f=>document.getElementById('m-'+f).value=m[f]||'');
-  document.getElementById('m-time').value=m.time||'';
   document.getElementById('m-product1').value=m.product1||'';document.getElementById('m-product2').value=m.product2||'';
   document.getElementById('m-otherppp').value=m.otherPPP||'';document.getElementById('m-status').value=m.status||'';
   document.getElementById('m-seen').value=m.seen?'true':'false';document.getElementById('m-followup').value=m.followUpDate||'';
@@ -2073,7 +2125,7 @@ function openMeetModal(idx=-1){
 function closeMeetModal(){document.getElementById('meet-modal-overlay').classList.remove('open');}
 function saveMeeting(){
   const g=id=>document.getElementById(id).value;
-  const m={date:g('m-date'),name:g('m-name'),phone:g('m-phone'),source:g('m-source'),product1:g('m-product1'),product2:g('m-product2'),otherPPP:g('m-otherppp'),status:g('m-status'),time:g('m-time')||null,seen:g('m-seen')==='true',followUpDate:g('m-followup')||null,reengageDate:g('m-reengage')||null,notes:g('m-notes').replace(/\n/g,'\\n')};
+  const m={date:g('m-date'),name:g('m-name'),phone:g('m-phone'),source:g('m-source'),product1:g('m-product1'),product2:g('m-product2'),otherPPP:g('m-otherppp'),status:g('m-status'),seen:g('m-seen')==='true',followUpDate:g('m-followup')||null,reengageDate:g('m-reengage')||null,notes:g('m-notes').replace(/\n/g,'\\n')};
   if(!m.name){toast('Name is required','error');return;}
   if(editMeetIdx>=0)meetings[editMeetIdx]=m;else meetings.push(m);
   closeMeetModal();renderMeetings();if(document.getElementById('page-today').classList.contains('active'))renderToday();saveData();
@@ -2124,7 +2176,6 @@ function openQuickAdd(){
   document.getElementById('qa-m-name').value = '';
   document.getElementById('qa-m-phone').value = '';
   document.getElementById('qa-m-status').value = '';
-  document.getElementById('qa-m-time').value = '';
   document.getElementById('qa-s-name').value = '';
   document.getElementById('qa-s-api').value = '';
   document.getElementById('qa-s-product').value = '';
@@ -2145,9 +2196,8 @@ function saveQuickAdd(){
     const date = document.getElementById('qa-m-date').value;
     const status = document.getElementById('qa-m-status').value;
     const phone = document.getElementById('qa-m-phone').value.trim();
-    const time = document.getElementById('qa-m-time').value || null;
     if(!name){ toast('Name is required','error'); return; }
-    meetings.push({ date, name, phone, source:'', product1:'', product2:'', otherPPP:'', status, time, seen:false, followUpDate:null, notes:'' });
+    meetings.push({ date, name, phone, source:'', product1:'', product2:'', otherPPP:'', status, seen:false, followUpDate:null, notes:'' });
     saveData();
     toast(`Meeting added for ${name} ✓`, 'success');
     closeQuickAdd();
@@ -2488,7 +2538,6 @@ window.showPage = function(id, btn){
     <div id="qa-meeting-fields" class="qa-fields">
       <div class="qa-field"><label>Name</label><input type="text" id="qa-m-name" placeholder="Client name"></div>
       <div class="qa-field"><label>Date</label><input type="date" id="qa-m-date"></div>
-      <div class="qa-field"><label>Time (optional)</label><input type="time" id="qa-m-time"></div>
       <div class="qa-field"><label>Status</label><select id="qa-m-status"><option value="">-- Status --</option><option>Meeting Close</option><option>Meeting No Sale</option><option>Meeting Reschedule</option><option>Client No Show</option><option>Client Cancel</option><option>Follow Up</option><option>Second Meeting</option></select></div>
       <div class="qa-field"><label>Phone (optional)</label><input type="tel" id="qa-m-phone" placeholder="Optional"></div>
     </div>
