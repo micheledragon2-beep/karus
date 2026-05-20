@@ -343,8 +343,6 @@ html[data-theme="light"] .weekly-summary{background:#ffffff !important;}
 .cal-event:hover{background:rgba(96,165,250,.28);transform:translateY(-1px);}
 .cal-event-time{font-family:var(--font-mono);font-size:.56rem;color:#93c5fd;}
 .cal-event-title{font-size:.67rem;color:#f1f5f9;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.cal-event-cats{display:flex;flex-wrap:wrap;gap:2px;margin-top:2px;}
-.cal-event-cat{font-size:.52rem;font-weight:700;padding:.1rem .35rem;border-radius:3px;white-space:nowrap;letter-spacing:.03em;}
 .connect-cta{text-align:center;padding:2rem 1rem;}
 .connect-cta p{color:#64748b;font-size:.85rem;margin-bottom:1rem;line-height:1.6;}
 .mob-cal-event{background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.25);border-radius:10px;padding:.75rem 1rem;cursor:pointer;transition:all .2s var(--ease);margin-bottom:.5rem;}
@@ -1096,6 +1094,7 @@ function syncDrawerActive(page){
     <div class="modal-subtitle" id="meet-modal-subtitle"></div>
     <div class="field-grid">
       <div class="field"><label>Date</label><input type="date" id="m-date"></div>
+      <div class="field"><label>Time (optional)</label><input type="time" id="m-time"></div>
       <div class="field"><label>Full Name</label><input type="text" id="m-name"></div>
       <div class="field"><label>Phone</label><input type="tel" id="m-phone"></div>
       <div class="field"><label>Source</label><input type="text" id="m-source"></div>
@@ -1335,39 +1334,9 @@ function checkOutlookToken(){
   else{console.log('[KARUS DEBUG] NO TOKEN FOUND anywhere');}
 }
 function setOutlookConnected(c){const btn=document.getElementById('outlook-btn'),txt=document.getElementById('outlook-txt');if(c){btn.classList.add('connected');txt.textContent='📅 Outlook ✓';}else{btn.classList.remove('connected');txt.textContent='📅 Outlook';}}
-async function fetchCalendarEvents(){if(!outlookToken)return null;const now=new Date(),ws=new Date(now);ws.setDate(now.getDate()-now.getDay()+calWeekOffset*7);ws.setHours(0,0,0,0);const we=new Date(ws);we.setDate(ws.getDate()+7);const tz=Intl.DateTimeFormat().resolvedOptions().timeZone;try{const r=await fetch(`https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${ws.toISOString()}&endDateTime=${we.toISOString()}&$orderby=start/dateTime&$top=50&$select=subject,start,end,categories,isAllDay`,{headers:{Authorization:`Bearer ${outlookToken}`,'Prefer':`outlook.timezone="${tz}"`}});if(r.status===401){outlookToken=null;sessionStorage.removeItem('ot');setOutlookConnected(false);return null;}return(await r.json()).value||[];}catch(e){return null;}}
+async function fetchCalendarEvents(){if(!outlookToken)return null;const now=new Date(),ws=new Date(now);ws.setDate(now.getDate()-now.getDay()+calWeekOffset*7);ws.setHours(0,0,0,0);const we=new Date(ws);we.setDate(ws.getDate()+7);try{const r=await fetch(`https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${ws.toISOString()}&endDateTime=${we.toISOString()}&$orderby=start/dateTime&$top=50`,{headers:{Authorization:`Bearer ${outlookToken}`}});if(r.status===401){outlookToken=null;sessionStorage.removeItem('ot');setOutlookConnected(false);return null;}return(await r.json()).value||[];}catch(e){return null;}}
 function getWeekDates(){const n=new Date(),s=new Date(n);s.setDate(n.getDate()-n.getDay()+calWeekOffset*7);s.setHours(0,0,0,0);return Array.from({length:7},(_,i)=>{const d=new Date(s);d.setDate(s.getDate()+i);return d;});}
 function calNav(dir){if(dir===0)calWeekOffset=0;else calWeekOffset+=dir;renderCalendar();}
-
-// Maps Outlook's standard category colour names to hex colours
-function catColor(name){
-  const n=(name||'').toLowerCase();
-  if(n.includes('red'))    return{bg:'rgba(239,68,68,.25)',border:'rgba(239,68,68,.5)',text:'#fca5a5'};
-  if(n.includes('orange')) return{bg:'rgba(249,115,22,.25)',border:'rgba(249,115,22,.5)',text:'#fdba74'};
-  if(n.includes('yellow')) return{bg:'rgba(234,179,8,.25)',border:'rgba(234,179,8,.5)',text:'#fde047'};
-  if(n.includes('green'))  return{bg:'rgba(34,197,94,.25)',border:'rgba(34,197,94,.5)',text:'#86efac'};
-  if(n.includes('teal'))   return{bg:'rgba(20,184,166,.25)',border:'rgba(20,184,166,.5)',text:'#5eead4'};
-  if(n.includes('blue'))   return{bg:'rgba(96,165,250,.25)',border:'rgba(96,165,250,.5)',text:'#93c5fd'};
-  if(n.includes('purple')) return{bg:'rgba(167,139,250,.25)',border:'rgba(167,139,250,.5)',text:'#c4b5fd'};
-  if(n.includes('pink'))   return{bg:'rgba(236,72,153,.25)',border:'rgba(236,72,153,.5)',text:'#f9a8d4'};
-  if(n.includes('maroon')||n.includes('dark red')) return{bg:'rgba(159,18,57,.3)',border:'rgba(159,18,57,.6)',text:'#fda4af'};
-  if(n.includes('steel'))  return{bg:'rgba(100,116,139,.25)',border:'rgba(100,116,139,.5)',text:'#94a3b8'};
-  if(n.includes('dark blue')) return{bg:'rgba(30,64,175,.3)',border:'rgba(30,64,175,.6)',text:'#93c5fd'};
-  if(n.includes('black')) return{bg:'rgba(15,23,42,.5)',border:'rgba(148,163,184,.3)',text:'#94a3b8'};
-  // fallback — derive a colour from the string so custom category names get a consistent colour
-  let hash=0;for(let i=0;i<name.length;i++)hash=name.charCodeAt(i)+((hash<<5)-hash);
-  const hue=Math.abs(hash)%360;
-  return{bg:`hsla(${hue},60%,40%,.25)`,border:`hsla(${hue},60%,55%,.5)`,text:`hsl(${hue},80%,75%)`};
-}
-
-// Parse a dateTime string returned by Graph (already in local tz due to Prefer header)
-// Format: "2026-05-20T09:00:00.0000000" — no Z suffix, already local
-function parseGraphDT(dtStr){
-  if(!dtStr)return null;
-  // Strip sub-seconds and timezone suffix, treat as local
-  return new Date(dtStr.replace(/\.\d+$/,'').replace(/Z$/,''));
-}
-
 async function renderCalendar(){
   const cont=document.getElementById('cal-grid-container');
   const wd=getWeekDates();
@@ -1381,47 +1350,35 @@ async function renderCalendar(){
   if(window.innerWidth<768){
     let h='<div style="display:flex;flex-direction:column;gap:.5rem">';
     if(!evs.length)h+='<div style="text-align:center;color:#64748b;padding:1.5rem;font-size:.82rem">No events this week</div>';
-    evs.forEach(ev=>{
-      const s=parseGraphDT(ev.start.dateTime)||new Date(ev.start.date);
-      const allDay=ev.isAllDay||!ev.start.dateTime;
-      const t=allDay?'All day':s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-      const d=s.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
-      const cats=(ev.categories||[]).map(c=>{const col=catColor(c);return`<span class="cal-event-cat" style="background:${col.bg};border:1px solid ${col.border};color:${col.text}">${c}</span>`;}).join('');
-      h+=`<div class="mob-cal-event" onclick='importOutlookEvent(${JSON.stringify(ev).replace(/'/g,"\\'")})'><div class="mob-cal-title">${ev.subject||'(No title)'}</div><div class="mob-cal-meta">${d} · ${t}</div>${cats?`<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:.35rem">${cats}</div>`:''}</div>`;
-    });
+    evs.forEach(ev=>{const s=new Date(ev.start.dateTime||ev.start.date);const t=ev.start.dateTime?s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'All day';const d=s.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});h+=`<div class="mob-cal-event" onclick='importOutlookEvent(${JSON.stringify(ev).replace(/'/g,"\\'")})'><div class="mob-cal-title">${ev.subject||'(No title)'}</div><div class="mob-cal-meta">${d} · ${t}</div></div>`;});
     h+='</div>';cont.innerHTML=h;
   }else{
     const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    let h='<div class="cal-grid-scroll"><div class="cal-grid">';
+    let h='<div class="cal-grid">';
     wd.forEach((day,i)=>{
       const isToday=day.getTime()===today.getTime();
-      const dayEvs=evs.filter(ev=>{
-        const s=parseGraphDT(ev.start.dateTime)||new Date(ev.start.date);
-        return s.toDateString()===day.toDateString();
-      });
+      const dayEvs=evs.filter(ev=>new Date(ev.start.dateTime||ev.start.date).toDateString()===day.toDateString());
       h+=`<div class="cal-day"><div class="cal-day-hdr">${DAYS[i]}</div><div class="${isToday?'cal-day-num today':'cal-day-num'}">${day.getDate()}</div>`;
-      dayEvs.forEach(ev=>{
-        const s=parseGraphDT(ev.start.dateTime)||new Date(ev.start.date);
-        const allDay=ev.isAllDay||!ev.start.dateTime;
-        const t=allDay?'All day':s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-        const cats=(ev.categories||[]).map(c=>{const col=catColor(c);return`<span class="cal-event-cat" style="background:${col.bg};border:1px solid ${col.border};color:${col.text}">${c}</span>`;}).join('');
-        h+=`<div class="cal-event" onclick="importOutlookEvent(${JSON.stringify(ev).replace(/"/g,'&quot;')})" title="${ev.subject||''}"><div class="cal-event-time">${t}</div><div class="cal-event-title">${ev.subject||'(No title)'}</div>${cats?`<div class="cal-event-cats">${cats}</div>`:''}</div>`;
-      });
+      dayEvs.forEach(ev=>{const s=new Date(ev.start.dateTime||ev.start.date);const t=ev.start.dateTime?s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'All day';h+=`<div class="cal-event" onclick="importOutlookEvent(${JSON.stringify(ev).replace(/"/g,'&quot;')})" title="${ev.subject||''}"><div class="cal-event-time">${t}</div><div class="cal-event-title">${ev.subject||'(No title)'}</div></div>`;});
       if(!dayEvs.length)h+=`<div style="font-size:.6rem;color:var(--border);text-align:center;padding:.3rem">--</div>`;
       h+='</div>';
     });
-    h+='</div></div>';cont.innerHTML=h;
+    h+='</div>';cont.innerHTML=h;
   }
 }
 function importOutlookEvent(ev){
   if(typeof ev==='string')ev=JSON.parse(ev);
-  const s=parseGraphDT(ev.start.dateTime)||new Date(ev.start.date);
+  const s=new Date(ev.start.dateTime||ev.start.date);
   const dateStr=s.toISOString().split('T')[0];
   let name=ev.subject||'';
   name=name.replace(/^(home meeting\s*-?\s*|cnf home meeting\s*-?\s*|cnx home meeting\s*-?\s*|close\s*-?\s*|follow up\s*-?\s*|meeting\s*with\s*|meeting\s*-?\s*)/i,'').replace(/\s*Michele Dim.*$/i,'').trim();
   if(!name)name=ev.subject||'';
   openMeetModal();
   document.getElementById('m-date').value=dateStr;
+  if(ev.start.dateTime&&!ev.isAllDay){
+    const timeStr=s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('m-time').value=timeStr;
+  }
   document.getElementById('m-name').value=name;
   document.getElementById('meet-modal-title').textContent='Import from Outlook';
   document.getElementById('meet-modal-subtitle').textContent=`📅 "${ev.subject}" · ${s.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}`;
@@ -1591,11 +1548,19 @@ function renderToday(){
   // ── TODAY'S MEETINGS ──
   document.getElementById('today-meets-cnt').textContent=todayMeets.length;
   if(todayMeets.length){
-    document.getElementById('today-meets-list').innerHTML=todayMeets.map(m=>{
+    const sorted=[...todayMeets].sort((a,b)=>{
+      if(!a.time&&!b.time)return 0;
+      if(!a.time)return 1;
+      if(!b.time)return -1;
+      return a.time.localeCompare(b.time);
+    });
+    document.getElementById('today-meets-list').innerHTML=sorted.map(m=>{
       const ri=meetings.indexOf(m);
       const color=STATUS_COLORS[m.status]||'#64748b';
+      const timeTag=m.time?`<span style="font-family:var(--font-mono);font-size:.68rem;color:var(--gold);font-weight:600;flex-shrink:0">${m.time}</span>`:'';
       return`<div class="today-meet-row today-event" onclick="openMeetModal(${ri})">
         <div class="t-meet-dot" style="background:${color}"></div>
+        ${timeTag}
         <div style="flex:1;min-width:0"><div class="t-meet-name">${m.name}</div><div class="t-meet-meta">${m.phone||m.source||'--'} ${m.product1?'· '+m.product1:''}</div></div>
         <div class="t-meet-right">${statusBadge(m.status)}</div>
       </div>`;
@@ -2097,6 +2062,7 @@ function openMeetModal(idx=-1){
   document.getElementById('meet-modal-title').textContent=idx>=0?'Edit Meeting':'Add Meeting';
   document.getElementById('meet-modal-subtitle').textContent='';
   ['date','name','phone','source'].forEach(f=>document.getElementById('m-'+f).value=m[f]||'');
+  document.getElementById('m-time').value=m.time||'';
   document.getElementById('m-product1').value=m.product1||'';document.getElementById('m-product2').value=m.product2||'';
   document.getElementById('m-otherppp').value=m.otherPPP||'';document.getElementById('m-status').value=m.status||'';
   document.getElementById('m-seen').value=m.seen?'true':'false';document.getElementById('m-followup').value=m.followUpDate||'';
@@ -2107,7 +2073,7 @@ function openMeetModal(idx=-1){
 function closeMeetModal(){document.getElementById('meet-modal-overlay').classList.remove('open');}
 function saveMeeting(){
   const g=id=>document.getElementById(id).value;
-  const m={date:g('m-date'),name:g('m-name'),phone:g('m-phone'),source:g('m-source'),product1:g('m-product1'),product2:g('m-product2'),otherPPP:g('m-otherppp'),status:g('m-status'),seen:g('m-seen')==='true',followUpDate:g('m-followup')||null,reengageDate:g('m-reengage')||null,notes:g('m-notes').replace(/\n/g,'\\n')};
+  const m={date:g('m-date'),name:g('m-name'),phone:g('m-phone'),source:g('m-source'),product1:g('m-product1'),product2:g('m-product2'),otherPPP:g('m-otherppp'),status:g('m-status'),time:g('m-time')||null,seen:g('m-seen')==='true',followUpDate:g('m-followup')||null,reengageDate:g('m-reengage')||null,notes:g('m-notes').replace(/\n/g,'\\n')};
   if(!m.name){toast('Name is required','error');return;}
   if(editMeetIdx>=0)meetings[editMeetIdx]=m;else meetings.push(m);
   closeMeetModal();renderMeetings();if(document.getElementById('page-today').classList.contains('active'))renderToday();saveData();
@@ -2158,6 +2124,7 @@ function openQuickAdd(){
   document.getElementById('qa-m-name').value = '';
   document.getElementById('qa-m-phone').value = '';
   document.getElementById('qa-m-status').value = '';
+  document.getElementById('qa-m-time').value = '';
   document.getElementById('qa-s-name').value = '';
   document.getElementById('qa-s-api').value = '';
   document.getElementById('qa-s-product').value = '';
@@ -2178,8 +2145,9 @@ function saveQuickAdd(){
     const date = document.getElementById('qa-m-date').value;
     const status = document.getElementById('qa-m-status').value;
     const phone = document.getElementById('qa-m-phone').value.trim();
+    const time = document.getElementById('qa-m-time').value || null;
     if(!name){ toast('Name is required','error'); return; }
-    meetings.push({ date, name, phone, source:'', product1:'', product2:'', otherPPP:'', status, seen:false, followUpDate:null, notes:'' });
+    meetings.push({ date, name, phone, source:'', product1:'', product2:'', otherPPP:'', status, time, seen:false, followUpDate:null, notes:'' });
     saveData();
     toast(`Meeting added for ${name} ✓`, 'success');
     closeQuickAdd();
@@ -2520,6 +2488,7 @@ window.showPage = function(id, btn){
     <div id="qa-meeting-fields" class="qa-fields">
       <div class="qa-field"><label>Name</label><input type="text" id="qa-m-name" placeholder="Client name"></div>
       <div class="qa-field"><label>Date</label><input type="date" id="qa-m-date"></div>
+      <div class="qa-field"><label>Time (optional)</label><input type="time" id="qa-m-time"></div>
       <div class="qa-field"><label>Status</label><select id="qa-m-status"><option value="">-- Status --</option><option>Meeting Close</option><option>Meeting No Sale</option><option>Meeting Reschedule</option><option>Client No Show</option><option>Client Cancel</option><option>Follow Up</option><option>Second Meeting</option></select></div>
       <div class="qa-field"><label>Phone (optional)</label><input type="tel" id="qa-m-phone" placeholder="Optional"></div>
     </div>
