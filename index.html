@@ -334,7 +334,8 @@ html[data-theme="light"] .weekly-summary{background:#ffffff !important;}
 .cal-nav-btn{background:#111d33;border:1px solid rgba(255,255,255,0.09);color:#cbd5e1;border-radius:7px;padding:.35rem .65rem;cursor:pointer;font-size:.8rem;font-family:var(--font-body);transition:all .2s var(--ease);}
 .cal-nav-btn:hover{border-color:rgba(255,255,255,0.14);}
 .cal-week-label{font-family:var(--font-mono);font-size:.73rem;color:#94a3b8;min-width:140px;text-align:center;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.4rem;}
+.cal-grid-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -.1rem;padding-bottom:.25rem;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(130px,1fr));gap:.4rem;min-width:700px;}
 .cal-day{background:#111d33;border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:.5rem;min-height:88px;}
 .cal-day-hdr{font-size:.6rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem;text-align:center;}
 .cal-day-num{font-family:var(--font-mono);font-size:.88rem;color:#f1f5f9;text-align:center;margin-bottom:.35rem;font-weight:600;}
@@ -1100,8 +1101,7 @@ function syncDrawerActive(page){
       <div class="field"><label>Product 1</label><select id="m-product1"><option value="">--</option><option>PPPWP</option><option>PPPUL</option><option>ULSP</option><option>FP</option></select></div>
       <div class="field"><label>Product 2</label><select id="m-product2"><option value="">--</option><option>PPPWP</option><option>PPPUL</option><option>ULSP</option><option>FP</option></select></div>
       <div class="field"><label>Other PPP</label><select id="m-otherppp"><option value="">--</option><option>IVALIFE</option><option>LIFESTAR</option><option>HSBC</option><option>APS</option><option>No</option></select></div>
-      <div class="field"><label>Status</label><select id="m-status" onchange="toggleNextMeetDate()"><option value="">--</option><option>Meeting Close</option><option>Meeting No Sale</option><option>Meeting Reschedule</option><option>Client No Show</option><option>Client Cancel</option><option>Follow Up</option><option>Second Meeting</option></select></div>
-      <div class="field" id="m-next-meet-wrap" style="display:none"><label id="m-next-meet-label">Next Meeting Date</label><input type="date" id="m-nextmeetdate"></div>
+      <div class="field"><label>Status</label><select id="m-status"><option value="">--</option><option>Meeting Close</option><option>Meeting No Sale</option><option>Meeting Reschedule</option><option>Client No Show</option><option>Client Cancel</option><option>Follow Up</option><option>Second Meeting</option></select></div>
       <div class="field"><label>Seen</label><select id="m-seen"><option value="false">No</option><option value="true">Yes</option></select></div>
       <div class="field"><label>Follow Up Date</label><input type="date" id="m-followup"></div>
       <div class="field"><label>Re-engage Date</label><input type="date" id="m-reengage"></div>
@@ -1354,7 +1354,7 @@ async function renderCalendar(){
     h+='</div>';cont.innerHTML=h;
   }else{
     const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    let h='<div class="cal-grid">';
+    let h='<div class="cal-grid-scroll"><div class="cal-grid">';
     wd.forEach((day,i)=>{
       const isToday=day.getTime()===today.getTime();
       const dayEvs=evs.filter(ev=>new Date(ev.start.dateTime||ev.start.date).toDateString()===day.toDateString());
@@ -1363,7 +1363,7 @@ async function renderCalendar(){
       if(!dayEvs.length)h+=`<div style="font-size:.6rem;color:var(--border);text-align:center;padding:.3rem">--</div>`;
       h+='</div>';
     });
-    h+='</div>';cont.innerHTML=h;
+    h+='</div></div>';cont.innerHTML=h;
   }
 }
 function importOutlookEvent(ev){
@@ -2053,16 +2053,14 @@ function openMeetModal(idx=-1){
   document.getElementById('m-product1').value=m.product1||'';document.getElementById('m-product2').value=m.product2||'';
   document.getElementById('m-otherppp').value=m.otherPPP||'';document.getElementById('m-status').value=m.status||'';
   document.getElementById('m-seen').value=m.seen?'true':'false';document.getElementById('m-followup').value=m.followUpDate||'';
-  document.getElementById('m-nextmeetdate').value=m.nextMeetingDate||'';
   document.getElementById('m-notes').value=(m.notes||'').replace(/\\n/g,'\n');
   document.getElementById('meet-delete-btn').style.display=idx>=0?'flex':'none';
-  toggleNextMeetDate();
   document.getElementById('meet-modal-overlay').classList.add('open');
 }
 function closeMeetModal(){document.getElementById('meet-modal-overlay').classList.remove('open');}
 function saveMeeting(){
   const g=id=>document.getElementById(id).value;
-  const m={date:g('m-date'),name:g('m-name'),phone:g('m-phone'),source:g('m-source'),product1:g('m-product1'),product2:g('m-product2'),otherPPP:g('m-otherppp'),status:g('m-status'),seen:g('m-seen')==='true',followUpDate:g('m-followup')||null,reengageDate:g('m-reengage')||null,nextMeetingDate:g('m-nextmeetdate')||null,notes:g('m-notes').replace(/\n/g,'\\n')};
+  const m={date:g('m-date'),name:g('m-name'),phone:g('m-phone'),source:g('m-source'),product1:g('m-product1'),product2:g('m-product2'),otherPPP:g('m-otherppp'),status:g('m-status'),seen:g('m-seen')==='true',followUpDate:g('m-followup')||null,reengageDate:g('m-reengage')||null,notes:g('m-notes').replace(/\n/g,'\\n')};
   if(!m.name){toast('Name is required','error');return;}
   if(editMeetIdx>=0)meetings[editMeetIdx]=m;else meetings.push(m);
   closeMeetModal();renderMeetings();if(document.getElementById('page-today').classList.contains('active'))renderToday();saveData();
@@ -2097,25 +2095,6 @@ function saveSale(){
 }
 function deleteSale(){if(editSaleIdx<0)return;if(!confirm('Delete this sale?'))return;sales.splice(editSaleIdx,1);closeSaleModal();renderSales();saveData();toast('Sale deleted','info');}
 
-function toggleNextMeetDate(){
-  const status=document.getElementById('m-status').value;
-  const wrap=document.getElementById('m-next-meet-wrap');
-  const lbl=document.getElementById('m-next-meet-label');
-  const show=['Meeting Reschedule','Second Meeting'].includes(status);
-  wrap.style.display=show?'':'none';
-  if(show) lbl.textContent=status==='Meeting Reschedule'?'Reschedule Date':'Second Meeting Date';
-  if(!show) document.getElementById('m-nextmeetdate').value='';
-}
-function toggleQANextMeetDate(){
-  const status=document.getElementById('qa-m-status').value;
-  const wrap=document.getElementById('qa-m-next-meet-wrap');
-  const lbl=document.getElementById('qa-m-next-meet-label');
-  const show=['Meeting Reschedule','Second Meeting'].includes(status);
-  wrap.style.display=show?'flex':'none';
-  if(show) lbl.textContent=status==='Meeting Reschedule'?'Reschedule Date':'Second Meeting Date';
-  if(!show) document.getElementById('qa-m-nextmeetdate').value='';
-}
-
 window.addEventListener('DOMContentLoaded',()=>{loadTheme();checkOutlookToken();});
 window.addEventListener('resize',()=>{if(document.getElementById('page-meetings').classList.contains('active'))renderCalendar();});
 
@@ -2132,8 +2111,6 @@ function openQuickAdd(){
   document.getElementById('qa-m-name').value = '';
   document.getElementById('qa-m-phone').value = '';
   document.getElementById('qa-m-status').value = '';
-  document.getElementById('qa-m-nextmeetdate').value = '';
-  document.getElementById('qa-m-next-meet-wrap').style.display = 'none';
   document.getElementById('qa-s-name').value = '';
   document.getElementById('qa-s-api').value = '';
   document.getElementById('qa-s-product').value = '';
@@ -2154,9 +2131,8 @@ function saveQuickAdd(){
     const date = document.getElementById('qa-m-date').value;
     const status = document.getElementById('qa-m-status').value;
     const phone = document.getElementById('qa-m-phone').value.trim();
-    const nextMeetingDate = document.getElementById('qa-m-nextmeetdate').value || null;
     if(!name){ toast('Name is required','error'); return; }
-    meetings.push({ date, name, phone, source:'', product1:'', product2:'', otherPPP:'', status, seen:false, followUpDate:null, nextMeetingDate, notes:'' });
+    meetings.push({ date, name, phone, source:'', product1:'', product2:'', otherPPP:'', status, seen:false, followUpDate:null, notes:'' });
     saveData();
     toast(`Meeting added for ${name} ✓`, 'success');
     closeQuickAdd();
@@ -2497,8 +2473,7 @@ window.showPage = function(id, btn){
     <div id="qa-meeting-fields" class="qa-fields">
       <div class="qa-field"><label>Name</label><input type="text" id="qa-m-name" placeholder="Client name"></div>
       <div class="qa-field"><label>Date</label><input type="date" id="qa-m-date"></div>
-      <div class="qa-field"><label>Status</label><select id="qa-m-status" onchange="toggleQANextMeetDate()"><option value="">-- Status --</option><option>Meeting Close</option><option>Meeting No Sale</option><option>Meeting Reschedule</option><option>Client No Show</option><option>Client Cancel</option><option>Follow Up</option><option>Second Meeting</option></select></div>
-      <div class="qa-field" id="qa-m-next-meet-wrap" style="display:none"><label id="qa-m-next-meet-label">Next Meeting Date</label><input type="date" id="qa-m-nextmeetdate"></div>
+      <div class="qa-field"><label>Status</label><select id="qa-m-status"><option value="">-- Status --</option><option>Meeting Close</option><option>Meeting No Sale</option><option>Meeting Reschedule</option><option>Client No Show</option><option>Client Cancel</option><option>Follow Up</option><option>Second Meeting</option></select></div>
       <div class="qa-field"><label>Phone (optional)</label><input type="tel" id="qa-m-phone" placeholder="Optional"></div>
     </div>
     <div id="qa-sale-fields" class="qa-fields" style="display:none">
