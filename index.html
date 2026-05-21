@@ -344,8 +344,6 @@ html[data-theme="light"] .weekly-summary{background:#ffffff !important;}
 .cal-event:hover{background:rgba(96,165,250,.28);transform:translateY(-1px);}
 .cal-event-time{font-family:var(--font-mono);font-size:.56rem;color:#93c5fd;}
 .cal-event-title{font-size:.67rem;color:#f1f5f9;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.cal-event-cats{display:flex;flex-wrap:wrap;gap:2px;margin-top:2px;}
-.cal-event-cat{font-size:.52rem;font-weight:700;padding:.1rem .35rem;border-radius:3px;white-space:nowrap;letter-spacing:.03em;}
 .connect-cta{text-align:center;padding:2rem 1rem;}
 .connect-cta p{color:#64748b;font-size:.85rem;margin-bottom:1rem;line-height:1.6;}
 .mob-cal-event{background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.25);border-radius:10px;padding:.75rem 1rem;cursor:pointer;transition:all .2s var(--ease);margin-bottom:.5rem;}
@@ -1383,31 +1381,30 @@ async function fetchCalendarEvents(){if(!outlookToken)return null;const now=new 
 function getWeekDates(){const n=new Date(),s=new Date(n);s.setDate(n.getDate()-n.getDay()+calWeekOffset*7);s.setHours(0,0,0,0);return Array.from({length:7},(_,i)=>{const d=new Date(s);d.setDate(s.getDate()+i);return d;});}
 function calNav(dir){if(dir===0)calWeekOffset=0;else calWeekOffset+=dir;renderCalendar();}
 
-// Parse Graph API dateTime string (already local tz from Prefer header) — no UTC shift
 function parseGraphDT(dtStr){
   if(!dtStr)return null;
   return new Date(dtStr.replace(/\.\d+$/,'').replace(/Z$/,''));
 }
 
-// Map Outlook category colour names → CSS colours
+// Returns full card colours based on Outlook category name
 function catColor(name){
   const n=(name||'').toLowerCase();
-  if(n.includes('red'))      return{bg:'rgba(239,68,68,.25)',  border:'rgba(239,68,68,.6)',  text:'#fca5a5'};
-  if(n.includes('orange'))   return{bg:'rgba(249,115,22,.25)', border:'rgba(249,115,22,.6)', text:'#fdba74'};
-  if(n.includes('yellow'))   return{bg:'rgba(234,179,8,.25)',  border:'rgba(234,179,8,.6)',  text:'#fde047'};
-  if(n.includes('green'))    return{bg:'rgba(34,197,94,.25)',  border:'rgba(34,197,94,.6)',  text:'#86efac'};
-  if(n.includes('teal'))     return{bg:'rgba(20,184,166,.25)', border:'rgba(20,184,166,.6)', text:'#5eead4'};
-  if(n.includes('blue'))     return{bg:'rgba(96,165,250,.25)', border:'rgba(96,165,250,.6)', text:'#93c5fd'};
-  if(n.includes('purple'))   return{bg:'rgba(167,139,250,.25)',border:'rgba(167,139,250,.6)',text:'#c4b5fd'};
-  if(n.includes('pink'))     return{bg:'rgba(236,72,153,.25)', border:'rgba(236,72,153,.6)', text:'#f9a8d4'};
-  if(n.includes('maroon')||n.includes('dark red')) return{bg:'rgba(159,18,57,.3)',border:'rgba(159,18,57,.6)',text:'#fda4af'};
-  if(n.includes('steel'))    return{bg:'rgba(100,116,139,.25)',border:'rgba(100,116,139,.6)',text:'#94a3b8'};
-  if(n.includes('dark blue'))return{bg:'rgba(30,64,175,.3)',   border:'rgba(30,64,175,.6)',  text:'#93c5fd'};
-  if(n.includes('black'))    return{bg:'rgba(15,23,42,.5)',    border:'rgba(148,163,184,.3)',text:'#94a3b8'};
-  // custom category — derive consistent colour from name string
+  if(n.includes('red'))       return{bg:'rgba(239,68,68,.22)',  border:'rgba(239,68,68,.7)',  time:'#fca5a5',title:'#fff'};
+  if(n.includes('orange'))    return{bg:'rgba(249,115,22,.22)', border:'rgba(249,115,22,.7)', time:'#fdba74',title:'#fff'};
+  if(n.includes('yellow'))    return{bg:'rgba(234,179,8,.22)',  border:'rgba(234,179,8,.7)',  time:'#fde047',title:'#fff'};
+  if(n.includes('green'))     return{bg:'rgba(34,197,94,.22)',  border:'rgba(34,197,94,.7)',  time:'#86efac',title:'#fff'};
+  if(n.includes('teal'))      return{bg:'rgba(20,184,166,.22)', border:'rgba(20,184,166,.7)', time:'#5eead4',title:'#fff'};
+  if(n.includes('blue'))      return{bg:'rgba(96,165,250,.22)', border:'rgba(96,165,250,.7)', time:'#93c5fd',title:'#fff'};
+  if(n.includes('purple'))    return{bg:'rgba(167,139,250,.22)',border:'rgba(167,139,250,.7)',time:'#c4b5fd',title:'#fff'};
+  if(n.includes('pink'))      return{bg:'rgba(236,72,153,.22)', border:'rgba(236,72,153,.7)', time:'#f9a8d4',title:'#fff'};
+  if(n.includes('maroon')||n.includes('dark red')) return{bg:'rgba(159,18,57,.3)',border:'rgba(220,38,38,.7)',time:'#fda4af',title:'#fff'};
+  if(n.includes('steel'))     return{bg:'rgba(100,116,139,.22)',border:'rgba(100,116,139,.7)',time:'#94a3b8',title:'#fff'};
+  if(n.includes('dark blue')) return{bg:'rgba(30,64,175,.3)',   border:'rgba(59,130,246,.7)', time:'#93c5fd',title:'#fff'};
+  if(n.includes('black'))     return{bg:'rgba(15,23,42,.6)',    border:'rgba(148,163,184,.4)',time:'#94a3b8',title:'#e2e8f0'};
+  // custom — derive from name hash
   let hash=0;for(let i=0;i<name.length;i++)hash=name.charCodeAt(i)+((hash<<5)-hash);
   const hue=Math.abs(hash)%360;
-  return{bg:`hsla(${hue},60%,40%,.25)`,border:`hsla(${hue},60%,55%,.5)`,text:`hsl(${hue},80%,75%)`};
+  return{bg:`hsla(${hue},55%,35%,.3)`,border:`hsla(${hue},65%,55%,.7)`,time:`hsl(${hue},80%,80%)`,title:'#fff'};
 }
 
 async function renderCalendar(){
@@ -1428,8 +1425,8 @@ async function renderCalendar(){
       const allDay=ev.isAllDay||!ev.start.dateTime;
       const t=allDay?'All day':s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
       const d=s.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
-      const cats=(ev.categories||[]).map(c=>{const col=catColor(c);return`<span class="cal-event-cat" style="background:${col.bg};border:1px solid ${col.border};color:${col.text}">${c}</span>`;}).join('');
-      h+=`<div class="mob-cal-event" onclick='importOutlookEvent(${JSON.stringify(ev).replace(/'/g,"\\'")})'><div class="mob-cal-title">${ev.subject||'(No title)'}</div><div class="mob-cal-meta">${d} · ${t}</div>${cats?`<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:.35rem">${cats}</div>`:''}</div>`;
+      const col=(ev.categories&&ev.categories.length)?catColor(ev.categories[0]):{bg:'rgba(96,165,250,.15)',border:'rgba(96,165,250,.3)',time:'#93c5fd',title:'#f1f5f9'};
+      h+=`<div class="mob-cal-event" style="background:${col.bg};border-left:3px solid ${col.border}" onclick='importOutlookEvent(${JSON.stringify(ev).replace(/'/g,"\\'")})'><div class="mob-cal-title" style="color:${col.title}">${ev.subject||'(No title)'}</div><div class="mob-cal-meta" style="color:${col.time}">${d} · ${t}</div></div>`;
     });
     h+='</div>';cont.innerHTML=h;
   }else{
@@ -1446,8 +1443,8 @@ async function renderCalendar(){
         const s=parseGraphDT(ev.start.dateTime)||new Date(ev.start.date);
         const allDay=ev.isAllDay||!ev.start.dateTime;
         const t=allDay?'All day':s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-        const cats=(ev.categories||[]).map(c=>{const col=catColor(c);return`<span class="cal-event-cat" style="background:${col.bg};border:1px solid ${col.border};color:${col.text}">${c}</span>`;}).join('');
-        h+=`<div class="cal-event" onclick="importOutlookEvent(${JSON.stringify(ev).replace(/"/g,'&quot;')})" title="${ev.subject||''}"><div class="cal-event-time">${t}</div><div class="cal-event-title">${ev.subject||'(No title)'}</div>${cats?`<div class="cal-event-cats">${cats}</div>`:''}</div>`;
+        const col=(ev.categories&&ev.categories.length)?catColor(ev.categories[0]):{bg:'rgba(96,165,250,.15)',border:'rgba(96,165,250,.4)',time:'#93c5fd',title:'#f1f5f9'};
+        h+=`<div class="cal-event" style="background:${col.bg};border:1px solid ${col.border};border-left:3px solid ${col.border}" onclick="importOutlookEvent(${JSON.stringify(ev).replace(/"/g,'&quot;')})" title="${ev.subject||''}"><div class="cal-event-time" style="color:${col.time}">${t}</div><div class="cal-event-title" style="color:${col.title}">${ev.subject||'(No title)'}</div></div>`;
       });
       if(!dayEvs.length)h+=`<div style="font-size:.6rem;color:var(--border);text-align:center;padding:.3rem">--</div>`;
       h+='</div>';
