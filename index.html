@@ -334,8 +334,7 @@ html[data-theme="light"] .weekly-summary{background:#ffffff !important;}
 .cal-nav-btn{background:#111d33;border:1px solid rgba(255,255,255,0.09);color:#cbd5e1;border-radius:7px;padding:.35rem .65rem;cursor:pointer;font-size:.8rem;font-family:var(--font-body);transition:all .2s var(--ease);}
 .cal-nav-btn:hover{border-color:rgba(255,255,255,0.14);}
 .cal-week-label{font-family:var(--font-mono);font-size:.73rem;color:#94a3b8;min-width:140px;text-align:center;}
-.cal-grid-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:.25rem;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(130px,1fr));gap:.4rem;min-width:700px;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.4rem;}
 .cal-day{background:#111d33;border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:.5rem;min-height:88px;}
 .cal-day-hdr{font-size:.6rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem;text-align:center;}
 .cal-day-num{font-family:var(--font-mono);font-size:.88rem;color:#f1f5f9;text-align:center;margin-bottom:.35rem;font-weight:600;}
@@ -1332,7 +1331,7 @@ async function fetchTodayOutlookEvents(){
   const start=new Date(now);start.setHours(0,0,0,0);
   const end=new Date(now);end.setHours(23,59,59,999);
   try{
-    const r=await fetch(`https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${start.toISOString()}&endDateTime=${end.toISOString()}&$orderby=start/dateTime&$top=100&$select=subject,start,end,isAllDay`,{
+    const r=await fetch(`https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${start.toISOString()}&endDateTime=${end.toISOString()}&$orderby=start/dateTime&$top=100&$select=subject,start,end,isAllDay,body`,{
       headers:{Authorization:`Bearer ${outlookToken}`,'Prefer':`outlook.timezone="${tz}"`}
     });
     if(r.status===401){outlookToken=null;sessionStorage.removeItem('ot');setOutlookConnected(false);return null;}
@@ -1377,36 +1376,9 @@ function checkOutlookToken(){
   else{console.log('[KARUS DEBUG] NO TOKEN FOUND anywhere');}
 }
 function setOutlookConnected(c){const btn=document.getElementById('outlook-btn'),txt=document.getElementById('outlook-txt');if(c){btn.classList.add('connected');txt.textContent='📅 Outlook ✓';}else{btn.classList.remove('connected');txt.textContent='📅 Outlook';}}
-async function fetchCalendarEvents(){if(!outlookToken)return null;const now=new Date(),ws=new Date(now);ws.setDate(now.getDate()-now.getDay()+calWeekOffset*7);ws.setHours(0,0,0,0);const we=new Date(ws);we.setDate(ws.getDate()+7);const tz=Intl.DateTimeFormat().resolvedOptions().timeZone;try{const r=await fetch(`https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${ws.toISOString()}&endDateTime=${we.toISOString()}&$orderby=start/dateTime&$top=50&$select=subject,start,end,categories,isAllDay`,{headers:{Authorization:`Bearer ${outlookToken}`,'Prefer':`outlook.timezone="${tz}"`}});if(r.status===401){outlookToken=null;sessionStorage.removeItem('ot');setOutlookConnected(false);return null;}return(await r.json()).value||[];}catch(e){return null;}}
+async function fetchCalendarEvents(){if(!outlookToken)return null;const now=new Date(),ws=new Date(now);ws.setDate(now.getDate()-now.getDay()+calWeekOffset*7);ws.setHours(0,0,0,0);const we=new Date(ws);we.setDate(ws.getDate()+7);const tz=Intl.DateTimeFormat().resolvedOptions().timeZone;try{const r=await fetch(`https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${ws.toISOString()}&endDateTime=${we.toISOString()}&$orderby=start/dateTime&$top=50&$select=subject,start,end,categories,isAllDay,body`,{headers:{Authorization:`Bearer ${outlookToken}`,'Prefer':`outlook.timezone="${tz}"`}});if(r.status===401){outlookToken=null;sessionStorage.removeItem('ot');setOutlookConnected(false);return null;}return(await r.json()).value||[];}catch(e){return null;}}
 function getWeekDates(){const n=new Date(),s=new Date(n);s.setDate(n.getDate()-n.getDay()+calWeekOffset*7);s.setHours(0,0,0,0);return Array.from({length:7},(_,i)=>{const d=new Date(s);d.setDate(s.getDate()+i);return d;});}
 function calNav(dir){if(dir===0)calWeekOffset=0;else calWeekOffset+=dir;renderCalendar();}
-
-function parseGraphDT(dtStr){
-  if(!dtStr)return null;
-  return new Date(dtStr.replace(/\.\d+$/,'').replace(/Z$/,''));
-}
-
-// Returns full card colours based on Outlook category name
-function catColor(name){
-  const n=(name||'').toLowerCase();
-  if(n.includes('red'))       return{bg:'rgba(239,68,68,.22)',  border:'rgba(239,68,68,.7)',  time:'#fca5a5',title:'#fff'};
-  if(n.includes('orange'))    return{bg:'rgba(249,115,22,.22)', border:'rgba(249,115,22,.7)', time:'#fdba74',title:'#fff'};
-  if(n.includes('yellow'))    return{bg:'rgba(234,179,8,.22)',  border:'rgba(234,179,8,.7)',  time:'#fde047',title:'#fff'};
-  if(n.includes('green'))     return{bg:'rgba(34,197,94,.22)',  border:'rgba(34,197,94,.7)',  time:'#86efac',title:'#fff'};
-  if(n.includes('teal'))      return{bg:'rgba(20,184,166,.22)', border:'rgba(20,184,166,.7)', time:'#5eead4',title:'#fff'};
-  if(n.includes('blue'))      return{bg:'rgba(96,165,250,.22)', border:'rgba(96,165,250,.7)', time:'#93c5fd',title:'#fff'};
-  if(n.includes('purple'))    return{bg:'rgba(167,139,250,.22)',border:'rgba(167,139,250,.7)',time:'#c4b5fd',title:'#fff'};
-  if(n.includes('pink'))      return{bg:'rgba(236,72,153,.22)', border:'rgba(236,72,153,.7)', time:'#f9a8d4',title:'#fff'};
-  if(n.includes('maroon')||n.includes('dark red')) return{bg:'rgba(159,18,57,.3)',border:'rgba(220,38,38,.7)',time:'#fda4af',title:'#fff'};
-  if(n.includes('steel'))     return{bg:'rgba(100,116,139,.22)',border:'rgba(100,116,139,.7)',time:'#94a3b8',title:'#fff'};
-  if(n.includes('dark blue')) return{bg:'rgba(30,64,175,.3)',   border:'rgba(59,130,246,.7)', time:'#93c5fd',title:'#fff'};
-  if(n.includes('black'))     return{bg:'rgba(15,23,42,.6)',    border:'rgba(148,163,184,.4)',time:'#94a3b8',title:'#e2e8f0'};
-  // custom — derive from name hash
-  let hash=0;for(let i=0;i<name.length;i++)hash=name.charCodeAt(i)+((hash<<5)-hash);
-  const hue=Math.abs(hash)%360;
-  return{bg:`hsla(${hue},55%,35%,.3)`,border:`hsla(${hue},65%,55%,.7)`,time:`hsl(${hue},80%,80%)`,title:'#fff'};
-}
-
 async function renderCalendar(){
   const cont=document.getElementById('cal-grid-container');
   const wd=getWeekDates();
@@ -1420,51 +1392,46 @@ async function renderCalendar(){
   if(window.innerWidth<768){
     let h='<div style="display:flex;flex-direction:column;gap:.5rem">';
     if(!evs.length)h+='<div style="text-align:center;color:#64748b;padding:1.5rem;font-size:.82rem">No events this week</div>';
-    evs.forEach(ev=>{
-      const s=parseGraphDT(ev.start.dateTime)||new Date(ev.start.date);
-      const allDay=ev.isAllDay||!ev.start.dateTime;
-      const t=allDay?'All day':s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-      const d=s.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
-      const col=(ev.categories&&ev.categories.length)?catColor(ev.categories[0]):{bg:'rgba(96,165,250,.15)',border:'rgba(96,165,250,.3)',time:'#93c5fd',title:'#f1f5f9'};
-      h+=`<div class="mob-cal-event" style="background:${col.bg};border-left:3px solid ${col.border}" onclick='importOutlookEvent(${JSON.stringify(ev).replace(/'/g,"\\'")})'><div class="mob-cal-title" style="color:${col.title}">${ev.subject||'(No title)'}</div><div class="mob-cal-meta" style="color:${col.time}">${d} · ${t}</div></div>`;
-    });
+    evs.forEach(ev=>{const s=new Date(ev.start.dateTime||ev.start.date);const t=ev.start.dateTime?s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'All day';const d=s.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});h+=`<div class="mob-cal-event" onclick='importOutlookEvent(${JSON.stringify(ev).replace(/'/g,"\\'")})'><div class="mob-cal-title">${ev.subject||'(No title)'}</div><div class="mob-cal-meta">${d} · ${t}</div></div>`;});
     h+='</div>';cont.innerHTML=h;
   }else{
     const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    let h='<div class="cal-grid-scroll"><div class="cal-grid">';
+    let h='<div class="cal-grid">';
     wd.forEach((day,i)=>{
       const isToday=day.getTime()===today.getTime();
-      const dayEvs=evs.filter(ev=>{
-        const s=parseGraphDT(ev.start.dateTime)||new Date(ev.start.date);
-        return s.toDateString()===day.toDateString();
-      });
+      const dayEvs=evs.filter(ev=>new Date(ev.start.dateTime||ev.start.date).toDateString()===day.toDateString());
       h+=`<div class="cal-day"><div class="cal-day-hdr">${DAYS[i]}</div><div class="${isToday?'cal-day-num today':'cal-day-num'}">${day.getDate()}</div>`;
-      dayEvs.forEach(ev=>{
-        const s=parseGraphDT(ev.start.dateTime)||new Date(ev.start.date);
-        const allDay=ev.isAllDay||!ev.start.dateTime;
-        const t=allDay?'All day':s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-        const col=(ev.categories&&ev.categories.length)?catColor(ev.categories[0]):{bg:'rgba(96,165,250,.15)',border:'rgba(96,165,250,.4)',time:'#93c5fd',title:'#f1f5f9'};
-        h+=`<div class="cal-event" style="background:${col.bg};border:1px solid ${col.border};border-left:3px solid ${col.border}" onclick="importOutlookEvent(${JSON.stringify(ev).replace(/"/g,'&quot;')})" title="${ev.subject||''}"><div class="cal-event-time" style="color:${col.time}">${t}</div><div class="cal-event-title" style="color:${col.title}">${ev.subject||'(No title)'}</div></div>`;
-      });
+      dayEvs.forEach(ev=>{const s=new Date(ev.start.dateTime||ev.start.date);const t=ev.start.dateTime?s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'All day';h+=`<div class="cal-event" onclick="importOutlookEvent(${JSON.stringify(ev).replace(/"/g,'&quot;')})" title="${ev.subject||''}"><div class="cal-event-time">${t}</div><div class="cal-event-title">${ev.subject||'(No title)'}</div></div>`;});
       if(!dayEvs.length)h+=`<div style="font-size:.6rem;color:var(--border);text-align:center;padding:.3rem">--</div>`;
       h+='</div>';
     });
-    h+='</div></div>';cont.innerHTML=h;
+    h+='</div>';cont.innerHTML=h;
   }
 }
 function importOutlookEvent(ev){
   if(typeof ev==='string')ev=JSON.parse(ev);
-  const s=parseGraphDT(ev.start.dateTime)||new Date(ev.start.date);
+  const s=new Date(ev.start.dateTime||ev.start.date);
   const dateStr=s.toISOString().split('T')[0];
   let name=ev.subject||'';
   name=name.replace(/^(home meeting\s*-?\s*|cnf home meeting\s*-?\s*|cnx home meeting\s*-?\s*|close\s*-?\s*|follow up\s*-?\s*|meeting\s*with\s*|meeting\s*-?\s*)/i,'').replace(/\s*Michele Dim.*$/i,'').trim();
   if(!name)name=ev.subject||'';
+  // Extract plain text from body (strip HTML tags)
+  let notes='';
+  if(ev.body&&ev.body.content){
+    if(ev.body.contentType==='html'){
+      const tmp=document.createElement('div');
+      tmp.innerHTML=ev.body.content;
+      notes=tmp.innerText.trim();
+    }else{
+      notes=ev.body.content.trim();
+    }
+    // Remove Outlook's default boilerplate invitation text
+    notes=notes.replace(/_{5,}[\s\S]*/,'').trim();
+  }
   openMeetModal();
   document.getElementById('m-date').value=dateStr;
-  if(ev.start.dateTime&&!ev.isAllDay){
-    document.getElementById('m-time').value=s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  }
   document.getElementById('m-name').value=name;
+  if(notes) document.getElementById('m-notes').value=notes;
   document.getElementById('meet-modal-title').textContent='Import from Outlook';
   document.getElementById('meet-modal-subtitle').textContent=`📅 "${ev.subject}" · ${s.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}`;
   toast('Outlook event imported -- fill in the details','info');
