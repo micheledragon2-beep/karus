@@ -334,7 +334,8 @@ html[data-theme="light"] .weekly-summary{background:#ffffff !important;}
 .cal-nav-btn{background:#111d33;border:1px solid rgba(255,255,255,0.09);color:#cbd5e1;border-radius:7px;padding:.35rem .65rem;cursor:pointer;font-size:.8rem;font-family:var(--font-body);transition:all .2s var(--ease);}
 .cal-nav-btn:hover{border-color:rgba(255,255,255,0.14);}
 .cal-week-label{font-family:var(--font-mono);font-size:.73rem;color:#94a3b8;min-width:140px;text-align:center;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.4rem;}
+.cal-grid-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:.25rem;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(130px,1fr));gap:.4rem;min-width:700px;}
 .cal-day{background:#111d33;border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:.5rem;min-height:88px;}
 .cal-day-hdr{font-size:.6rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem;text-align:center;}
 .cal-day-num{font-family:var(--font-mono);font-size:.88rem;color:#f1f5f9;text-align:center;margin-bottom:.35rem;font-weight:600;}
@@ -860,7 +861,8 @@ function syncDrawerActive(page){
     <div class="card"><div class="card-header"><div class="card-title">Best Sources</div></div><div id="best-sources"></div></div>
   </div>
   <div class="grid-3 mb-1">
-    <div class="card"><div class="card-header"><div class="card-title">Close Ratio / Month</div></div><div class="chart-wrap sm"><canvas id="chart-ratio-close"></canvas></div></div>
+    <div class="card"><div class="card-header"><div class="card-title">Close Ratio / Month <span style="font-size:.65rem;color:#64748b">(of seen)</span></div></div><div class="chart-wrap sm"><canvas id="chart-ratio-close"></canvas></div></div>
+    <div class="card"><div class="card-header"><div class="card-title">Seen Ratio / Month <span style="font-size:.65rem;color:#64748b">(of total)</span></div></div><div class="chart-wrap sm"><canvas id="chart-ratio-seen"></canvas></div></div>
     <div class="card"><div class="card-header"><div class="card-title">No Show Ratio / Month</div></div><div class="chart-wrap sm"><canvas id="chart-ratio-noshow"></canvas></div></div>
     <div class="card"><div class="card-header"><div class="card-title">Cancel Ratio / Month</div></div><div class="chart-wrap sm"><canvas id="chart-ratio-cancel"></canvas></div></div>
   </div>
@@ -1331,7 +1333,7 @@ async function fetchTodayOutlookEvents(){
   const start=new Date(now);start.setHours(0,0,0,0);
   const end=new Date(now);end.setHours(23,59,59,999);
   try{
-    const r=await fetch(`https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${start.toISOString()}&endDateTime=${end.toISOString()}&$orderby=start/dateTime&$top=100&$select=subject,start,end,isAllDay,body`,{
+    const r=await fetch(`https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${start.toISOString()}&endDateTime=${end.toISOString()}&$orderby=start/dateTime&$top=100&$select=subject,start,end,isAllDay`,{
       headers:{Authorization:`Bearer ${outlookToken}`,'Prefer':`outlook.timezone="${tz}"`}
     });
     if(r.status===401){outlookToken=null;sessionStorage.removeItem('ot');setOutlookConnected(false);return null;}
@@ -1379,6 +1381,37 @@ function setOutlookConnected(c){const btn=document.getElementById('outlook-btn')
 async function fetchCalendarEvents(){if(!outlookToken)return null;const now=new Date(),ws=new Date(now);ws.setDate(now.getDate()-now.getDay()+calWeekOffset*7);ws.setHours(0,0,0,0);const we=new Date(ws);we.setDate(ws.getDate()+7);const tz=Intl.DateTimeFormat().resolvedOptions().timeZone;try{const r=await fetch(`https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${ws.toISOString()}&endDateTime=${we.toISOString()}&$orderby=start/dateTime&$top=50&$select=subject,start,end,categories,isAllDay,body`,{headers:{Authorization:`Bearer ${outlookToken}`,'Prefer':`outlook.timezone="${tz}"`}});if(r.status===401){outlookToken=null;sessionStorage.removeItem('ot');setOutlookConnected(false);return null;}return(await r.json()).value||[];}catch(e){return null;}}
 function getWeekDates(){const n=new Date(),s=new Date(n);s.setDate(n.getDate()-n.getDay()+calWeekOffset*7);s.setHours(0,0,0,0);return Array.from({length:7},(_,i)=>{const d=new Date(s);d.setDate(s.getDate()+i);return d;});}
 function calNav(dir){if(dir===0)calWeekOffset=0;else calWeekOffset+=dir;renderCalendar();}
+
+// Parse Graph dateTime string already in local tz (from Prefer header) — no UTC shift
+function parseGraphDT(dtStr){
+  if(!dtStr)return null;
+  return new Date(dtStr.replace(/\.\d+$/,'').replace(/Z$/,''));
+}
+
+// Exact Outlook category colours (from Microsoft's colour presets)
+function catColor(name){
+  const n=(name||'').toLowerCase();
+  // Outlook preset colour names → exact hex
+  if(n.includes('red'))        return{bg:'#d13438',border:'#d13438',text:'#ffffff'};
+  if(n.includes('orange'))     return{bg:'#ca5010',border:'#ca5010',text:'#ffffff'};
+  if(n.includes('yellow'))     return{bg:'#c19c00',border:'#c19c00',text:'#ffffff'};
+  if(n.includes('green'))      return{bg:'#0e700e',border:'#0e700e',text:'#ffffff'};
+  if(n.includes('teal'))       return{bg:'#038387',border:'#038387',text:'#ffffff'};
+  if(n.includes('olive'))      return{bg:'#8cbd18',border:'#8cbd18',text:'#ffffff'};
+  if(n.includes('blue'))       return{bg:'#0078d4',border:'#0078d4',text:'#ffffff'};
+  if(n.includes('purple'))     return{bg:'#8764b8',border:'#8764b8',text:'#ffffff'};
+  if(n.includes('cranberry')||n.includes('maroon')) return{bg:'#c239b3',border:'#c239b3',text:'#ffffff'};
+  if(n.includes('pink'))       return{bg:'#e3008c',border:'#e3008c',text:'#ffffff'};
+  if(n.includes('steel'))      return{bg:'#005b70',border:'#005b70',text:'#ffffff'};
+  if(n.includes('dark blue')||n.includes('darkblue')) return{bg:'#003966',border:'#003966',text:'#ffffff'};
+  if(n.includes('black'))      return{bg:'#1b1a19',border:'#605e5c',text:'#ffffff'};
+  if(n.includes('gray')||n.includes('grey')) return{bg:'#69797e',border:'#69797e',text:'#ffffff'};
+  // custom — derive consistent colour from name
+  let hash=0;for(let i=0;i<name.length;i++)hash=name.charCodeAt(i)+((hash<<5)-hash);
+  const hue=Math.abs(hash)%360;
+  return{bg:`hsl(${hue},55%,40%)`,border:`hsl(${hue},55%,40%)`,text:'#ffffff'};
+}
+
 async function renderCalendar(){
   const cont=document.getElementById('cal-grid-container');
   const wd=getWeekDates();
@@ -1392,45 +1425,57 @@ async function renderCalendar(){
   if(window.innerWidth<768){
     let h='<div style="display:flex;flex-direction:column;gap:.5rem">';
     if(!evs.length)h+='<div style="text-align:center;color:#64748b;padding:1.5rem;font-size:.82rem">No events this week</div>';
-    evs.forEach(ev=>{const s=new Date(ev.start.dateTime||ev.start.date);const t=ev.start.dateTime?s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'All day';const d=s.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});h+=`<div class="mob-cal-event" onclick='importOutlookEvent(${JSON.stringify(ev).replace(/'/g,"\\'")})'><div class="mob-cal-title">${ev.subject||'(No title)'}</div><div class="mob-cal-meta">${d} · ${t}</div></div>`;});
+    evs.forEach(ev=>{
+      const s=parseGraphDT(ev.start.dateTime)||new Date(ev.start.date);
+      const allDay=ev.isAllDay||!ev.start.dateTime;
+      const t=allDay?'All day':s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+      const d=s.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+      const col=(ev.categories&&ev.categories.length)?catColor(ev.categories[0]):{bg:'#1e3a5f',border:'#0078d4',text:'#ffffff'};
+      h+=`<div class="mob-cal-event" style="background:${col.bg};border-left:3px solid ${col.border};opacity:.92" onclick='importOutlookEvent(${JSON.stringify(ev).replace(/'/g,"\\'")})'><div class="mob-cal-title" style="color:${col.text}">${ev.subject||'(No title)'}</div><div class="mob-cal-meta" style="color:${col.text};opacity:.75">${d} · ${t}</div></div>`;
+    });
     h+='</div>';cont.innerHTML=h;
   }else{
     const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    let h='<div class="cal-grid">';
+    let h='<div class="cal-grid-scroll"><div class="cal-grid">';
     wd.forEach((day,i)=>{
       const isToday=day.getTime()===today.getTime();
-      const dayEvs=evs.filter(ev=>new Date(ev.start.dateTime||ev.start.date).toDateString()===day.toDateString());
+      const dayEvs=evs.filter(ev=>{
+        const s=parseGraphDT(ev.start.dateTime)||new Date(ev.start.date);
+        return s.toDateString()===day.toDateString();
+      });
       h+=`<div class="cal-day"><div class="cal-day-hdr">${DAYS[i]}</div><div class="${isToday?'cal-day-num today':'cal-day-num'}">${day.getDate()}</div>`;
-      dayEvs.forEach(ev=>{const s=new Date(ev.start.dateTime||ev.start.date);const t=ev.start.dateTime?s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'All day';h+=`<div class="cal-event" onclick="importOutlookEvent(${JSON.stringify(ev).replace(/"/g,'&quot;')})" title="${ev.subject||''}"><div class="cal-event-time">${t}</div><div class="cal-event-title">${ev.subject||'(No title)'}</div></div>`;});
+      dayEvs.forEach(ev=>{
+        const s=parseGraphDT(ev.start.dateTime)||new Date(ev.start.date);
+        const allDay=ev.isAllDay||!ev.start.dateTime;
+        const t=allDay?'All day':s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+        const col=(ev.categories&&ev.categories.length)?catColor(ev.categories[0]):{bg:'#1e3a5f',border:'#0078d4',text:'#ffffff'};
+        h+=`<div class="cal-event" style="background:${col.bg};border:1px solid ${col.border};border-left:3px solid ${col.border}" onclick="importOutlookEvent(${JSON.stringify(ev).replace(/"/g,'&quot;')})" title="${ev.subject||''}"><div class="cal-event-time" style="color:${col.text};opacity:.8;font-family:var(--font-mono);font-size:.56rem">${t}</div><div class="cal-event-title" style="color:${col.text};font-size:.67rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ev.subject||'(No title)'}</div></div>`;
+      });
       if(!dayEvs.length)h+=`<div style="font-size:.6rem;color:var(--border);text-align:center;padding:.3rem">--</div>`;
       h+='</div>';
     });
-    h+='</div>';cont.innerHTML=h;
+    h+='</div></div>';cont.innerHTML=h;
   }
 }
 function importOutlookEvent(ev){
   if(typeof ev==='string')ev=JSON.parse(ev);
-  const s=new Date(ev.start.dateTime||ev.start.date);
+  const s=parseGraphDT(ev.start.dateTime)||new Date(ev.start.date);
   const dateStr=s.toISOString().split('T')[0];
   let name=ev.subject||'';
   name=name.replace(/^(home meeting\s*-?\s*|cnf home meeting\s*-?\s*|cnx home meeting\s*-?\s*|close\s*-?\s*|follow up\s*-?\s*|meeting\s*with\s*|meeting\s*-?\s*)/i,'').replace(/\s*Michele Dim.*$/i,'').trim();
   if(!name)name=ev.subject||'';
-  // Extract plain text from body (strip HTML tags)
   let notes='';
   if(ev.body&&ev.body.content){
     if(ev.body.contentType==='html'){
-      const tmp=document.createElement('div');
-      tmp.innerHTML=ev.body.content;
+      const tmp=document.createElement('div');tmp.innerHTML=ev.body.content;
       notes=tmp.innerText.trim();
-    }else{
-      notes=ev.body.content.trim();
-    }
-    // Remove Outlook's default boilerplate invitation text
+    }else{notes=ev.body.content.trim();}
     notes=notes.replace(/_{5,}[\s\S]*/,'').trim();
   }
   openMeetModal();
   document.getElementById('m-date').value=dateStr;
   document.getElementById('m-name').value=name;
+  if(ev.start.dateTime&&!ev.isAllDay) document.getElementById('m-time').value=s.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
   if(notes) document.getElementById('m-notes').value=notes;
   document.getElementById('meet-modal-title').textContent='Import from Outlook';
   document.getElementById('meet-modal-subtitle').textContent=`📅 "${ev.subject}" · ${s.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}`;
@@ -1711,7 +1756,8 @@ function renderDashboard(){
   const apiChg=pwAPI>0?(twAPI-pwAPI)/pwAPI*100:null;
   document.getElementById('weekly-summary').innerHTML=`<div class="weekly-title">📊 This Week -- ${ws.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div><div class="weekly-stats"><div class="weekly-stat"><div class="weekly-val">${twS.length}</div><div class="weekly-lbl">Sales</div></div><div class="weekly-stat"><div class="weekly-val">${fmt(twAPI,0)}</div><div class="weekly-lbl">My API</div>${apiChg!==null?`<div class="weekly-change ${apiChg>=0?'up':'down'}">${apiChg>=0?'↑':'↓'}${Math.abs(apiChg).toFixed(0)}% vs last wk</div>`:'<div class="weekly-change flat">--</div>'}</div><div class="weekly-stat"><div class="weekly-val">${fmt(twComm,0)}</div><div class="weekly-lbl">Commission</div></div><div class="weekly-stat"><div class="weekly-val">${twM.length}</div><div class="weekly-lbl">Meetings</div></div><div class="weekly-stat"><div class="weekly-val">${twCl}</div><div class="weekly-lbl">Closed</div></div></div>`;
 
-  document.getElementById('kpi-strip').innerHTML=kpi('gold','My API -- YTD',fmt(myTotal,0),`${yrSales.length} policies`)+kpi('purple',`My API -- ${MONTHS[nowMo-1]}`,fmt(myThisMo,0),'this month')+kpi('green','Total CCG',fmt(totalCCG,0),'gross')+kpi('teal',`Payout -- ${MONTHS[nowMo-1]}`,fmt(payout,0),`from ${MONTHS[prevMo-1]} sales`)+kpi('amber','Meetings',tot,`${closed} closed · ${pct(closed/Math.max(1,tot))}`)+kpi(rem<=0?'green':'red','To Target',fmt(Math.abs(rem),0),rem<=0?'🎯 Achieved!':'remaining');
+  const seenCount=yrMeets.filter(m=>m.seen).length;
+  document.getElementById('kpi-strip').innerHTML=kpi('gold','My API -- YTD',fmt(myTotal,0),`${yrSales.length} policies`)+kpi('purple',`My API -- ${MONTHS[nowMo-1]}`,fmt(myThisMo,0),'this month')+kpi('green','Total CCG',fmt(totalCCG,0),'gross')+kpi('teal',`Payout -- ${MONTHS[nowMo-1]}`,fmt(payout,0),`from ${MONTHS[prevMo-1]} sales`)+kpi('amber','Meetings',tot,`${seenCount} seen · ${pct(seenCount/Math.max(1,tot))}`)+kpi('green','Close Ratio',pct(closed/Math.max(1,seenCount)),`${closed} closed of ${seenCount} seen`)+kpi(rem<=0?'green':'red','To Target',fmt(Math.abs(rem),0),rem<=0?'🎯 Achieved!':'remaining');
 
   const cbm=MONTHS.map((_,i)=>commForSaleMonth(i+1,yr));
   makeChart('chart-commission',{type:'bar',data:{labels:MONTHS,datasets:[{data:cbm,backgroundColor:cbm.map(v=>v>0?'rgba(201,168,76,.65)':'rgba(201,168,76,.1)'),borderColor:cbm.map(v=>v>0?'rgba(201,168,76,.9)':'rgba(201,168,76,.15)'),borderWidth:1,borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>`€${c.parsed.y.toFixed(2)}`}}},scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#64748b',font:{size:10},callback:v=>'€'+v},grid:{color:'rgba(255,255,255,.04)'},border:{display:false},beginAtZero:true}}}});
@@ -1732,8 +1778,10 @@ function renderDashboard(){
   const srcArr=Object.entries(srcMap).sort((a,b)=>b[1]-a[1]);const maxS=srcArr[0]?.[1]||1;
   document.getElementById('best-sources').innerHTML=srcArr.slice(0,5).map((x,i)=>`<div class="best-item"><span class="best-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</span><div class="best-label">${x[0]}</div><div style="flex:1;margin:0 .75rem;height:4px;background:#111d33;border-radius:2px;overflow:hidden"><div style="height:100%;background:var(--teal);border-radius:2px;width:${(x[1]/maxS*100).toFixed(0)}%"></div></div><span class="best-val">${fmt(x[1],0)}</span></div>`).join('')||'<div style="color:#64748b;font-size:.82rem;padding:.75rem">No data yet</div>';
 
-  function rpm(ss){return MONTHS.map((_,i)=>{const mo=i+1,t2=yrMeets.filter(m=>getMeetMonth(m)===mo).length,c=yrMeets.filter(m=>ss.includes(m.status)&&getMeetMonth(m)===mo).length;return t2>0?parseFloat(((c/t2)*100).toFixed(1)):0;});}
+  function rpm(ss){return MONTHS.map((_,i)=>{const mo=i+1,seen=yrMeets.filter(m=>m.seen&&getMeetMonth(m)===mo).length,c=yrMeets.filter(m=>ss.includes(m.status)&&getMeetMonth(m)===mo).length;return seen>0?parseFloat(((c/seen)*100).toFixed(1)):0;});}
+  function rpmSeen(){return MONTHS.map((_,i)=>{const mo=i+1,t=yrMeets.filter(m=>getMeetMonth(m)===mo).length,s=yrMeets.filter(m=>m.seen&&getMeetMonth(m)===mo).length;return t>0?parseFloat(((s/t)*100).toFixed(1)):0;});}
   [['chart-ratio-close',rpm(['Meeting Close','Closed']),'#22c55e'],['chart-ratio-noshow',rpm(['Client No Show','No Show']),'#ef4444'],['chart-ratio-cancel',rpm(['Client Cancel','Cancelled']),'#94a3b8'],['chart-ratio-reschedule',rpm(['Meeting Reschedule']),'#a78bfa']].forEach(([id,data,color])=>{makeChart(id,{type:'bar',data:{labels:MONTHS,datasets:[{data,backgroundColor:data.map(v=>v>0?color+'88':color+'15'),borderColor:data.map(v=>v>0?color:color+'33'),borderWidth:1,borderRadius:4}]},options:rOpts()});});
+  const seenData=rpmSeen();makeChart('chart-ratio-seen',{type:'bar',data:{labels:MONTHS,datasets:[{data:seenData,backgroundColor:seenData.map(v=>v>0?'rgba(20,184,166,.55)':'rgba(20,184,166,.1)'),borderColor:seenData.map(v=>v>0?'#14b8a6':'rgba(20,184,166,.2)'),borderWidth:1,borderRadius:4}]},options:rOpts()});
 
   const act=MONTHS.map(m=>targets[m]?.actual||0),gls=MONTHS.map(m=>targets[m]?.target||10000);
   makeChart('chart-target',{type:'bar',data:{labels:MONTHS,datasets:[{label:'Actual',data:act,backgroundColor:act.map((a,i)=>a>=gls[i]?'rgba(34,197,94,.55)':'rgba(245,158,11,.55)'),borderColor:act.map((a,i)=>a>=gls[i]?'#22c55e':'#f59e0b'),borderWidth:1,borderRadius:4},{label:'Target',data:gls,type:'line',borderColor:'rgba(201,168,76,.6)',borderWidth:1.5,borderDash:[5,3],pointRadius:0,fill:false,tension:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#94a3b8',font:{size:10},padding:10,usePointStyle:true}},tooltip:{...TT}},scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#64748b',font:{size:10},callback:v=>'€'+v.toLocaleString()},grid:{color:'rgba(255,255,255,.04)'},border:{display:false},beginAtZero:true}}}});
@@ -1916,11 +1964,34 @@ function renderMeetings(){
 function renderRatioTable(){
   const yr=activeYear;const yrMeets=getMeetingsForYear(yr);const tot=yrMeets.length;
   if(!tot){document.getElementById('ratio-tbody').innerHTML='<tr><td colspan="14" style="text-align:center;color:#64748b;padding:1.5rem">No meetings yet</td></tr>';return;}
+  const seenMeets=yrMeets.filter(m=>m.seen);const seenTot=seenMeets.length;
   const mT=new Array(12).fill(0);yrMeets.forEach(m=>{const mo=getMeetMonth(m);if(mo>=1&&mo<=12)mT[mo-1]++;});
+  const mS=new Array(12).fill(0);seenMeets.forEach(m=>{const mo=getMeetMonth(m);if(mo>=1&&mo<=12)mS[mo-1]++;});
   const statuses=['Meeting Close','Meeting No Sale','Meeting Reschedule','Client No Show','Client Cancel','Follow Up','Second Meeting'];
   const cMap={'Meeting Close':'#22c55e','Meeting No Sale':'#ef4444','Meeting Reschedule':'#a78bfa','Client No Show':'#ef4444','Client Cancel':'#94a3b8','Follow Up':'#f59e0b','Second Meeting':'#14b8a6'};
   document.getElementById('ratio-header').innerHTML=`<th>Status</th><th>Full Year</th>${MONTHS.map(m=>`<th class="ratio-mo-col">${m}</th>`).join('')}`;
-  document.getElementById('ratio-tbody').innerHTML=statuses.map(s=>{const color=cMap[s]||'#64748b',cnt=yrMeets.filter(m=>m.status===s).length,fy=tot>0?cnt/tot:0;const mCells=MONTHS.map((_,i)=>{const mc=yrMeets.filter(m=>m.status===s&&getMeetMonth(m)===i+1).length;const r=mT[i]>0?mc/mT[i]:0;const al=r>0?Math.round((.1+r*.5)*255).toString(16).padStart(2,'0'):'0f';return`<td class="ratio-cell ratio-mo-col"><span class="ratio-pill" style="background:${color}${al};color:${r>0?color:'rgba(255,255,255,.12)'}">${mc>0?(r*100).toFixed(0)+'%':'--'}</span></td>`;}).join('');const fa=fy>0?Math.round((.1+fy*.5)*255).toString(16).padStart(2,'0'):'0f';return`<tr><td style="background:${color}18;border-left:2px solid ${color};color:${color};font-weight:700;padding:.6rem .85rem;font-size:.75rem;white-space:nowrap">${s}</td><td class="ratio-cell"><span class="ratio-pill" style="background:${color}${fa};color:${color};font-weight:700">${(fy*100).toFixed(0)}%</span></td>${mCells}</tr>`;}).join('');
+  // Seen row (seen / total)
+  const seenFY=tot>0?seenTot/tot:0;
+  const seenFa=seenFY>0?Math.round((.1+seenFY*.5)*255).toString(16).padStart(2,'0'):'0f';
+  const seenMoCells=MONTHS.map((_,i)=>{const r=mT[i]>0?mS[i]/mT[i]:0;const al=r>0?Math.round((.1+r*.5)*255).toString(16).padStart(2,'0'):'0f';return`<td class="ratio-cell ratio-mo-col"><span class="ratio-pill" style="background:#14b8a6${al};color:${r>0?'#14b8a6':'rgba(255,255,255,.12)'}">${mS[i]>0?(r*100).toFixed(0)+'%':'--'}</span></td>`;}).join('');
+  const seenRow=`<tr><td style="background:#14b8a618;border-left:2px solid #14b8a6;color:#14b8a6;font-weight:700;padding:.6rem .85rem;font-size:.75rem;white-space:nowrap">Seen</td><td class="ratio-cell"><span class="ratio-pill" style="background:#14b8a6${seenFa};color:#14b8a6;font-weight:700">${(seenFY*100).toFixed(0)}%</span></td>${seenMoCells}</tr>`;
+  // Status rows — Meeting Close divides by seen, others by total
+  const statusRows=statuses.map(s=>{
+    const color=cMap[s]||'#64748b',cnt=yrMeets.filter(m=>m.status===s).length;
+    const isClose=s==='Meeting Close';
+    const fy=isClose?(seenTot>0?cnt/seenTot:0):(tot>0?cnt/tot:0);
+    const mCells=MONTHS.map((_,i)=>{
+      const mc=yrMeets.filter(m=>m.status===s&&getMeetMonth(m)===i+1).length;
+      const denom=isClose?mS[i]:mT[i];
+      const r=denom>0?mc/denom:0;
+      const al=r>0?Math.round((.1+r*.5)*255).toString(16).padStart(2,'0'):'0f';
+      return`<td class="ratio-cell ratio-mo-col"><span class="ratio-pill" style="background:${color}${al};color:${r>0?color:'rgba(255,255,255,.12)'}">${mc>0?(r*100).toFixed(0)+'%':'--'}</span></td>`;
+    }).join('');
+    const fa=fy>0?Math.round((.1+fy*.5)*255).toString(16).padStart(2,'0'):'0f';
+    const label=isClose?'Meeting Close <span style="font-size:.6rem;opacity:.6">(of seen)</span>':s;
+    return`<tr><td style="background:${color}18;border-left:2px solid ${color};color:${color};font-weight:700;padding:.6rem .85rem;font-size:.75rem;white-space:nowrap">${label}</td><td class="ratio-cell"><span class="ratio-pill" style="background:${color}${fa};color:${color};font-weight:700">${(fy*100).toFixed(0)}%</span></td>${mCells}</tr>`;
+  }).join('');
+  document.getElementById('ratio-tbody').innerHTML=seenRow+statusRows;
 }
 
 // ── PIPELINE ──
@@ -2129,9 +2200,11 @@ function openMeetModal(idx=-1){
   document.getElementById('meet-modal-title').textContent=idx>=0?'Edit Meeting':'Add Meeting';
   document.getElementById('meet-modal-subtitle').textContent='';
   ['date','name','phone','source'].forEach(f=>document.getElementById('m-'+f).value=m[f]||'');
+  document.getElementById('m-time').value=m.time||'';
   document.getElementById('m-product1').value=m.product1||'';document.getElementById('m-product2').value=m.product2||'';
   document.getElementById('m-otherppp').value=m.otherPPP||'';document.getElementById('m-status').value=m.status||'';
   document.getElementById('m-seen').value=m.seen?'true':'false';document.getElementById('m-followup').value=m.followUpDate||'';
+  document.getElementById('m-reengage').value=m.reengageDate||'';
   document.getElementById('m-notes').value=(m.notes||'').replace(/\\n/g,'\n');
   document.getElementById('meet-delete-btn').style.display=idx>=0?'flex':'none';
   document.getElementById('meet-modal-overlay').classList.add('open');
@@ -2139,7 +2212,7 @@ function openMeetModal(idx=-1){
 function closeMeetModal(){document.getElementById('meet-modal-overlay').classList.remove('open');}
 function saveMeeting(){
   const g=id=>document.getElementById(id).value;
-  const m={date:g('m-date'),name:g('m-name'),phone:g('m-phone'),source:g('m-source'),product1:g('m-product1'),product2:g('m-product2'),otherPPP:g('m-otherppp'),status:g('m-status'),seen:g('m-seen')==='true',followUpDate:g('m-followup')||null,reengageDate:g('m-reengage')||null,notes:g('m-notes').replace(/\n/g,'\\n')};
+  const m={date:g('m-date'),name:g('m-name'),phone:g('m-phone'),source:g('m-source'),product1:g('m-product1'),product2:g('m-product2'),otherPPP:g('m-otherppp'),status:g('m-status'),time:g('m-time')||null,seen:g('m-seen')==='true',followUpDate:g('m-followup')||null,reengageDate:g('m-reengage')||null,notes:g('m-notes').replace(/\n/g,'\\n')};
   if(!m.name){toast('Name is required','error');return;}
   if(editMeetIdx>=0)meetings[editMeetIdx]=m;else meetings.push(m);
   closeMeetModal();renderMeetings();if(document.getElementById('page-today').classList.contains('active'))renderToday();saveData();
