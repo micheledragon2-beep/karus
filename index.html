@@ -861,7 +861,8 @@ function syncDrawerActive(page){
     <div class="card"><div class="card-header"><div class="card-title">Best Sources</div></div><div id="best-sources"></div></div>
   </div>
   <div class="grid-3 mb-1">
-    <div class="card"><div class="card-header"><div class="card-title">Close Ratio / Month</div></div><div class="chart-wrap sm"><canvas id="chart-ratio-close"></canvas></div></div>
+    <div class="card"><div class="card-header"><div class="card-title">Close Ratio / Month <span style="font-size:.65rem;color:#64748b">(of seen)</span></div></div><div class="chart-wrap sm"><canvas id="chart-ratio-close"></canvas></div></div>
+    <div class="card"><div class="card-header"><div class="card-title">Seen Ratio / Month <span style="font-size:.65rem;color:#64748b">(of total)</span></div></div><div class="chart-wrap sm"><canvas id="chart-ratio-seen"></canvas></div></div>
     <div class="card"><div class="card-header"><div class="card-title">No Show Ratio / Month</div></div><div class="chart-wrap sm"><canvas id="chart-ratio-noshow"></canvas></div></div>
     <div class="card"><div class="card-header"><div class="card-title">Cancel Ratio / Month</div></div><div class="chart-wrap sm"><canvas id="chart-ratio-cancel"></canvas></div></div>
   </div>
@@ -1381,9 +1382,7 @@ function setOutlookConnected(c){const btn=document.getElementById('outlook-btn')
 async function fetchCalendarEvents(){if(!outlookToken)return null;const now=new Date(),ws=new Date(now);ws.setDate(now.getDate()-now.getDay()+calWeekOffset*7);ws.setHours(0,0,0,0);const we=new Date(ws);we.setDate(ws.getDate()+7);const tz=Intl.DateTimeFormat().resolvedOptions().timeZone;try{const r=await fetch(`https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${ws.toISOString()}&endDateTime=${we.toISOString()}&$orderby=start/dateTime&$top=50&$select=subject,start,end,categories,isAllDay,body`,{headers:{Authorization:`Bearer ${outlookToken}`,'Prefer':`outlook.timezone="${tz}"`}});if(r.status===401){outlookToken=null;sessionStorage.removeItem('ot');setOutlookConnected(false);return null;}return(await r.json()).value||[];}catch(e){return null;}}
 function getWeekDates(){const n=new Date(),s=new Date(n);s.setDate(n.getDate()-n.getDay()+calWeekOffset*7);s.setHours(0,0,0,0);return Array.from({length:7},(_,i)=>{const d=new Date(s);d.setDate(s.getDate()+i);return d;});}
 function calNav(dir){if(dir===0)calWeekOffset=0;else calWeekOffset+=dir;renderCalendar();}
-
 function parseGraphDT(dtStr){if(!dtStr)return null;return new Date(dtStr.replace(/\.\d+$/,'').replace(/Z$/,''));}
-
 function catColor(name){
   const n=(name||'').toLowerCase();
   if(n.includes('red'))        return{bg:'#d13438',border:'#d13438',text:'#ffffff'};
@@ -1401,10 +1400,8 @@ function catColor(name){
   if(n.includes('black'))      return{bg:'#1b1a19',border:'#605e5c',text:'#ffffff'};
   if(n.includes('gray')||n.includes('grey')) return{bg:'#69797e',border:'#69797e',text:'#ffffff'};
   let hash=0;for(let i=0;i<name.length;i++)hash=name.charCodeAt(i)+((hash<<5)-hash);
-  const hue=Math.abs(hash)%360;
-  return{bg:`hsl(${hue},55%,40%)`,border:`hsl(${hue},55%,40%)`,text:'#ffffff'};
+  const hue=Math.abs(hash)%360;return{bg:`hsl(${hue},55%,40%)`,border:`hsl(${hue},55%,40%)`,text:'#ffffff'};
 }
-
 async function renderCalendar(){
   const cont=document.getElementById('cal-grid-container');
   const wd=getWeekDates();
@@ -1765,8 +1762,10 @@ function renderDashboard(){
   const srcArr=Object.entries(srcMap).sort((a,b)=>b[1]-a[1]);const maxS=srcArr[0]?.[1]||1;
   document.getElementById('best-sources').innerHTML=srcArr.slice(0,5).map((x,i)=>`<div class="best-item"><span class="best-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</span><div class="best-label">${x[0]}</div><div style="flex:1;margin:0 .75rem;height:4px;background:#111d33;border-radius:2px;overflow:hidden"><div style="height:100%;background:var(--teal);border-radius:2px;width:${(x[1]/maxS*100).toFixed(0)}%"></div></div><span class="best-val">${fmt(x[1],0)}</span></div>`).join('')||'<div style="color:#64748b;font-size:.82rem;padding:.75rem">No data yet</div>';
 
-  function rpm(ss){return MONTHS.map((_,i)=>{const mo=i+1,t2=yrMeets.filter(m=>getMeetMonth(m)===mo).length,c=yrMeets.filter(m=>ss.includes(m.status)&&getMeetMonth(m)===mo).length;return t2>0?parseFloat(((c/t2)*100).toFixed(1)):0;});}
+  function rpm(ss){return MONTHS.map((_,i)=>{const mo=i+1,seen=yrMeets.filter(m=>m.seen&&getMeetMonth(m)===mo).length,c=yrMeets.filter(m=>ss.includes(m.status)&&getMeetMonth(m)===mo).length;return seen>0?parseFloat(((c/seen)*100).toFixed(1)):0;});}
+  function rpmSeen(){return MONTHS.map((_,i)=>{const mo=i+1,t=yrMeets.filter(m=>getMeetMonth(m)===mo).length,s=yrMeets.filter(m=>m.seen&&getMeetMonth(m)===mo).length;return t>0?parseFloat(((s/t)*100).toFixed(1)):0;});}
   [['chart-ratio-close',rpm(['Meeting Close','Closed']),'#22c55e'],['chart-ratio-noshow',rpm(['Client No Show','No Show']),'#ef4444'],['chart-ratio-cancel',rpm(['Client Cancel','Cancelled']),'#94a3b8'],['chart-ratio-reschedule',rpm(['Meeting Reschedule']),'#a78bfa']].forEach(([id,data,color])=>{makeChart(id,{type:'bar',data:{labels:MONTHS,datasets:[{data,backgroundColor:data.map(v=>v>0?color+'88':color+'15'),borderColor:data.map(v=>v>0?color:color+'33'),borderWidth:1,borderRadius:4}]},options:rOpts()});});
+  const seenData=rpmSeen();makeChart('chart-ratio-seen',{type:'bar',data:{labels:MONTHS,datasets:[{data:seenData,backgroundColor:seenData.map(v=>v>0?'rgba(20,184,166,.55)':'rgba(20,184,166,.1)'),borderColor:seenData.map(v=>v>0?'#14b8a6':'rgba(20,184,166,.2)'),borderWidth:1,borderRadius:4}]},options:rOpts()});
 
   const act=MONTHS.map(m=>targets[m]?.actual||0),gls=MONTHS.map(m=>targets[m]?.target||10000);
   makeChart('chart-target',{type:'bar',data:{labels:MONTHS,datasets:[{label:'Actual',data:act,backgroundColor:act.map((a,i)=>a>=gls[i]?'rgba(34,197,94,.55)':'rgba(245,158,11,.55)'),borderColor:act.map((a,i)=>a>=gls[i]?'#22c55e':'#f59e0b'),borderWidth:1,borderRadius:4},{label:'Target',data:gls,type:'line',borderColor:'rgba(201,168,76,.6)',borderWidth:1.5,borderDash:[5,3],pointRadius:0,fill:false,tension:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#94a3b8',font:{size:10},padding:10,usePointStyle:true}},tooltip:{...TT}},scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#64748b',font:{size:10},callback:v=>'€'+v.toLocaleString()},grid:{color:'rgba(255,255,255,.04)'},border:{display:false},beginAtZero:true}}}});
@@ -1936,7 +1935,7 @@ function renderMeetings(){
   const tot=yrMeets.length,sc=meetingsByStatus(yr);
   const closed=(sc['Meeting Close']||0)+(sc['Closed']||0);const seen=yrMeets.filter(m=>m.seen).length;
   const noShow=(sc['Client No Show']||0)+(sc['No Show']||0);const cancel=(sc['Client Cancel']||0)+(sc['Cancelled']||0);
-  document.getElementById('meetings-kpi').innerHTML=kpi('gold','Meetings Set',tot,'total')+kpi('blue','Seen',seen,pct(seen/Math.max(1,tot)))+kpi('green','Closed',closed,pct(closed/Math.max(1,tot)))+kpi('red','No Show',noShow,pct(noShow/Math.max(1,tot)))+kpi('grey','Cancelled',cancel,pct(cancel/Math.max(1,tot)))+kpi('amber','Follow Up',sc['Follow Up']||0,pct((sc['Follow Up']||0)/Math.max(1,tot)));
+  document.getElementById('meetings-kpi').innerHTML=kpi('gold','Meetings Set',tot,'total')+kpi('blue','Seen',seen,pct(seen/Math.max(1,tot)))+kpi('teal','Seen Ratio',pct(seen/Math.max(1,tot)),`${seen} of ${tot} meetings`)+kpi('green','Close Ratio',pct(closed/Math.max(1,seen)),`${closed} of ${seen} seen`)+kpi('red','No Show',noShow,pct(noShow/Math.max(1,tot)))+kpi('grey','Cancelled',cancel,pct(cancel/Math.max(1,tot)))+kpi('amber','Follow Up',sc['Follow Up']||0,pct((sc['Follow Up']||0)/Math.max(1,tot)));
   renderRatioTable();
   const q=document.getElementById('meet-search').value.toLowerCase();const status=document.getElementById('meet-status-filter').value;const month=document.getElementById('meet-month-filter').value;
   const filtered=yrMeets.filter(m=>{const mq=!q||[m.name,m.phone,m.notes,m.source].some(f=>(f||'').toLowerCase().includes(q));return mq&&(!status||m.status===status)&&(!month||(m.date||'').slice(5,7)===month);});
@@ -1949,11 +1948,32 @@ function renderMeetings(){
 function renderRatioTable(){
   const yr=activeYear;const yrMeets=getMeetingsForYear(yr);const tot=yrMeets.length;
   if(!tot){document.getElementById('ratio-tbody').innerHTML='<tr><td colspan="14" style="text-align:center;color:#64748b;padding:1.5rem">No meetings yet</td></tr>';return;}
+  const seenMeets=yrMeets.filter(m=>m.seen);const seenTot=seenMeets.length;
   const mT=new Array(12).fill(0);yrMeets.forEach(m=>{const mo=getMeetMonth(m);if(mo>=1&&mo<=12)mT[mo-1]++;});
+  const mS=new Array(12).fill(0);seenMeets.forEach(m=>{const mo=getMeetMonth(m);if(mo>=1&&mo<=12)mS[mo-1]++;});
   const statuses=['Meeting Close','Meeting No Sale','Meeting Reschedule','Client No Show','Client Cancel','Follow Up','Second Meeting'];
   const cMap={'Meeting Close':'#22c55e','Meeting No Sale':'#ef4444','Meeting Reschedule':'#a78bfa','Client No Show':'#ef4444','Client Cancel':'#94a3b8','Follow Up':'#f59e0b','Second Meeting':'#14b8a6'};
   document.getElementById('ratio-header').innerHTML=`<th>Status</th><th>Full Year</th>${MONTHS.map(m=>`<th class="ratio-mo-col">${m}</th>`).join('')}`;
-  document.getElementById('ratio-tbody').innerHTML=statuses.map(s=>{const color=cMap[s]||'#64748b',cnt=yrMeets.filter(m=>m.status===s).length,fy=tot>0?cnt/tot:0;const mCells=MONTHS.map((_,i)=>{const mc=yrMeets.filter(m=>m.status===s&&getMeetMonth(m)===i+1).length;const r=mT[i]>0?mc/mT[i]:0;const al=r>0?Math.round((.1+r*.5)*255).toString(16).padStart(2,'0'):'0f';return`<td class="ratio-cell ratio-mo-col"><span class="ratio-pill" style="background:${color}${al};color:${r>0?color:'rgba(255,255,255,.12)'}">${mc>0?(r*100).toFixed(0)+'%':'--'}</span></td>`;}).join('');const fa=fy>0?Math.round((.1+fy*.5)*255).toString(16).padStart(2,'0'):'0f';return`<tr><td style="background:${color}18;border-left:2px solid ${color};color:${color};font-weight:700;padding:.6rem .85rem;font-size:.75rem;white-space:nowrap">${s}</td><td class="ratio-cell"><span class="ratio-pill" style="background:${color}${fa};color:${color};font-weight:700">${(fy*100).toFixed(0)}%</span></td>${mCells}</tr>`;}).join('');
+  const seenFY=tot>0?seenTot/tot:0;
+  const seenFa=seenFY>0?Math.round((.1+seenFY*.5)*255).toString(16).padStart(2,'0'):'0f';
+  const seenMoCells=MONTHS.map((_,i)=>{const r=mT[i]>0?mS[i]/mT[i]:0;const al=r>0?Math.round((.1+r*.5)*255).toString(16).padStart(2,'0'):'0f';return`<td class="ratio-cell ratio-mo-col"><span class="ratio-pill" style="background:#14b8a6${al};color:${r>0?'#14b8a6':'rgba(255,255,255,.12)'}">${mS[i]>0?(r*100).toFixed(0)+'%':'--'}</span></td>`;}).join('');
+  const seenRow=`<tr><td style="background:#14b8a618;border-left:2px solid #14b8a6;color:#14b8a6;font-weight:700;padding:.6rem .85rem;font-size:.75rem;white-space:nowrap">Seen</td><td class="ratio-cell"><span class="ratio-pill" style="background:#14b8a6${seenFa};color:#14b8a6;font-weight:700">${(seenFY*100).toFixed(0)}%</span></td>${seenMoCells}</tr>`;
+  const statusRows=statuses.map(s=>{
+    const color=cMap[s]||'#64748b',cnt=yrMeets.filter(m=>m.status===s).length;
+    const isClose=s==='Meeting Close';
+    const fy=isClose?(seenTot>0?cnt/seenTot:0):(tot>0?cnt/tot:0);
+    const mCells=MONTHS.map((_,i)=>{
+      const mc=yrMeets.filter(m=>m.status===s&&getMeetMonth(m)===i+1).length;
+      const denom=isClose?mS[i]:mT[i];
+      const r=denom>0?mc/denom:0;
+      const al=r>0?Math.round((.1+r*.5)*255).toString(16).padStart(2,'0'):'0f';
+      return`<td class="ratio-cell ratio-mo-col"><span class="ratio-pill" style="background:${color}${al};color:${r>0?color:'rgba(255,255,255,.12)'}">${mc>0?(r*100).toFixed(0)+'%':'--'}</span></td>`;
+    }).join('');
+    const fa=fy>0?Math.round((.1+fy*.5)*255).toString(16).padStart(2,'0'):'0f';
+    const label=isClose?'Meeting Close <span style="font-size:.6rem;opacity:.6">(of seen)</span>':s;
+    return`<tr><td style="background:${color}18;border-left:2px solid ${color};color:${color};font-weight:700;padding:.6rem .85rem;font-size:.75rem;white-space:nowrap">${label}</td><td class="ratio-cell"><span class="ratio-pill" style="background:${color}${fa};color:${color};font-weight:700">${(fy*100).toFixed(0)}%</span></td>${mCells}</tr>`;
+  }).join('');
+  document.getElementById('ratio-tbody').innerHTML=seenRow+statusRows;
 }
 
 // ── PIPELINE ──
